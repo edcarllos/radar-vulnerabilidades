@@ -9,10 +9,11 @@
 })(typeof self !== "undefined" ? self : this, function () {
   "use strict";
 
-  var RELEASES = ["deb12", "deb13", "u2204", "u2404", "u2604"];
+  var RELEASES = ["deb12", "deb13", "u2004", "u2204", "u2404", "u2604"];
   var ROTULOS = {
     deb12: "Debian 12 (bookworm)",
     deb13: "Debian 13 (trixie)",
+    u2004: "Ubuntu 20.04 LTS (focal)",
     u2204: "Ubuntu 22.04 LTS (jammy)",
     u2404: "Ubuntu 24.04 LTS (noble)",
     u2604: "Ubuntu 26.04 LTS (resolute)"

@@ -20,7 +20,7 @@ Formato do índice (texto, separador "|"):
 """
 import argparse, bz2, collections, datetime, json, re, sys
 
-REL = {"bookworm": "deb12", "trixie": "deb13", "jammy": "u2204", "noble": "u2404", "resolute": "u2604"}
+REL = {"bookworm": "deb12", "trixie": "deb13", "focal": "u2004", "jammy": "u2204", "noble": "u2404", "resolute": "u2604"}
 RE_VER = re.compile(r"^[0-9][0-9A-Za-z.+~:-]{0,80}$")
 RE_PKG = re.compile(r"^[a-z0-9][a-z0-9+.-]{0,62}$")
 RE_CVE = re.compile(r"^CVE-\d{4}-\d{4,7}$")

@@ -71,7 +71,8 @@ legend button { background: none; border: 0; color: var(--accent); font-size: .7
 .lista-kev, .kev, .kev details > div { grid-template-columns: minmax(0, 1fr); }
 .lista-kev > *, .kev details > div, .kev details > div > * { min-width: 0; }
 .kev, .kev p, .kev a { overflow-wrap: anywhere; }
-.kev .pill { white-space: normal; }
+.kev .pill, .tile .pill { white-space: normal; }
+#s-outros .tile { min-width: 0; overflow-wrap: anywhere; }
 .ref { font-size: .82rem; color: var(--muted); border-left: 3px solid var(--line); padding-left: 8px; }
 .barras { width: 100%; max-width: 760px; height: auto; }
 .barras text { font-family: var(--f-mono); font-size: 11px; fill: var(--muted); }
@@ -365,6 +366,7 @@ footer { color: var(--muted); font-size: .82rem; display: grid; gap: 6px; }
             <label class="chk"><input type="checkbox" id="h-so-kev"> Só pacotes com CVE no KEV</label>
           </div>
           <div id="s-expl" style="display:grid;gap:10px"></div>
+          <details id="s-outros-d"><summary><b>Outros sistemas: Debian 11, Proxmox VE e TrueNAS</b></summary><div id="s-outros" style="display:grid;gap:12px;margin-top:8px"></div></details>
           <h3 style="font-size:1rem;margin:6px 0 0">Histórico completo da distro</h3>
           <div class="resumo" id="h-resumo"></div>
           <div id="h-baixar" class="aviso"></div>
@@ -457,7 +459,7 @@ footer { color: var(--muted); font-size: .82rem; display: grid; gap: 6px; }
           <h3>Limites</h3>
           <ul>
             <li>O Radar é um projeto comunitário oferecido sem garantia: pode haver atraso, erro ou falha que ele não conhece. Ele ajuda a priorizar; não substitui os avisos oficiais nem o julgamento da sua equipe.</li>
-            <li>Os scripts cobrem Debian 12 e 13 e Ubuntu 22.04, 24.04 e 26.04. Equipamentos e sistemas fora dessas distros aparecem como verificação manual.</li>
+            <li>Os scripts cobrem Debian 12 e 13 e Ubuntu 20.04, 22.04, 24.04 e 26.04, e o Proxmox VE (atualização completa guiada). No Debian 11 (sem suporte) e no TrueNAS só há verificação. Equipamentos e sistemas fora dessas distros aparecem como verificação manual.</li>
             <li>A versão mínima das aplicações web vem da descrição da NVD; confira o aviso do projeto antes de agir.</li>
             <li>Os scripts de correção rodam como root no seu servidor. Leia antes, rode a verificação e o <code>--simular</code> primeiro e tenha backup.</li>
           </ul>
@@ -594,11 +596,11 @@ sha256sum -c --ignore-missing SHA256SUMS</pre>
   var D = null, COLETAS = [], INV = null;
   var F = ler("filtros", null) || {};
   function padraoFiltros() {
-    return { v: 5, ordem: "decisao", decisao: ["agir_agora", "agir_em_breve", "acompanhar_de_perto", "acompanhar", "nao_se_aplica"], epss: 0, busca: "", releases: ["deb12", "deb13", "u2204", "u2404", "u2604"], nota: 0, sev: ["c", "h", "m", "l", "n"], kevSempre: true,
+    return { v: 6, ordem: "decisao", decisao: ["agir_agora", "agir_em_breve", "acompanhar_de_perto", "acompanhar", "nao_se_aplica"], epss: 0, busca: "", releases: ["deb12", "deb13", "u2004", "u2204", "u2404", "u2604"], nota: 0, sev: ["c", "h", "m", "l", "n"], kevSempre: true,
       situacao: ["explorado", "urgente", "atencao", "nao_afetado"], tipo: ["pacote", "kernel", "app", "manual"], tecExcl: [],
       dataCampo: "coletado_em", de: "", ate: "" };
   }
-  if (F.v !== 5) F = {};
+  if (F.v !== 6) F = {};
   F = Object.assign(padraoFiltros(), F);
   delete F.tec;
   if (!Array.isArray(F.tecExcl)) F.tecExcl = [];
@@ -1149,6 +1151,7 @@ sha256sum -c --ignore-missing SHA256SUMS</pre>
   var H = null, hCarregando = false, hLimite = 100;
   function renderHistorico() {
     if (document.getElementById("aba-historico").hidden) return;
+    renderOutrosSistemas();
     if (!H) {
       if (hCarregando) return;
       hCarregando = true;
@@ -1364,6 +1367,32 @@ sha256sum -c --ignore-missing SHA256SUMS</pre>
       return el("li", {}, [link(e.cve, "https://nvd.nist.gov/vuln/detail/" + e.cve), " · " + e.f + " " + e.p + " (pacote " + e.so[rel].p + ", " + (SO_EST[e.so[rel].e] || [e.so[rel].e])[0] + ")"]);
     })));
     alvo.replaceChildren.apply(alvo, partes);
+  }
+
+  // ---------- F23: outros sistemas (sem dados por pacote ou com atualização própria) ----------
+  function renderOutrosSistemas() {
+    var alvo = document.getElementById("s-outros");
+    if (!alvo || !D || alvo.childNodes.length) return;
+    var p = function (t) { return el("p", { style: "margin:0", text: t }); };
+    var cartao = function (titulo, pill, filhos) { return el("div", { class: "tile", style: "gap:6px" }, [el("div", { style: "display:flex;gap:8px;align-items:center;flex-wrap:wrap" }, [el("b", { style: "font-size:1rem;font-family:var(--f-body)", text: titulo }), pill]), el("div", { style: "display:grid;gap:6px;font-size:.88rem;color:var(--fg)" }, filhos)]); };
+    var tn = (D.avisos_truenas || []).slice(0, 6);
+    var itemPve = D.itens.filter(function (i) { return i.id === "nvd-proxmox"; })[0];
+    alvo.replaceChildren(
+      cartao("Debian 11 (bullseye)", el("span", { class: "pill p-crit", text: "sem suporte desde 31/08/2026" }), [
+        p("Não recebe mais correções gratuitas. Toda falha descoberta depois dessa data fica aberta. O Radar não tem dados por pacote dele: o script de verificação avisa e confere só as aplicações web."),
+        p("O que fazer: migre para o Debian 12 ou 13. O suporte estendido (ELTS, da Freexian) é pago. Pelo PPSI (controle 2.2), sistema sem suporte precisa de exceção documentada enquanto não for migrado.")]),
+      cartao("Ubuntu 20.04 LTS (focal)", el("span", { class: "pill p-warn", text: "suporte padrão encerrado em 31/05/2025" }), [
+        p("O Radar tem os dados dele (escolha a versão acima). Correções novas saem só no Ubuntu Pro (ESM): sem ele, as falhas novas ficam abertas. Planeje a migração para o 22.04 ou 24.04.")]),
+      cartao("Proxmox VE 8 e 9", el("span", { class: "pill p-info", text: "base Debian 12 e 13" }), [
+        p("Escolha Debian 12 (Proxmox VE 8) ou Debian 13 (Proxmox VE 9) acima. A verificação confere os pacotes Debian; o kernel e os pacotes próprios do Proxmox, não."),
+        p("A correção do Radar faz a atualização completa guiada (apt full-upgrade), como a Proxmox recomenda, com snapshot ZFS ou backup antes. Desfazer é pelo snapshot."),
+        el("p", { style: "margin:0" }, ["Avisos de segurança do Proxmox: ", link("fórum oficial", "https://forum.proxmox.com/threads/proxmox-virtual-environment-security-advisories.149331/"),
+          itemPve ? el("span", {}, [" · ", el("a", { href: "#itens", text: "CVEs recentes do Proxmox no Radar", onclick: function (ev) { ev.preventDefault(); abertos.add("nvd-proxmox"); location.hash = "#itens"; } })]) : null])]),
+      cartao("TrueNAS", el("span", { class: "pill p-info", text: "atualização só pelo próprio TrueNAS" }), [
+        p("É um equipamento fechado: não altere com apt. O script de verificação mostra a versão e serve só de informação; a correção é pelo atualizador do TrueNAS."),
+        tn.length ? el("ul", { style: "margin:0;padding-left:20px" }, tn.map(function (a) { return el("li", {}, [dataBR(a.data) + " · ", link(a.titulo, a.url)]); })) : p("Sem avisos recentes no cache."),
+        el("p", { style: "margin:0" }, ["Todos os avisos: ", link("security.truenas.com", "https://security.truenas.com/")])])
+    );
   }
 
   // ---------- F22: Hoje ----------
