@@ -1,0 +1,142 @@
+# Radar de Vulnerabilidades: correção em lote com Ansible
+# Gerado em @@GERADO@@ · coleta @@COLETA@@ · catálogo KEV @@KEV@@ · @@QTD_ITENS@@ itens · distros: @@RELEASES_ROTULOS@@
+#
+# Uso (numa máquina com ansible-core 2.14 ou mais novo e acesso SSH aos servidores):
+#   ansible-playbook -i inventario radar-ansible.yml --check     # SIMULA: mostra o que seria atualizado
+#   ansible-playbook -i inventario radar-ansible.yml             # aplica
+# Variáveis (-e):
+#   radar_decisoes='["agir_agora"]'      só itens com estas decisões (padrão: agir_agora e agir_em_breve)
+#   radar_itens='["krb5-2026-11"]'       só estes itens (ids do painel)
+#   radar_lote=1                         servidores por vez (padrão: 25%); um erro interrompe os lotes seguintes
+#   radar_reiniciar=true                 reinicia quando o sistema pedir (padrão: NÃO reinicia)
+#   radar_hosts=web                      grupo do inventário (padrão: all)
+#
+# O que acontece em cada servidor:
+#   1. grava o script de verificação embutido abaixo num arquivo temporário e roda-o (somente leitura);
+#   2. guarda as versões instaladas em /var/backups/radar-vuln/ansible-<data>.json (base para rollback);
+#   3. atualiza com apt APENAS os pacotes binários já instalados dos itens VULNERÁVEIS selecionados
+#      (only_upgrade: nunca instala pacote novo nem remove nada);
+#   4. roda a verificação de novo e mostra antes e depois.
+# Kernel e aplicações (Moodle, GLPI, WordPress...) não são atualizados aqui: aparecem na lista "fora do Ansible".
+# Rollback: apt install PACOTE=VERSAO_ANTIGA com as versões do arquivo do passo 2 (se ainda estiverem no repositório),
+# ou o radar-corrigir.sh/radar-rollback.sh, que guardam os .deb antigos.
+
+- name: Radar de Vulnerabilidades - correção em lote
+  hosts: "{{ radar_hosts | default('all') }}"
+  become: true
+  serial: "{{ radar_lote | default('25%') }}"
+  max_fail_percentage: 0
+  gather_facts: true
+  vars:
+    radar_decisoes_padrao: [agir_agora, agir_em_breve]
+    radar_verificar: !unsafe |
+@@VERIFICAR_YAML@@
+  tasks:
+    - name: Só Debian e Ubuntu
+      ansible.builtin.assert:
+        that: ansible_facts['os_family'] == 'Debian'
+        fail_msg: "O Radar cobre Debian e Ubuntu; {{ inventory_hostname }} é {{ ansible_facts['distribution'] }}."
+        quiet: true
+
+    - name: Radar
+      block:
+        - name: Arquivo temporário para o script de verificação
+          ansible.builtin.tempfile:
+            state: file
+            suffix: .radar.sh
+          register: radar_tmp
+          check_mode: false
+
+        - name: Grava o script de verificação desta coleta
+          ansible.builtin.copy:
+            content: "{{ radar_verificar }}"
+            dest: "{{ radar_tmp.path }}"
+            mode: "0700"
+          check_mode: false
+          diff: false
+
+        - name: Verificação antes (somente leitura)
+          ansible.builtin.command: bash {{ radar_tmp.path }} --json
+          register: radar_antes
+          changed_when: false
+          failed_when: radar_antes.rc not in [0, 1]
+          check_mode: false
+
+        - name: Seleciona os itens e pacotes
+          ansible.builtin.set_fact:
+            radar_j: "{{ radar_antes.stdout | from_json }}"
+            radar_vuln: >-
+              {{ (radar_antes.stdout | from_json).itens
+                 | selectattr('status', 'equalto', 'VULNERAVEL')
+                 | selectattr('decisao', 'in', radar_decisoes | default(radar_decisoes_padrao))
+                 | list }}
+
+        - name: Filtra pelos ids pedidos
+          ansible.builtin.set_fact:
+            radar_vuln: "{{ radar_vuln | selectattr('item', 'in', radar_itens) | list }}"
+          when: radar_itens is defined and radar_itens | length > 0
+
+        - name: Monta a lista de pacotes
+          ansible.builtin.set_fact:
+            radar_pacotes: "{{ radar_vuln | map(attribute='binarios') | select | map('split') | flatten | unique | list }}"
+            radar_fora: "{{ radar_vuln | rejectattr('binarios') | map(attribute='titulo') | unique | list }}"
+
+        - name: Pasta de backups
+          ansible.builtin.file:
+            path: /var/backups/radar-vuln
+            state: directory
+            mode: "0700"
+          when: radar_pacotes | length > 0
+
+        - name: Guarda as versões instaladas (base para rollback)
+          ansible.builtin.copy:
+            content: "{{ radar_antes.stdout }}"
+            dest: "/var/backups/radar-vuln/ansible-{{ ansible_date_time.iso8601_basic_short }}.json"
+            mode: "0600"
+          when: radar_pacotes | length > 0 and not ansible_check_mode
+          diff: false
+
+        - name: Atualiza só os pacotes afetados (apt, only_upgrade)
+          ansible.builtin.apt:
+            name: "{{ radar_pacotes }}"
+            state: latest
+            only_upgrade: true
+            update_cache: true
+            cache_valid_time: 600
+          when: radar_pacotes | length > 0
+          register: radar_apt
+
+        - name: Reinício pendente?
+          ansible.builtin.stat:
+            path: /var/run/reboot-required
+          register: radar_rb
+
+        - name: Reinicia (só com radar_reiniciar=true)
+          ansible.builtin.reboot:
+            msg: "Radar de Vulnerabilidades: reinício após atualização de segurança"
+            reboot_timeout: 900
+          when: (radar_reiniciar | default(false) | bool) and radar_rb.stat.exists and not ansible_check_mode
+
+        - name: Verificação depois
+          ansible.builtin.command: bash {{ radar_tmp.path }} --json
+          register: radar_depois
+          changed_when: false
+          failed_when: radar_depois.rc not in [0, 1]
+          check_mode: false
+
+        - name: Resultado
+          ansible.builtin.debug:
+            msg:
+              - "Antes:  {{ radar_j.resumo }}"
+              - "Depois: {{ (radar_depois.stdout | from_json).resumo }}{{ ' (simulação: nada foi alterado)' if ansible_check_mode else '' }}"
+              - "Itens tratados: {{ radar_vuln | rejectattr('binarios', 'equalto', '') | map(attribute='item') | unique | join(', ') or 'nenhum' }}"
+              - "Pacotes: {{ radar_pacotes | join(' ') or 'nenhum' }}"
+              - "Fora do Ansible (kernel e aplicações; veja o painel): {{ radar_fora | join('; ') or 'nenhum' }}"
+              - "Reinício pendente: {{ 'sim' if radar_rb.stat.exists else 'não' }}"
+      always:
+        - name: Remove o arquivo temporário
+          ansible.builtin.file:
+            path: "{{ radar_tmp.path }}"
+            state: absent
+          when: radar_tmp.path is defined
+          check_mode: false

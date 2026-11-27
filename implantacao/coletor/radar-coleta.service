@@ -1,0 +1,27 @@
+[Unit]
+Description=Radar de Vulnerabilidades: coleta institucional
+Documentation=file:///opt/radar/implantacao/coletor/LEIA-ME.md
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=oneshot
+User=radar-coletor
+Group=radar-coletor
+EnvironmentFile=/etc/radar/radar.env
+Environment=HOME=/var/lib/radar-coletor
+ExecStart=/opt/radar/implantacao/coletor/rodar-coleta.sh
+TimeoutStartSec=45min
+Nice=10
+# Isolamento: só escreve no código, no cache e na pasta publicada.
+NoNewPrivileges=yes
+PrivateTmp=yes
+ProtectSystem=strict
+ProtectHome=yes
+ReadWritePaths=/opt/radar /var/lib/radar-coletor @@PUBLICAR@@
+ProtectKernelTunables=yes
+ProtectKernelModules=yes
+ProtectControlGroups=yes
+RestrictSUIDSGID=yes
+LockPersonality=yes
+CapabilityBoundingSet=

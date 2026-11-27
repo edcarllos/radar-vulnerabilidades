@@ -1,0 +1,6 @@
+<!-- Radar de Vulnerabilidades: acrescente dentro de <ossec_config> no ossec.conf do agente Wazuh.
+     O cron do radar acrescenta um objeto JSON por item a este arquivo a cada hora (logrotate cuida do tamanho). -->
+<localfile>
+  <log_format>json</log_format>
+  <location>/var/log/radar/verificacao.log</location>
+</localfile>

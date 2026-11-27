@@ -1,0 +1,27 @@
+[Unit]
+Description=Radar de Vulnerabilidades: receptor dos resultados dos servidores (F7)
+After=network.target
+
+[Service]
+User=radar-coletor
+Group=radar-coletor
+EnvironmentFile=/etc/radar/radar.env
+ExecStart=/usr/bin/python3 -I /opt/radar/ferramentas/inventario.py servir --porta 8790 --db /var/lib/radar-coletor/inventario.db --tokens /etc/radar/tokens.json --exposicao /etc/radar/exposicao.json --publicar @@PUBLICAR@@
+Restart=on-failure
+RestartSec=5
+NoNewPrivileges=yes
+PrivateTmp=yes
+ProtectSystem=strict
+ProtectHome=yes
+ReadWritePaths=/var/lib/radar-coletor @@PUBLICAR@@
+ProtectKernelTunables=yes
+ProtectKernelModules=yes
+ProtectControlGroups=yes
+RestrictSUIDSGID=yes
+LockPersonality=yes
+CapabilityBoundingSet=
+IPAddressDeny=any
+IPAddressAllow=localhost
+
+[Install]
+WantedBy=multi-user.target

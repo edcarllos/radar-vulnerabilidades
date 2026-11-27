@@ -1,0 +1,29 @@
+<!-- Radar de Vulnerabilidades: regras para o gerenciador Wazuh (/var/ossec/etc/rules/radar_rules.xml).
+     Os eventos chegam decodificados como JSON pelo decodificador nativo. Ajuste os ids se já estiverem em uso. -->
+<group name="radar,vulnerabilidade,">
+  <rule id="100700" level="0">
+    <decoded_as>json</decoded_as>
+    <field name="radar">^verificacao$</field>
+    <description>Radar: resultado de verificação</description>
+  </rule>
+  <rule id="100701" level="5">
+    <if_sid>100700</if_sid>
+    <field name="status">^SEM_CORRECAO$</field>
+    <description>Radar: $(item) sem correção na distro em $(host) (mitigar)</description>
+  </rule>
+  <rule id="100702" level="8">
+    <if_sid>100700</if_sid>
+    <field name="status">^VULNERAVEL$</field>
+    <description>Radar: $(item) vulnerável em $(host), correção disponível ($(alvo) $(instalado) abaixo de $(minimo))</description>
+  </rule>
+  <rule id="100703" level="12">
+    <if_sid>100702</if_sid>
+    <field name="decisao">^agir_agora$</field>
+    <description>Radar: AGIR AGORA em $(host): $(titulo)</description>
+  </rule>
+  <rule id="100704" level="6">
+    <if_sid>100700</if_sid>
+    <field name="status">^REINICIAR$</field>
+    <description>Radar: $(host) precisa reiniciar para concluir a correção do kernel</description>
+  </rule>
+</group>

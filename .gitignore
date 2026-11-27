@@ -1,0 +1,13 @@
+# Gerados pela coleta (o estado fica no branch "dados"; o site, no GitHub Pages)
+/site/
+/scripts/
+/publico/
+# Dados de servidores e segredos nunca vão ao repositório
+inventario.json
+inventario.db
+tokens.json
+notificacoes.json
+nvd-api-key
+*.key
+*.tmp
+__pycache__/

@@ -1,0 +1,10 @@
+[Unit]
+Description=Radar de Vulnerabilidades: coleta pedida pelo botão "Atualizar agora" do painel
+
+[Path]
+# O receptor grava este arquivo; rodar-coleta.sh apaga-o ao começar.
+PathExists=/var/lib/radar-coletor/pedido-coleta
+Unit=radar-coleta.service
+
+[Install]
+WantedBy=multi-user.target

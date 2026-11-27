@@ -1,0 +1,4344 @@
+{
+  "_sobre": "Definições curadas dos itens do Radar. Os estados por distro/versão são calculados por ferramentas/construir_dados.py a partir do Debian Security Tracker, da API de CVEs da Ubuntu e da NVD. Ids são estáveis: nunca renomeie um id existente.",
+  "tecnologias": {
+    "php": "PHP",
+    "kernel": "Kernel Linux",
+    "apt": "APT",
+    "nginx": "nginx",
+    "apache2": "Apache httpd",
+    "haproxy": "HAProxy",
+    "brotli": "Brotli (biblioteca)",
+    "zstd": "zstd (biblioteca)",
+    "expat": "Expat (biblioteca XML)",
+    "pcre2": "PCRE2 (biblioteca regex)",
+    "libssh": "libssh (biblioteca)",
+    "glibc": "glibc",
+    "openssl": "OpenSSL",
+    "curl": "curl / libcurl",
+    "libgd": "libgd (biblioteca de imagens)",
+    "krb5": "Kerberos (krb5)",
+    "openssh": "OpenSSH",
+    "exim": "Exim (e-mail)",
+    "roundcube": "Roundcube (webmail)",
+    "squid": "Squid (proxy)",
+    "postgresql": "PostgreSQL",
+    "tomcat": "Apache Tomcat",
+    "axis": "Apache Axis",
+    "django": "Django",
+    "mediawiki": "MediaWiki",
+    "conteineres": "Contêineres (runc)",
+    "puppet": "Puppet",
+    "chromium": "Chromium",
+    "drupal": "Drupal",
+    "wordpress": "WordPress",
+    "gitlab": "GitLab",
+    "webconferencia": "Webconferência e telefonia",
+    "pesquisa": "Sistemas de pesquisa e IA",
+    "virtualizacao": "Virtualização",
+    "vpn-firewall": "VPN e firewall",
+    "email-gateway": "Gateway de e-mail",
+    "nas": "Armazenamento (NAS)",
+    "estacoes": "Estações de trabalho",
+    "outros": "Outros sistemas",
+    "java": "Java (OpenJDK)",
+    "banco-dados": "MySQL / MariaDB",
+    "navegadores-email": "Firefox ESR / Thunderbird",
+    "escritorio": "LibreOffice",
+    "imagens-pdf": "ImageMagick / Ghostscript",
+    "dns": "DNS (BIND, Unbound, PowerDNS)",
+    "email": "E-mail e listas (Dovecot, SOGo, Sympa, ClamAV)",
+    "eduroam-vpn": "eduroam e VPN (radsecproxy, FreeRADIUS, strongSwan, OpenVPN)",
+    "ruby": "Ruby e Rails",
+    "cache": "Redis / Valkey",
+    "nodejs": "Node.js",
+    "python": "Python e bibliotecas",
+    "sistema-base": "Base do sistema (sudo, needrestart, shadow, rsync)",
+    "monitoramento": "Monitoramento (Nagios, Zabbix, Grafana)",
+    "moodle": "Moodle",
+    "gestao-ti": "GLPI",
+    "publicacao": "OJS e DSpace",
+    "bibliotecas-acervo": "Koha (bibliotecas)",
+    "nuvem-arquivos": "Nextcloud",
+    "identidade": "Identidade e SSO (Shibboleth, Keycloak, CAS, Samba AD, OpenLDAP)",
+    "ci-devops": "Jenkins",
+    "rede": "Rede e Wi-Fi (MikroTik, UniFi, Aruba)",
+    "cftv": "Câmeras e interfones (Intelbras, Hikvision)",
+    "backup": "Backup (Veeam)",
+    "microsoft": "Microsoft Exchange e SharePoint",
+    "sistemas-gov": "Sistemas acadêmicos e de governo (SIGAA, SEI)"
+  },
+  "itens": [
+    {
+      "id": "drupal-sa-core-2026-019",
+      "titulo": "Drupal core: instalador permite tomar o site (SA-CORE-2026-019)",
+      "tecnologia": "drupal",
+      "tipo": "app",
+      "app": {
+        "tipo": "drupal",
+        "minimos": [
+          "10.6.23",
+          "11.3.23",
+          "11.4.14"
+        ],
+        "estrito": true
+      },
+      "situacao": "explorado",
+      "exploracao": "Drupal declara exploração ativa; o CVE anterior (SA-CORE-2026-017) está no KEV desde 24/11.",
+      "kev": "2026-11-24",
+      "publicado_em": "2026-11-25",
+      "cves": [
+        "CVE-2026-136716",
+        "CVE-2026-132165"
+      ],
+      "pontuacao_manual": {
+        "valor": null,
+        "rotulo": "Highly critical 21/25",
+        "fonte": "Drupal Security Team (sem CVSS na NVD)"
+      },
+      "resumo": "Bypass de acesso no instalador (install.php) permite reinstalar ou assumir o site. Substitui as versões corrigidas do SA-CORE-2026-017 (CVE-2026-132165, RCE explorada desde 19/11).",
+      "afetadas": "Drupal 10 < 10.6.23; 11.0 a 11.3 < 11.3.23; 11.4 < 11.4.14. Drupal 8/9, 10.5.x e 11.2.x estão sem suporte.",
+      "softwares": [
+        "Portais institucionais",
+        "Sites de departamentos e programas de pós-graduação",
+        "Portais de eventos e extensão"
+      ],
+      "mitigacao": [
+        "Bloquear /core/install.php no servidor web",
+        "Impedir que o servidor web grave em settings.php",
+        "Revisar logs de acesso ao instalador e o usuário 1; trocar e-mail e senha do usuário 1"
+      ],
+      "correcao_app": "composer update drupal/core-recommended drupal/core-composer-scaffold --with-all-dependencies && vendor/bin/drush updatedb -y && vendor/bin/drush cache:rebuild",
+      "rollback_app": "Restaure o backup do código e do banco feito antes da atualização (drush sql:dump antes de atualizar). Voltar a versão reexpõe o site à exploração ativa.",
+      "referencias": [
+        {
+          "t": "SA-CORE-2026-019",
+          "u": "https://www.drupal.org/sa-core-2026-019"
+        },
+        {
+          "t": "SA-CORE-2026-017",
+          "u": "https://www.drupal.org/sa-core-2026-017"
+        }
+      ]
+    },
+    {
+      "id": "php-php2shell",
+      "titulo": "PHP \"PHP2Shell\": corrupção de estado via bailout leva a RCE",
+      "tecnologia": "php",
+      "tipo": "pacote",
+      "situacao": "explorado",
+      "exploracao": "CISA KEV desde 26/10; exploração iniciada horas após a divulgação. A CISA exige triagem forense.",
+      "kev": "2026-10-26",
+      "publicado_em": "2026-10-21",
+      "cves": [
+        "CVE-2026-109618",
+        "CVE-2026-109619"
+      ],
+      "fontes": {
+        "deb12": [
+          "php8.2"
+        ],
+        "deb13": [
+          "php8.4"
+        ],
+        "u2204": [
+          "php8.1"
+        ],
+        "u2404": [
+          "php8.3"
+        ],
+        "u2604": [
+          "php8.5"
+        ]
+      },
+      "upstream_minimos": [
+        "8.2.35",
+        "8.3.36",
+        "8.4.27",
+        "8.5.12"
+      ],
+      "resumo": "Duas falhas no núcleo do PHP permitem execução remota de código em qualquer instalação que sirva web.",
+      "afetadas": "Todos os SAPIs: mod_php (maior risco), PHP-FPM, php-cgi, FrankenPHP, LiteSpeed. Upstream < 8.2.35, 8.3.36, 8.4.27, 8.5.12.",
+      "softwares": [
+        "Moodle",
+        "WordPress",
+        "Drupal",
+        "OJS/OMP/OPS (PKP, revistas e SEER)",
+        "GLPI",
+        "phpMyAdmin",
+        "Nextcloud",
+        "LimeSurvey",
+        "MediaWiki",
+        "Roundcube"
+      ],
+      "mitigacao": [
+        "session.upload_progress.enabled = 0",
+        "No PHP 8.5: fatal_error_backtraces = 0",
+        "Servidores sem patch entre 21/10 e a correção: procurar webshells e processos estranhos do www-data"
+      ],
+      "referencias": [
+        {
+          "t": "PHP ChangeLog 8",
+          "u": "https://www.php.net/ChangeLog-8.php"
+        },
+        {
+          "t": "Ubuntu CVE-2026-109618",
+          "u": "https://ubuntu.com/security/CVE-2026-109618"
+        },
+        {
+          "t": "Debian tracker",
+          "u": "https://security-tracker.debian.org/tracker/CVE-2026-109618"
+        },
+        {
+          "t": "CISA KEV",
+          "u": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog"
+        }
+      ]
+    },
+    {
+      "id": "kernel-fragnesia",
+      "titulo": "Kernel Linux \"Fragnesia\": escalada local para root e fuga de contêiner",
+      "tecnologia": "kernel",
+      "tipo": "kernel",
+      "situacao": "explorado",
+      "exploracao": "CISA KEV desde 28/10; PoC público.",
+      "kev": "2026-10-28",
+      "publicado_em": "2026-10-28",
+      "cves": [
+        "CVE-2026-46300"
+      ],
+      "fontes": {
+        "deb12": [
+          "linux"
+        ],
+        "deb13": [
+          "linux"
+        ],
+        "u2204": [
+          "linux"
+        ],
+        "u2404": [
+          "linux"
+        ],
+        "u2604": [
+          "linux"
+        ]
+      },
+      "resumo": "Falha lógica no caminho XFRM ESP-in-TCP (skb_try_coalesce) permite que usuário local vire root ou escape de contêiner.",
+      "afetadas": "Kernels sem a correção nas versões listadas abaixo.",
+      "softwares": [
+        "Clusters HPC",
+        "Servidores de laboratório com acesso SSH de alunos",
+        "JupyterHub",
+        "Hosts Docker e Kubernetes",
+        "Runners de CI"
+      ],
+      "mitigacao": [
+        "Priorizar servidores multiusuário",
+        "Exige reinicialização (ou livepatch do Ubuntu Pro)"
+      ],
+      "referencias": [
+        {
+          "t": "Ubuntu CVE-2026-46300",
+          "u": "https://ubuntu.com/security/CVE-2026-46300"
+        },
+        {
+          "t": "Debian tracker",
+          "u": "https://security-tracker.debian.org/tracker/CVE-2026-46300"
+        }
+      ]
+    },
+    {
+      "id": "gitlab-cicd-regex",
+      "titulo": "GitLab CE/EE: RCE sem autenticação via regex no CI/CD",
+      "tecnologia": "gitlab",
+      "tipo": "app",
+      "app": {
+        "tipo": "gitlab",
+        "minimos": [
+          "19.2.8",
+          "19.3.5",
+          "19.4.2"
+        ],
+        "estrito": true
+      },
+      "situacao": "explorado",
+      "exploracao": "CISA KEV desde 29/10.",
+      "kev": "2026-10-29",
+      "publicado_em": "2026-10-12",
+      "cves": [
+        "CVE-2026-97229"
+      ],
+      "resumo": "Expressão regular maliciosa na configuração de CI/CD executa código no servidor GitLab. O Debian Security Tracker também lista este CVE nos pacotes ruby3.x; isso não corrige um GitLab instalado pelo Omnibus.",
+      "afetadas": "19.2 < 19.2.8, 19.3 < 19.3.5, 19.4 < 19.4.2. Versões 19.5.x: aplique 19.5.3 ou superior, que corrige outras falhas críticas.",
+      "softwares": [
+        "GitLab institucional",
+        "Forges de disciplinas e projetos de pesquisa",
+        "GitLab Runner"
+      ],
+      "mitigacao": [
+        "Restringir quem pode criar projetos e pipelines",
+        "Não expor o GitLab à internet sem VPN enquanto não atualizar"
+      ],
+      "correcao_app": "apt-get install --only-upgrade gitlab-ce   # ou gitlab-ee (repositório oficial packages.gitlab.com)",
+      "rollback_app": "Faça gitlab-backup create e copie /etc/gitlab antes. Downgrade do GitLab exige restaurar backup da mesma versão; não é suportado diretamente.",
+      "referencias": [
+        {
+          "t": "GitLab patch 19.4.2",
+          "u": "https://docs.gitlab.com/releases/patches/patch-release-gitlab-19-4-2-released/"
+        },
+        {
+          "t": "Debian tracker",
+          "u": "https://security-tracker.debian.org/tracker/CVE-2026-97229"
+        }
+      ]
+    },
+    {
+      "id": "wordpress-upgrade-rce",
+      "titulo": "WordPress core: RCE durante a atualização do core",
+      "tecnologia": "wordpress",
+      "tipo": "app",
+      "app": {
+        "tipo": "wordpress",
+        "minimos": [
+          "7.1.4"
+        ],
+        "estrito": false
+      },
+      "situacao": "explorado",
+      "exploracao": "CISA KEV desde 03/11.",
+      "kev": "2026-11-03",
+      "publicado_em": "2026-10-28",
+      "cves": [
+        "CVE-2026-119977"
+      ],
+      "fontes": {
+        "deb12": [
+          "wordpress"
+        ],
+        "deb13": [
+          "wordpress"
+        ],
+        "u2204": [
+          "wordpress"
+        ],
+        "u2404": [
+          "wordpress"
+        ],
+        "u2604": [
+          "wordpress"
+        ]
+      },
+      "resumo": "Caminhos de staging previsíveis e acessíveis pela web durante a atualização completa do core permitem que um atacante sem login execute código nessa janela.",
+      "afetadas": "WordPress 4.7 até 7.1.3. Ramos antigos recebem backport: confira se está no último release do ramo.",
+      "softwares": [
+        "Sites de eventos",
+        "Sites de laboratórios e grupos de pesquisa",
+        "Blogs institucionais"
+      ],
+      "mitigacao": [
+        "Atualizar para 7.1.4 ou superior (7.1.5 é o atual)",
+        "Fazer a atualização do core fora do horário de pico e monitorar wp-content/upgrade"
+      ],
+      "correcao_app": "wp core update && wp core update-db   # WP-CLI, como o dono dos arquivos",
+      "rollback_app": "wp core update --version=<anterior> --force restaura a versão anterior; faça wp db export antes.",
+      "referencias": [
+        {
+          "t": "WordPress 7.1.5",
+          "u": "https://wordpress.org/news/2026/11/wordpress-7-1-5-release/"
+        },
+        {
+          "t": "WordPress 7.1.4",
+          "u": "https://wordpress.org/news/2026/10/wordpress-7-1-4/"
+        }
+      ]
+    },
+    {
+      "id": "brotli-2026-111497",
+      "titulo": "Brotli: falha na biblioteca de compressão",
+      "tecnologia": "brotli",
+      "tipo": "pacote",
+      "situacao": "explorado",
+      "exploracao": "CISA KEV desde 27/10.",
+      "kev": "2026-10-27",
+      "publicado_em": "2026-10-23",
+      "cves": [
+        "CVE-2026-111497"
+      ],
+      "fontes": {
+        "deb12": [
+          "brotli"
+        ],
+        "deb13": [
+          "brotli"
+        ],
+        "u2204": [
+          "brotli"
+        ],
+        "u2404": [
+          "brotli"
+        ],
+        "u2604": [
+          "brotli"
+        ]
+      },
+      "resumo": "Falha na biblioteca Brotli (Ubuntu: prioridade alta, CVSS 9.8). Afeta todo programa que descomprime dados Brotli com a biblioteca do sistema.",
+      "afetadas": "Pacote brotli/libbrotli1 sem a correção. O Node.js do Ubuntu usa a biblioteca do sistema; builds do PHP no Windows tiveram rebuild específico.",
+      "softwares": [
+        "nginx com módulo brotli",
+        "Apache mod_brotli",
+        "curl/libcurl",
+        "Node.js",
+        "PHP (extensão brotli)",
+        "Navegadores dos laboratórios"
+      ],
+      "mitigacao": [
+        "Reiniciar serviços que carregam libbrotli após atualizar (needrestart lista)"
+      ],
+      "referencias": [
+        {
+          "t": "Ubuntu CVE-2026-111497",
+          "u": "https://ubuntu.com/security/CVE-2026-111497"
+        },
+        {
+          "t": "Debian tracker",
+          "u": "https://security-tracker.debian.org/tracker/CVE-2026-111497"
+        }
+      ],
+      "bibliotecas": [
+        "libbrotli1"
+      ]
+    },
+    {
+      "id": "puppet-agent-115731",
+      "titulo": "Puppet: desserialização insegura",
+      "tecnologia": "puppet",
+      "tipo": "pacote",
+      "situacao": "explorado",
+      "exploracao": "CISA KEV desde 17/11 (Puppet Enterprise).",
+      "kev": "2026-11-17",
+      "publicado_em": "2026-11-04",
+      "cves": [
+        "CVE-2026-115731"
+      ],
+      "fontes": {
+        "deb12": [
+          "puppet-agent"
+        ],
+        "deb13": [
+          "puppet-agent"
+        ],
+        "u2204": [
+          "puppet"
+        ],
+        "u2404": [
+          "puppet"
+        ],
+        "u2604": [
+          "puppet"
+        ]
+      },
+      "resumo": "Desserialização de dados não confiáveis no Puppet. O KEV cita o Puppet Enterprise; Debian corrigiu o puppet-agent.",
+      "afetadas": "Puppet Enterprise e agentes sem a correção.",
+      "softwares": [
+        "Gerência de configuração de servidores e laboratórios"
+      ],
+      "mitigacao": [
+        "Restringir acesso de rede ao servidor Puppet"
+      ],
+      "referencias": [
+        {
+          "t": "Debian tracker",
+          "u": "https://security-tracker.debian.org/tracker/CVE-2026-115731"
+        },
+        {
+          "t": "Ubuntu CVE-2026-115731",
+          "u": "https://ubuntu.com/security/CVE-2026-115731"
+        }
+      ]
+    },
+    {
+      "id": "apache-axis-90436",
+      "titulo": "Apache Axis: reflexão insegura (sem correção nas distros)",
+      "tecnologia": "axis",
+      "tipo": "pacote",
+      "situacao": "explorado",
+      "exploracao": "CISA KEV desde 18/11.",
+      "kev": "2026-11-18",
+      "publicado_em": "2026-11-18",
+      "cves": [
+        "CVE-2026-90436"
+      ],
+      "fontes": {
+        "deb12": [
+          "axis"
+        ],
+        "deb13": [
+          "axis"
+        ],
+        "u2204": [
+          "axis"
+        ],
+        "u2404": [
+          "axis"
+        ],
+        "u2604": [
+          "axis"
+        ]
+      },
+      "resumo": "Reflexão insegura no Apache Axis 1.x. Debian e Ubuntu ainda não têm pacote corrigido.",
+      "afetadas": "Apache Axis 1.x, inclusive cópias embutidas em aplicações Java (axis.jar).",
+      "softwares": [
+        "Integrações SOAP em sistemas Java legados"
+      ],
+      "mitigacao": [
+        "Procurar axis*.jar em aplicações Java (find / -name 'axis*.jar')",
+        "Restringir acesso de rede aos endpoints SOAP",
+        "Planejar a remoção do Axis 1.x"
+      ],
+      "referencias": [
+        {
+          "t": "Debian tracker",
+          "u": "https://security-tracker.debian.org/tracker/CVE-2026-90436"
+        },
+        {
+          "t": "Ubuntu CVE-2026-90436",
+          "u": "https://ubuntu.com/security/CVE-2026-90436"
+        }
+      ]
+    },
+    {
+      "id": "chromium-125350",
+      "titulo": "Chromium: use-after-free no XML",
+      "tecnologia": "chromium",
+      "tipo": "pacote",
+      "situacao": "explorado",
+      "exploracao": "CISA KEV desde 10/11.",
+      "kev": "2026-11-10",
+      "publicado_em": "2026-11-10",
+      "cves": [
+        "CVE-2026-125350"
+      ],
+      "fontes": {
+        "deb12": [
+          "chromium"
+        ],
+        "deb13": [
+          "chromium"
+        ]
+      },
+      "linhas_manuais": {
+        "u2204": {
+          "estado": "nao_empacotado",
+          "nota": "No Ubuntu o Chromium é snap: snap refresh chromium"
+        },
+        "u2404": {
+          "estado": "nao_empacotado",
+          "nota": "No Ubuntu o Chromium é snap: snap refresh chromium"
+        },
+        "u2604": {
+          "estado": "nao_empacotado",
+          "nota": "No Ubuntu o Chromium é snap: snap refresh chromium"
+        }
+      },
+      "resumo": "Página web maliciosa executa código dentro do sandbox do navegador. Chrome e Edge também afetados.",
+      "afetadas": "Chrome < 157.0.8103.50 e Chromium sem a correção.",
+      "softwares": [
+        "Laboratórios de informática",
+        "Estações administrativas",
+        "Quiosques"
+      ],
+      "mitigacao": [
+        "Ubuntu: snap refresh chromium",
+        "Chrome/Edge: atualizar pela política de gerenciamento"
+      ],
+      "referencias": [
+        {
+          "t": "Debian tracker",
+          "u": "https://security-tracker.debian.org/tracker/CVE-2026-125350"
+        }
+      ]
+    },
+    {
+      "id": "freeswitch-bigbluebutton",
+      "titulo": "FreeSWITCH: execução de comandos via SIP MESSAGE (BigBlueButton)",
+      "tecnologia": "webconferencia",
+      "tipo": "app",
+      "app": {
+        "tipo": "freeswitch",
+        "minimos": [
+          "1.11.3"
+        ],
+        "estrito": false
+      },
+      "situacao": "explorado",
+      "exploracao": "CISA KEV desde 09/11.",
+      "kev": "2026-11-09",
+      "publicado_em": "2026-11-09",
+      "cves": [
+        "CVE-2026-116779"
+      ],
+      "resumo": "Um par SIP cuja MESSAGE é aceita consegue executar comandos da API do FreeSWITCH, inclusive comandos do sistema, com os privilégios do daemon.",
+      "afetadas": "FreeSWITCH < 1.11.3. O BigBlueButton traz o FreeSWITCH empacotado (bbb-freeswitch-core): siga a atualização do BBB.",
+      "softwares": [
+        "BigBlueButton (aulas remotas, integrado ao Moodle)",
+        "Mconf",
+        "Centrais VoIP"
+      ],
+      "mitigacao": [
+        "Bloquear SIP (5060/5080) vindo da internet",
+        "Desativar o chat de entrada (inbound chat) do perfil SIP"
+      ],
+      "correcao_app": "BigBlueButton: apt-get update && apt-get install --only-upgrade 'bbb-*' (repositório oficial do BBB)",
+      "rollback_app": "Reinstalar a versão anterior dos pacotes bbb-* a partir do repositório do BBB; reexpõe o servidor.",
+      "referencias": [
+        {
+          "t": "NVD CVE-2026-116779",
+          "u": "https://nvd.nist.gov/vuln/detail/CVE-2026-116779"
+        }
+      ]
+    },
+    {
+      "id": "redcap-90817",
+      "titulo": "REDCap: RCE sem autenticação via pesquisa pública",
+      "tecnologia": "pesquisa",
+      "tipo": "manual",
+      "situacao": "explorado",
+      "exploracao": "CISA KEV desde 18/11.",
+      "kev": "2026-11-18",
+      "publicado_em": "2026-11-18",
+      "cves": [
+        "CVE-2026-90817"
+      ],
+      "resumo": "Manipulação de rotas a partir de um questionário público e da importação de dados executa código no servidor REDCap.",
+      "afetadas": "Versões indicadas pelo consórcio REDCap (consulte o aviso no portal da comunidade).",
+      "softwares": [
+        "Coleta de dados de pesquisa clínica e de saúde",
+        "Comitês de ética e hospitais universitários"
+      ],
+      "mitigacao": [
+        "Atualizar pelo canal do consórcio REDCap",
+        "Desativar questionários públicos até atualizar"
+      ],
+      "como_verificar": "Painel de controle do REDCap > versão; compare com o aviso do consórcio.",
+      "referencias": [
+        {
+          "t": "NVD CVE-2026-90817",
+          "u": "https://nvd.nist.gov/vuln/detail/CVE-2026-90817"
+        }
+      ]
+    },
+    {
+      "id": "vmware-vcenter-123890",
+      "titulo": "VMware vCenter: bypass de autenticação no Directory Service",
+      "tecnologia": "virtualizacao",
+      "tipo": "manual",
+      "situacao": "explorado",
+      "exploracao": "CISA KEV desde 20/11.",
+      "kev": "2026-11-20",
+      "publicado_em": "2026-11-20",
+      "cves": [
+        "CVE-2026-123890"
+      ],
+      "resumo": "Bypass de autenticação no VMware Directory Service do vCenter, que controla toda a virtualização.",
+      "afetadas": "9.1.x (corrigido em 9.1.1.0200); 9.0.x (9.0.2.0200); 8.0 (8.0 U3m); 5.x (5.2.5).",
+      "softwares": [
+        "Datacenter institucional"
+      ],
+      "mitigacao": [
+        "Restringir acesso à interface do vCenter à rede de gerência"
+      ],
+      "como_verificar": "vSphere Client > Sobre; ou VAMI (porta 5480).",
+      "referencias": [
+        {
+          "t": "NVD CVE-2026-123890",
+          "u": "https://nvd.nist.gov/vuln/detail/CVE-2026-123890"
+        }
+      ]
+    },
+    {
+      "id": "vmware-esx-41709",
+      "titulo": "VMware ESX: operações de administrador sem registro em log",
+      "tecnologia": "virtualizacao",
+      "tipo": "manual",
+      "situacao": "explorado",
+      "exploracao": "CISA KEV desde 28/10.",
+      "kev": "2026-10-28",
+      "publicado_em": "2026-10-28",
+      "cves": [
+        "CVE-2026-41709"
+      ],
+      "resumo": "Registro insuficiente: um administrador malicioso realiza operações sem deixar log. Nota baixa, mas explorada em conjunto com outras falhas.",
+      "afetadas": "Conforme aviso VMSA da Broadcom.",
+      "softwares": [
+        "Hosts de virtualização"
+      ],
+      "mitigacao": [
+        "Atualizar o ESX conforme o aviso da Broadcom"
+      ],
+      "como_verificar": "esxcli system version get",
+      "referencias": [
+        {
+          "t": "NVD CVE-2026-41709",
+          "u": "https://nvd.nist.gov/vuln/detail/CVE-2026-41709"
+        }
+      ]
+    },
+    {
+      "id": "xen-orchestra-133469",
+      "titulo": "Xen Orchestra: bypass de autenticação na API REST",
+      "tecnologia": "virtualizacao",
+      "tipo": "manual",
+      "situacao": "explorado",
+      "exploracao": "CISA KEV desde 25/11.",
+      "kev": "2026-11-25",
+      "publicado_em": "2026-11-25",
+      "cves": [
+        "CVE-2026-133469"
+      ],
+      "resumo": "Cookie authenticationToken forjado faz a API REST autenticar como o dono do primeiro token válido.",
+      "afetadas": "Xen Orchestra anterior a 6.9.2 e 6.10.1.",
+      "softwares": [
+        "XCP-ng (alternativa ao vCenter)"
+      ],
+      "mitigacao": [
+        "Restringir a interface do XO à rede de gerência"
+      ],
+      "como_verificar": "Interface do XO > About; instalações from sources: git log no diretório xen-orchestra.",
+      "referencias": [
+        {
+          "t": "NVD CVE-2026-133469",
+          "u": "https://nvd.nist.gov/vuln/detail/CVE-2026-133469"
+        }
+      ]
+    },
+    {
+      "id": "synology-dsm-2024-10441",
+      "titulo": "Synology DSM: execução remota de código (usada por ransomware)",
+      "tecnologia": "nas",
+      "tipo": "manual",
+      "situacao": "explorado",
+      "exploracao": "CISA KEV desde 18/11, com uso conhecido em campanhas de ransomware.",
+      "kev": "2026-11-18",
+      "publicado_em": "2024-11-04",
+      "cves": [
+        "CVE-2024-10441"
+      ],
+      "resumo": "Falha no daemon de plugins do sistema permite execução remota de código.",
+      "afetadas": "DSM anterior a 7.2-64570-4, 7.2.1-69057-6 e 7.2.2-72806-1; BSM anterior a 1.1-65374.",
+      "softwares": [
+        "NAS de departamentos e laboratórios",
+        "Backups de grupos de pesquisa"
+      ],
+      "mitigacao": [
+        "Não expor o DSM à internet",
+        "Desativar QuickConnect se não for usado"
+      ],
+      "como_verificar": "DSM > Painel de Controle > Atualizar e Restaurar.",
+      "referencias": [
+        {
+          "t": "NVD CVE-2024-10441",
+          "u": "https://nvd.nist.gov/vuln/detail/CVE-2024-10441"
+        }
+      ]
+    },
+    {
+      "id": "ivanti-connect-secure",
+      "titulo": "Ivanti Connect Secure: upload de arquivos e escalada para root",
+      "tecnologia": "vpn-firewall",
+      "tipo": "manual",
+      "situacao": "explorado",
+      "exploracao": "CISA KEV desde 30/10.",
+      "kev": "2026-10-30",
+      "publicado_em": "2026-10-30",
+      "cves": [
+        "CVE-2026-118527",
+        "CVE-2026-111357"
+      ],
+      "resumo": "Nomes de arquivo previsíveis permitem upload controlado pelo atacante; outra falha leva a root (explorada em outubro).",
+      "afetadas": "Anterior a 25.1.1.3 e 22.8R2.6.",
+      "softwares": [
+        "VPN de acesso remoto"
+      ],
+      "mitigacao": [
+        "Rodar a Integrity Checker Tool da Ivanti",
+        "Revisar contas e sessões ativas"
+      ],
+      "como_verificar": "Interface de administração > System > Maintenance > Platform.",
+      "referencias": [
+        {
+          "t": "NVD CVE-2026-111357",
+          "u": "https://nvd.nist.gov/vuln/detail/CVE-2026-111357"
+        }
+      ]
+    },
+    {
+      "id": "cisco-asa-ftd-76418",
+      "titulo": "Cisco ASA/FTD: negação de serviço na VPN SSL",
+      "tecnologia": "vpn-firewall",
+      "tipo": "manual",
+      "situacao": "explorado",
+      "exploracao": "CISA KEV desde 29/10.",
+      "kev": "2026-10-29",
+      "publicado_em": "2026-10-29",
+      "cves": [
+        "CVE-2026-76418"
+      ],
+      "resumo": "Requisição forjada na VPN SSL de acesso remoto reinicia o equipamento quando há autenticação secundária configurada.",
+      "afetadas": "Conforme aviso da Cisco.",
+      "softwares": [
+        "Firewall de borda",
+        "VPN"
+      ],
+      "mitigacao": [
+        "Aplicar a versão corrigida indicada pela Cisco"
+      ],
+      "como_verificar": "show version",
+      "referencias": [
+        {
+          "t": "NVD CVE-2026-76418",
+          "u": "https://nvd.nist.gov/vuln/detail/CVE-2026-76418"
+        }
+      ]
+    },
+    {
+      "id": "sonicwall-sslvpn-19868",
+      "titulo": "SonicWall SSLVPN: bypass de SAML e MFA",
+      "tecnologia": "vpn-firewall",
+      "tipo": "manual",
+      "situacao": "explorado",
+      "exploracao": "CISA KEV desde 06/11.",
+      "kev": "2026-11-06",
+      "publicado_em": "2026-11-06",
+      "cves": [
+        "CVE-2026-19868"
+      ],
+      "resumo": "Usuário com credencial de outro método de autenticação contorna o SAML e o MFA imposto por ele.",
+      "afetadas": "Conforme aviso da SonicWall.",
+      "softwares": [
+        "VPN de campi"
+      ],
+      "mitigacao": [
+        "Aplicar firmware corrigido",
+        "Desativar métodos de autenticação alternativos não usados"
+      ],
+      "como_verificar": "Interface do SonicOS > Device > Settings > Firmware.",
+      "referencias": [
+        {
+          "t": "NVD CVE-2026-19868",
+          "u": "https://nvd.nist.gov/vuln/detail/CVE-2026-19868"
+        }
+      ]
+    },
+    {
+      "id": "barracuda-esg",
+      "titulo": "Barracuda ESG: bypass de autenticação e injeção de comando",
+      "tecnologia": "email-gateway",
+      "tipo": "manual",
+      "situacao": "explorado",
+      "exploracao": "CISA KEV desde 10/11.",
+      "kev": "2026-11-10",
+      "publicado_em": "2026-11-10",
+      "cves": [
+        "CVE-2026-116606",
+        "CVE-2026-111560"
+      ],
+      "resumo": "Sem login, o atacante importa uma configuração forjada; outra falha injeta comandos pelo campo de fuso horário.",
+      "afetadas": "ESG anterior a 9.4.0.030.",
+      "softwares": [
+        "Gateway de e-mail institucional"
+      ],
+      "mitigacao": [
+        "Atualizar o firmware",
+        "Verificar se a configuração global foi alterada"
+      ],
+      "como_verificar": "Interface do ESG > Advanced > Firmware Update.",
+      "referencias": [
+        {
+          "t": "NVD CVE-2026-116606",
+          "u": "https://nvd.nist.gov/vuln/detail/CVE-2026-116606"
+        }
+      ]
+    },
+    {
+      "id": "checkpoint-gaia-123039",
+      "titulo": "Check Point Gaia: socket local sem autenticação leva a root",
+      "tecnologia": "vpn-firewall",
+      "tipo": "manual",
+      "situacao": "explorado",
+      "exploracao": "CISA KEV desde 13/11.",
+      "kev": "2026-11-13",
+      "publicado_em": "2026-11-13",
+      "cves": [
+        "CVE-2026-123039"
+      ],
+      "resumo": "O daemon DynamicCLI roda como root e aceita conexões em socket gravável por todos.",
+      "afetadas": "Conforme aviso da Check Point.",
+      "softwares": [
+        "Firewall e VPN"
+      ],
+      "mitigacao": [
+        "Aplicar o hotfix da Check Point"
+      ],
+      "como_verificar": "cpinfo -y all",
+      "referencias": [
+        {
+          "t": "NVD CVE-2026-123039",
+          "u": "https://nvd.nist.gov/vuln/detail/CVE-2026-123039"
+        }
+      ]
+    },
+    {
+      "id": "outlook-124194",
+      "titulo": "Microsoft Outlook: falsificação por falta de aviso de ação insegura",
+      "tecnologia": "estacoes",
+      "tipo": "manual",
+      "situacao": "explorado",
+      "exploracao": "CISA KEV desde 10/11.",
+      "kev": "2026-11-10",
+      "publicado_em": "2026-11-10",
+      "cves": [
+        "CVE-2026-124194"
+      ],
+      "resumo": "A interface não avisa sobre ações inseguras, permitindo falsificação pela rede.",
+      "afetadas": "Conforme Patch Tuesday de novembro.",
+      "softwares": [
+        "Estações administrativas"
+      ],
+      "mitigacao": [
+        "Aplicar as atualizações de novembro do Microsoft 365/Office"
+      ],
+      "como_verificar": "Arquivo > Conta do Office > Opções de atualização.",
+      "referencias": [
+        {
+          "t": "NVD CVE-2026-124194",
+          "u": "https://nvd.nist.gov/vuln/detail/CVE-2026-124194"
+        }
+      ]
+    },
+    {
+      "id": "mitel-micollab",
+      "titulo": "Mitel MiCollab: cinco falhas exploradas",
+      "tecnologia": "webconferencia",
+      "tipo": "manual",
+      "situacao": "explorado",
+      "exploracao": "CISA KEV desde 25/11.",
+      "kev": "2026-11-25",
+      "publicado_em": "2026-11-25",
+      "cves": [
+        "CVE-2026-133275",
+        "CVE-2026-133311",
+        "CVE-2026-133324",
+        "CVE-2026-133323",
+        "CVE-2026-133303"
+      ],
+      "resumo": "Upload irrestrito, injeção de comando, injeção XML e autenticação fraca no MiCollab.",
+      "afetadas": "MiCollab até 10.3 (10.3.0.18).",
+      "softwares": [
+        "Telefonia IP",
+        "Webconferência"
+      ],
+      "mitigacao": [
+        "Aplicar a atualização da Mitel",
+        "Não expor o componente AWV à internet"
+      ],
+      "como_verificar": "Interface do MiCollab Server > versão.",
+      "referencias": [
+        {
+          "t": "NVD CVE-2026-133275",
+          "u": "https://nvd.nist.gov/vuln/detail/CVE-2026-133275"
+        }
+      ]
+    },
+    {
+      "id": "cisco-expressway-76466",
+      "titulo": "Cisco Expressway: comandos como root",
+      "tecnologia": "webconferencia",
+      "tipo": "manual",
+      "situacao": "explorado",
+      "exploracao": "CISA KEV desde 20/11.",
+      "kev": "2026-11-20",
+      "publicado_em": "2026-11-20",
+      "cves": [
+        "CVE-2026-76466"
+      ],
+      "resumo": "Cookies persistentes e validação insuficiente de certificados de cluster permitem executar comandos como root.",
+      "afetadas": "Conforme aviso da Cisco.",
+      "softwares": [
+        "Videoconferência",
+        "Salas de aula híbridas"
+      ],
+      "mitigacao": [
+        "Restringir a porta do serviço de banco de dados do cluster"
+      ],
+      "como_verificar": "Interface do Expressway > Status > Overview.",
+      "referencias": [
+        {
+          "t": "NVD CVE-2026-76466",
+          "u": "https://nvd.nist.gov/vuln/detail/CVE-2026-76466"
+        }
+      ]
+    },
+    {
+      "id": "ibm-aspera-faspex",
+      "titulo": "IBM Aspera Faspex: usuário vira administrador",
+      "tecnologia": "pesquisa",
+      "tipo": "manual",
+      "situacao": "explorado",
+      "exploracao": "CISA KEV desde 09/11.",
+      "kev": "2026-11-09",
+      "publicado_em": "2026-11-09",
+      "cves": [
+        "CVE-2026-123218"
+      ],
+      "resumo": "Usuário autenticado forja mensagem e obtém privilégio de administrador.",
+      "afetadas": "Faspex 5.0.0 a 5.0.19.",
+      "softwares": [
+        "Transferência de grandes volumes de dados de pesquisa"
+      ],
+      "mitigacao": [
+        "Atualizar para versão posterior a 5.0.19"
+      ],
+      "como_verificar": "Interface do Faspex > About.",
+      "referencias": [
+        {
+          "t": "NVD CVE-2026-123218",
+          "u": "https://nvd.nist.gov/vuln/detail/CVE-2026-123218"
+        }
+      ]
+    },
+    {
+      "id": "gpustack-102895",
+      "titulo": "GPUStack: administrador sem autenticação",
+      "tecnologia": "pesquisa",
+      "tipo": "manual",
+      "situacao": "explorado",
+      "exploracao": "CISA KEV desde 09/11.",
+      "kev": "2026-11-09",
+      "publicado_em": "2026-11-09",
+      "cves": [
+        "CVE-2026-102895"
+      ],
+      "resumo": "Requisições que parecem vir de 127.0.0.1 são tratadas como administrador.",
+      "afetadas": "GPUStack anterior a 2.2.0.",
+      "softwares": [
+        "Clusters de GPU para IA"
+      ],
+      "mitigacao": [
+        "Ativar force_auth_localhost",
+        "Atualizar para 2.2.0"
+      ],
+      "como_verificar": "pip show gpustack (no ambiente do serviço)",
+      "referencias": [
+        {
+          "t": "NVD CVE-2026-102895",
+          "u": "https://nvd.nist.gov/vuln/detail/CVE-2026-102895"
+        }
+      ]
+    },
+    {
+      "id": "monai-label-133968",
+      "titulo": "MONAI Label: path traversal com RCE",
+      "tecnologia": "pesquisa",
+      "tipo": "manual",
+      "situacao": "explorado",
+      "exploracao": "CISA KEV desde 23/11; explorado desde setembro.",
+      "kev": "2026-11-23",
+      "publicado_em": "2026-11-23",
+      "cves": [
+        "CVE-2026-133968"
+      ],
+      "resumo": "Parâmetro image do endpoint PUT /datastore/image permite gravar fora do diretório e executar código.",
+      "afetadas": "monailabel anterior a 0.8.6.",
+      "softwares": [
+        "Pesquisa em imagem médica",
+        "Hospitais universitários"
+      ],
+      "mitigacao": [
+        "Atualizar para 0.8.6",
+        "Não expor o servidor MONAI Label fora da rede do laboratório"
+      ],
+      "como_verificar": "pip show monailabel",
+      "referencias": [
+        {
+          "t": "NVD CVE-2026-133968",
+          "u": "https://nvd.nist.gov/vuln/detail/CVE-2026-133968"
+        }
+      ]
+    },
+    {
+      "id": "litellm-40217",
+      "titulo": "LiteLLM: execução de código via guardrails",
+      "tecnologia": "pesquisa",
+      "tipo": "manual",
+      "situacao": "explorado",
+      "exploracao": "CISA KEV desde 18/11.",
+      "kev": "2026-11-18",
+      "publicado_em": "2026-11-18",
+      "cves": [
+        "CVE-2026-40217"
+      ],
+      "resumo": "O endpoint /guardrails/test_custom_code permite executar código arbitrário.",
+      "afetadas": "LiteLLM até 2026-04-08.",
+      "softwares": [
+        "Gateways de LLM em projetos de pesquisa e ensino"
+      ],
+      "mitigacao": [
+        "Atualizar o LiteLLM",
+        "Bloquear /guardrails/test_custom_code no proxy reverso"
+      ],
+      "como_verificar": "pip show litellm",
+      "referencias": [
+        {
+          "t": "NVD CVE-2026-40217",
+          "u": "https://nvd.nist.gov/vuln/detail/CVE-2026-40217"
+        }
+      ]
+    },
+    {
+      "id": "apache-roller-129448",
+      "titulo": "Apache Roller: desserialização via XML-RPC",
+      "tecnologia": "outros",
+      "tipo": "manual",
+      "situacao": "explorado",
+      "exploracao": "CISA KEV desde 20/11.",
+      "kev": "2026-11-20",
+      "publicado_em": "2026-11-20",
+      "cves": [
+        "CVE-2026-129448"
+      ],
+      "resumo": "O endpoint XML-RPC desserializa dados antes de autenticar.",
+      "afetadas": "Apache Roller 4.0.0 a 6.1.4 (e 6.1.5).",
+      "softwares": [
+        "Blogs institucionais em Java"
+      ],
+      "mitigacao": [
+        "Atualizar para 6.1.6",
+        "Desativar XML-RPC"
+      ],
+      "como_verificar": "Página de administração do Roller.",
+      "referencias": [
+        {
+          "t": "NVD CVE-2026-129448",
+          "u": "https://nvd.nist.gov/vuln/detail/CVE-2026-129448"
+        }
+      ]
+    },
+    {
+      "id": "sap-netweaver-2025-42884",
+      "titulo": "SAP NetWeaver Enterprise Portal: injeção JNDI",
+      "tecnologia": "outros",
+      "tipo": "manual",
+      "situacao": "explorado",
+      "exploracao": "CISA KEV desde 20/11.",
+      "kev": "2026-11-20",
+      "publicado_em": "2025-11-11",
+      "cves": [
+        "CVE-2025-42884"
+      ],
+      "resumo": "Atacante sem login injeta propriedades JNDI ou URL de lookup.",
+      "afetadas": "Conforme SAP Security Note.",
+      "softwares": [
+        "ERP (instituições que usam SAP)"
+      ],
+      "mitigacao": [
+        "Aplicar a SAP Security Note correspondente"
+      ],
+      "como_verificar": "SAP Solution Manager / System Status.",
+      "referencias": [
+        {
+          "t": "NVD CVE-2025-42884",
+          "u": "https://nvd.nist.gov/vuln/detail/CVE-2025-42884"
+        }
+      ]
+    },
+    {
+      "id": "openssh-musl-123158",
+      "titulo": "OpenSSH: bypass de senha em builds com musl e sem PAM",
+      "tecnologia": "openssh",
+      "tipo": "pacote",
+      "situacao": "nao_afetado",
+      "exploracao": "CISA KEV desde 09/11, mas os pacotes Debian e Ubuntu (glibc + PAM) não são afetados.",
+      "kev": "2026-11-09",
+      "publicado_em": "2026-11-05",
+      "cves": [
+        "CVE-2026-123158"
+      ],
+      "fontes": {
+        "deb12": [
+          "openssh"
+        ],
+        "deb13": [
+          "openssh"
+        ],
+        "u2204": [
+          "openssh"
+        ],
+        "u2404": [
+          "openssh"
+        ],
+        "u2604": [
+          "openssh"
+        ]
+      },
+      "resumo": "sshd compilado com musl e sem PAM aceita qualquer senha de 256 a 1024 caracteres em certas contas.",
+      "afetadas": "OpenSSH < 10.6p2 com musl e sem PAM: imagens Alpine, contêineres com sshd, appliances embarcados.",
+      "softwares": [
+        "Contêineres Alpine com sshd",
+        "Appliances"
+      ],
+      "mitigacao": [
+        "Verificar imagens Alpine e appliances; atualizar para 10.6p2"
+      ],
+      "referencias": [
+        {
+          "t": "Ubuntu CVE-2026-123158",
+          "u": "https://ubuntu.com/security/CVE-2026-123158"
+        },
+        {
+          "t": "Debian tracker",
+          "u": "https://security-tracker.debian.org/tracker/CVE-2026-123158"
+        }
+      ]
+    },
+    {
+      "id": "php-seguranca-2026-11",
+      "titulo": "PHP: release de segurança de 19/11 (sessão, FPM, CGI)",
+      "tecnologia": "php",
+      "tipo": "pacote",
+      "situacao": "urgente",
+      "publicado_em": "2026-11-19",
+      "cves_de": [
+        "DSA-6641-1",
+        "DLA-4916-1",
+        "USN-9185-1"
+      ],
+      "cves_excluir": [
+        "CVE-2026-109618",
+        "CVE-2026-109619"
+      ],
+      "cves": [],
+      "fontes": {
+        "deb12": [
+          "php8.2"
+        ],
+        "deb13": [
+          "php8.4"
+        ],
+        "u2204": [
+          "php8.1"
+        ],
+        "u2404": [
+          "php8.3"
+        ],
+        "u2604": [
+          "php8.5"
+        ]
+      },
+      "upstream_minimos": [
+        "8.2.36",
+        "8.3.37",
+        "8.4.28",
+        "8.5.13"
+      ],
+      "resumo": "17 correções, várias com RCE: sessão (CVE-2026-115560 e CVE-2026-126714), request smuggling no FPM (CVE-2026-129289), escalada local no FPM (CVE-2026-129291), CGI (CVE-2026-129538).",
+      "afetadas": "Upstream < 8.2.36, 8.3.37, 8.4.28, 8.5.13. O PHP 8.2 sai de suporte em 31/12/2026.",
+      "softwares": [
+        "Moodle",
+        "WordPress",
+        "Drupal",
+        "OJS/OMP/OPS (PKP)",
+        "GLPI",
+        "phpMyAdmin",
+        "Nextcloud",
+        "LimeSurvey"
+      ],
+      "mitigacao": [
+        "session.upload_progress.enabled = 0",
+        "Não compartilhar diretório ou Redis de sessão entre aplicações",
+        "Manter o php-fpm acessível só pelo loopback ou socket"
+      ],
+      "referencias": [
+        {
+          "t": "PHP ChangeLog 8",
+          "u": "https://www.php.net/ChangeLog-8.php"
+        },
+        {
+          "t": "Ubuntu USN-9185-1",
+          "u": "https://ubuntu.com/security/notices/USN-9185-1"
+        },
+        {
+          "t": "Debian DSA-6641-1",
+          "u": "https://security-tracker.debian.org/tracker/DSA-6641-1"
+        }
+      ]
+    },
+    {
+      "id": "kernel-tcp-uaf-98432",
+      "titulo": "Kernel Linux: use-after-free remoto no TCP",
+      "tecnologia": "kernel",
+      "tipo": "kernel",
+      "situacao": "urgente",
+      "publicado_em": "2026-10-15",
+      "cves": [
+        "CVE-2026-98432"
+      ],
+      "fontes": {
+        "deb12": [
+          "linux"
+        ],
+        "deb13": [
+          "linux"
+        ],
+        "u2204": [
+          "linux"
+        ],
+        "u2404": [
+          "linux"
+        ],
+        "u2604": [
+          "linux"
+        ]
+      },
+      "resumo": "Pacotes IPv4 TCP com opções no cabeçalho IP disparam use-after-free remoto (Ubuntu: Critical, CVSS 9.8).",
+      "afetadas": "Kernels sem a correção nas versões listadas.",
+      "softwares": [
+        "Todo servidor exposto à rede"
+      ],
+      "mitigacao": [
+        "Até reiniciar: descartar pacotes IPv4 TCP de entrada com opções IP (nftables: ip hdrlength > 5 tcp drop)"
+      ],
+      "referencias": [
+        {
+          "t": "Ubuntu CVE-2026-98432",
+          "u": "https://ubuntu.com/security/CVE-2026-98432"
+        },
+        {
+          "t": "Debian tracker",
+          "u": "https://security-tracker.debian.org/tracker/CVE-2026-98432"
+        }
+      ]
+    },
+    {
+      "id": "kernel-nfsd-oob-99362",
+      "titulo": "Kernel Linux: escrita fora dos limites no servidor NFS (nfsd, NFSv4.1)",
+      "tecnologia": "kernel",
+      "tipo": "kernel",
+      "situacao": "urgente",
+      "publicado_em": "2026-11-27",
+      "cves_de": [
+        "DLA-4942-1"
+      ],
+      "cves": [
+        "CVE-2026-99362"
+      ],
+      "fontes": {
+        "deb12": [
+          "linux"
+        ],
+        "deb13": [
+          "linux"
+        ],
+        "u2204": [
+          "linux"
+        ],
+        "u2404": [
+          "linux"
+        ],
+        "u2604": [
+          "linux"
+        ]
+      },
+      "resumo": "No servidor NFS do kernel (nfsd), um cliente NFSv4.1 que negocia um limite mínimo de resposta em cache faz a resposta de SEQUENCE ser copiada para além do slot da sessão: escrita fora dos limites no heap do kernel com bytes em boa parte escolhidos pelo cliente (Ubuntu: Critical, CVSS 9.3). Só afeta máquinas que exportam NFS; clientes NFS e servidores sem nfsd não são atingidos.",
+      "afetadas": "Kernels sem a correção em servidores com nfsd ativo e NFSv4.1 ou superior. Debian 12 corrigido no DLA-4942-1 (6.1.192-3); Debian 13 em 6.12.117-1. Ubuntu: ver estado por versão na tabela.",
+      "softwares": [
+        "Servidores de arquivos NFS (homes, laboratórios, clusters de pesquisa/HPC)",
+        "Armazenamento compartilhado de virtualização e backup exportado por NFS",
+        "Moodle/SUAP com moodledata ou mídia em NFS (o servidor NFS, não o cliente)"
+      ],
+      "mitigacao": [
+        "Atualizar o kernel e reiniciar o servidor NFS",
+        "Até reiniciar: restringir a porta 2049/tcp e as entradas de /etc/exports apenas a clientes confiáveis",
+        "Verificar se a máquina exporta NFS: systemctl is-active nfs-server; exportfs -v"
+      ],
+      "referencias": [
+        {
+          "t": "Debian DLA-4942-1",
+          "u": "https://security-tracker.debian.org/tracker/DLA-4942-1"
+        },
+        {
+          "t": "Debian tracker CVE-2026-99362",
+          "u": "https://security-tracker.debian.org/tracker/CVE-2026-99362"
+        },
+        {
+          "t": "Ubuntu CVE-2026-99362",
+          "u": "https://ubuntu.com/security/CVE-2026-99362"
+        }
+      ]
+    },
+    {
+      "id": "apt-retries-109518",
+      "titulo": "APT: atacante na rede executa código como root",
+      "tecnologia": "apt",
+      "tipo": "pacote",
+      "situacao": "urgente",
+      "publicado_em": "2026-11-04",
+      "cves": [
+        "CVE-2026-109518"
+      ],
+      "fontes": {
+        "deb12": [
+          "apt"
+        ],
+        "deb13": [
+          "apt"
+        ],
+        "u2204": [
+          "apt"
+        ],
+        "u2404": [
+          "apt"
+        ],
+        "u2604": [
+          "apt"
+        ]
+      },
+      "resumo": "Atacante no caminho de rede (espelho ou proxy malicioso) explora o mecanismo de novas tentativas do APT.",
+      "afetadas": "Exige Acquire::Retries diferente de zero (padrão 3 desde Debian 12 e Ubuntu 22.04).",
+      "softwares": [
+        "Todos os servidores e estações Debian/Ubuntu"
+      ],
+      "mitigacao": [
+        "Usar espelho interno confiável ou HTTPS",
+        "Até atualizar: Acquire::Retries \"0\"; (inferido da condição de exploração)"
+      ],
+      "referencias": [
+        {
+          "t": "Debian tracker",
+          "u": "https://security-tracker.debian.org/tracker/CVE-2026-109518"
+        }
+      ]
+    },
+    {
+      "id": "nginx-2026-11",
+      "titulo": "nginx: correções de novembro",
+      "tecnologia": "nginx",
+      "tipo": "pacote",
+      "situacao": "urgente",
+      "publicado_em": "2026-11-19",
+      "cves_de": [
+        "DSA-6642-1",
+        "USN-9159-1",
+        "USN-9182-1",
+        "DLA-4918-1"
+      ],
+      "cves": [
+        "CVE-2026-15176",
+        "CVE-2026-93479",
+        "CVE-2026-95101",
+        "CVE-2026-97205",
+        "CVE-2026-97629"
+      ],
+      "fontes": {
+        "deb12": [
+          "nginx"
+        ],
+        "deb13": [
+          "nginx"
+        ],
+        "u2204": [
+          "nginx"
+        ],
+        "u2404": [
+          "nginx"
+        ],
+        "u2604": [
+          "nginx"
+        ]
+      },
+      "resumo": "Várias falhas de prioridade alta no nginx (CVSS até 8.1).",
+      "afetadas": "Pacotes nginx sem as correções de 19 e 20/11.",
+      "softwares": [
+        "Proxy reverso de portais, Moodle e sistemas acadêmicos"
+      ],
+      "mitigacao": [
+        "Após atualizar: nginx -t && systemctl reload nginx"
+      ],
+      "referencias": [
+        {
+          "t": "Debian DSA-6642-1",
+          "u": "https://security-tracker.debian.org/tracker/DSA-6642-1"
+        },
+        {
+          "t": "Ubuntu USN-9182-1",
+          "u": "https://ubuntu.com/security/notices/USN-9182-1"
+        },
+        {
+          "t": "Debian DLA-4918-1",
+          "u": "https://security-tracker.debian.org/tracker/DLA-4918-1"
+        },
+        {
+          "t": "Alerta CAIS/RNP 21/10/2026 (NGINX)",
+          "u": "https://plataforma.rnp.br/arquivos/documents/CAIS-Alerta%2021-10-2026-%20M%C3%BAltiplas%20vulnerabilidades%20no%20NGINX%20permitem%20nega%C3%A7%C3%A3o%20de%20servi%C3%A7o%20e%20poss%C3%ADvel%20execu%C3%A7%C3%A3o%20remota%20de%20c%C3%B3digo.txt?VersionId=emzNz3SICmStq7bFrlqdCRIKRvBRqFUx"
+        }
+      ]
+    },
+    {
+      "id": "apache2-2026-11",
+      "titulo": "Apache httpd: correções de novembro",
+      "tecnologia": "apache2",
+      "tipo": "pacote",
+      "situacao": "urgente",
+      "publicado_em": "2026-11-12",
+      "cves_de": [
+        "DSA-6620-1",
+        "USN-9090-1"
+      ],
+      "cves": [],
+      "fontes": {
+        "deb12": [
+          "apache2"
+        ],
+        "deb13": [
+          "apache2"
+        ],
+        "u2204": [
+          "apache2"
+        ],
+        "u2404": [
+          "apache2"
+        ],
+        "u2604": [
+          "apache2"
+        ]
+      },
+      "resumo": "Falhas no Apache httpd, uma de prioridade alta (CVSS 8.1).",
+      "afetadas": "Upstream < 2.4.71.",
+      "softwares": [
+        "Moodle e sistemas PHP com mod_php",
+        "Shibboleth SP (CAFe)",
+        "Sites institucionais"
+      ],
+      "mitigacao": [
+        "Após atualizar: apachectl configtest && systemctl reload apache2"
+      ],
+      "referencias": [
+        {
+          "t": "Debian DSA-6620-1",
+          "u": "https://security-tracker.debian.org/tracker/DSA-6620-1"
+        },
+        {
+          "t": "Ubuntu USN-9090-1",
+          "u": "https://ubuntu.com/security/notices/USN-9090-1"
+        }
+      ]
+    },
+    {
+      "id": "haproxy-2026-11",
+      "titulo": "HAProxy: três falhas de negação de serviço",
+      "tecnologia": "haproxy",
+      "tipo": "pacote",
+      "situacao": "urgente",
+      "publicado_em": "2026-11-18",
+      "cves_de": [
+        "DSA-6638-1",
+        "USN-8972-1",
+        "DLA-4842-1"
+      ],
+      "cves": [],
+      "fontes": {
+        "deb12": [
+          "haproxy"
+        ],
+        "deb13": [
+          "haproxy"
+        ],
+        "u2204": [
+          "haproxy"
+        ],
+        "u2404": [
+          "haproxy"
+        ],
+        "u2604": [
+          "haproxy"
+        ]
+      },
+      "resumo": "Três falhas no HAProxy (CVSS até 7.5).",
+      "afetadas": "Pacotes sem as correções listadas. Debian 12 ainda sem correção.",
+      "softwares": [
+        "Balanceadores de Moodle, portais e sistemas acadêmicos"
+      ],
+      "mitigacao": [
+        "Após atualizar: haproxy -c -f /etc/haproxy/haproxy.cfg && systemctl reload haproxy"
+      ],
+      "referencias": [
+        {
+          "t": "Debian DSA-6638-1",
+          "u": "https://security-tracker.debian.org/tracker/DSA-6638-1"
+        }
+      ]
+    },
+    {
+      "id": "exim4-dsa-6659",
+      "titulo": "Exim: escrita fora dos limites no heap via tráfego SMTP (CVE-2026-137702)",
+      "tecnologia": "exim",
+      "tipo": "pacote",
+      "situacao": "urgente",
+      "publicado_em": "2026-11-25",
+      "cves_de": [
+        "DSA-6659-1"
+      ],
+      "cves": [
+        "CVE-2026-137702"
+      ],
+      "fontes": {
+        "deb12": [
+          "exim4"
+        ],
+        "deb13": [
+          "exim4"
+        ],
+        "u2204": [
+          "exim4"
+        ],
+        "u2404": [
+          "exim4"
+        ],
+        "u2604": [
+          "exim4"
+        ]
+      },
+      "resumo": "Tráfego SMTP malicioso dispara escrita fora dos limites no heap em código de expansão que roda como root (CVE-2026-137702, CVSS 8.1; ataque de alta complexidade); o Debian indica possível execução de código. É a falha do aviso upstream EXIM-Security-2026-11-19.1, corrigida no Exim 4.100.2.",
+      "afetadas": "Exim upstream < 4.100.2. Debian 13 corrigido no DSA-6659-1 (4.98.2-1+deb13u6); Debian 12 no DLA-4940-1 (4.96-15+deb12u11). Ubuntu: ver estado por versão na tabela.",
+      "softwares": [
+        "MTA padrão do Debian",
+        "Listas de e-mail (Mailman)",
+        "Servidores de notificação de sistemas acadêmicos"
+      ],
+      "mitigacao": [
+        "Após atualizar: systemctl restart exim4"
+      ],
+      "referencias": [
+        {
+          "t": "Debian DSA-6659-1",
+          "u": "https://security-tracker.debian.org/tracker/DSA-6659-1"
+        },
+        {
+          "t": "Debian tracker CVE-2026-137702",
+          "u": "https://security-tracker.debian.org/tracker/CVE-2026-137702"
+        },
+        {
+          "t": "Exim EXIM-Security-2026-11-19.1",
+          "u": "https://www.exim.org/static/doc/security/EXIM-Security-2026-11-19.1/EXIM-Security-2026-11-19.1.txt"
+        }
+      ]
+    },
+    {
+      "id": "exim4-dla-4940",
+      "titulo": "Exim: escalada de privilégio local e escrita fora dos limites com Proxy-Protocol",
+      "tecnologia": "exim",
+      "tipo": "pacote",
+      "situacao": "urgente",
+      "publicado_em": "2026-11-26",
+      "cves_de": [
+        "DLA-4940-1"
+      ],
+      "cves": [
+        "CVE-2026-66140",
+        "CVE-2026-66141",
+        "CVE-2026-94054",
+        "CVE-2026-94056",
+        "CVE-2026-94057"
+      ],
+      "cves_excluir": [
+        "CVE-2026-137702"
+      ],
+      "fontes": {
+        "deb12": [
+          "exim4"
+        ],
+        "deb13": [
+          "exim4"
+        ],
+        "u2204": [
+          "exim4"
+        ],
+        "u2404": [
+          "exim4"
+        ],
+        "u2604": [
+          "exim4"
+        ]
+      },
+      "resumo": "Travessia de diretório pelo nome de fila (CVE-2026-66140, CVSS 8.4) e .forward com pipe (CVE-2026-66141) permitem escalada local de privilégio; com Proxy-Protocol e proxy controlado pelo atacante há escrita fora dos limites (CVE-2026-94054) e leitura de memória não inicializada (CVE-2026-94056); SMTP smuggling após rejeição no DATA (CVE-2026-94057).",
+      "afetadas": "Exim upstream < 4.99.5 (66140/66141) e < 4.100.1 (demais). Debian 12 corrigido no DLA-4940-1 (4.96-15+deb12u11); Debian 13 já corrigido em 4.98.2-1+deb13u4/u5.",
+      "softwares": [
+        "MTA padrão do Debian",
+        "Listas de e-mail (Mailman, Sympa)",
+        "Servidores de notificação de sistemas acadêmicos",
+        "Relays de e-mail de Moodle/SUAP"
+      ],
+      "mitigacao": [
+        "Após atualizar: systemctl restart exim4",
+        "Só habilitar hosts_proxy para balanceadores confiáveis",
+        "Restringir contas locais e o uso de .forward com pipe em servidores de e-mail"
+      ],
+      "referencias": [
+        {
+          "t": "Debian DLA-4940-1",
+          "u": "https://security-tracker.debian.org/tracker/DLA-4940-1"
+        },
+        {
+          "t": "Debian tracker CVE-2026-66140",
+          "u": "https://security-tracker.debian.org/tracker/CVE-2026-66140"
+        },
+        {
+          "t": "Ubuntu CVE-2026-94054",
+          "u": "https://ubuntu.com/security/CVE-2026-94054"
+        }
+      ]
+    },
+    {
+      "id": "roundcube-dsa-6660",
+      "titulo": "Roundcube 1.6.22: 12 falhas, incluindo RCE",
+      "tecnologia": "roundcube",
+      "tipo": "pacote",
+      "situacao": "urgente",
+      "publicado_em": "2026-11-25",
+      "cves": [],
+      "pontuacao_manual": {
+        "valor": null,
+        "rotulo": "Sem nota",
+        "fonte": "Sem CVE atribuído na data da coleta"
+      },
+      "linhas_manuais": {
+        "deb13": {
+          "estado": "corrigido",
+          "pacote": "roundcube",
+          "versao": "1.6.22+dfsg-0+deb13u1",
+          "aviso": "DSA-6660-1"
+        },
+        "deb12": {
+          "estado": "nao_verificado",
+          "nota": "Último DLA: 1.6.5+dfsg-1+deb12u13 (DLA-4910-1, 16/11); não confirmado que cubra as falhas de 23/11"
+        },
+        "u2204": {
+          "estado": "nao_verificado"
+        },
+        "u2404": {
+          "estado": "nao_verificado"
+        },
+        "u2604": {
+          "estado": "nao_verificado"
+        }
+      },
+      "resumo": "Injeção de requisição HTTP, bypass de escopo CSS e de bloqueio de conteúdo remoto, injeção de script sieve, vazamento de informação, DoS e RCE. 1.6.22 é o último release da linha 1.6.",
+      "afetadas": "Roundcube < 1.6.22 e < 1.7.7.",
+      "softwares": [
+        "Webmail institucional"
+      ],
+      "mitigacao": [
+        "Planejar a migração para a linha 1.7"
+      ],
+      "referencias": [
+        {
+          "t": "Roundcube 1.6.22 / 1.7.7",
+          "u": "https://roundcube.net/news/2026/11/23/security-updates-1.6.22-and-1.7.7"
+        },
+        {
+          "t": "Debian DSA-6660-1",
+          "u": "https://security-tracker.debian.org/tracker/DSA-6660-1"
+        }
+      ]
+    },
+    {
+      "id": "runc-dsa-6656",
+      "titulo": "runc: fuga de contêiner",
+      "tecnologia": "conteineres",
+      "tipo": "pacote",
+      "situacao": "urgente",
+      "publicado_em": "2026-11-25",
+      "cves_de": [
+        "DSA-6656-1"
+      ],
+      "cves": [],
+      "fontes": {
+        "deb12": [
+          "runc"
+        ],
+        "deb13": [
+          "runc"
+        ],
+        "u2204": [
+          "runc",
+          "runc-app",
+          "runc-stable"
+        ],
+        "u2404": [
+          "runc",
+          "runc-app",
+          "runc-stable"
+        ],
+        "u2604": [
+          "runc",
+          "runc-app",
+          "runc-stable"
+        ]
+      },
+      "resumo": "Falhas no runc permitem que um contêiner malicioso escape para o host.",
+      "afetadas": "runc sem a correção. O Docker CE oficial traz o próprio runc (containerd.io): atualize pelo repositório da Docker.",
+      "softwares": [
+        "Docker",
+        "Kubernetes",
+        "Podman",
+        "JupyterHub com DockerSpawner",
+        "GitLab Runner"
+      ],
+      "mitigacao": [
+        "Não executar imagens de origem desconhecida",
+        "Docker CE: apt-get install --only-upgrade containerd.io"
+      ],
+      "referencias": [
+        {
+          "t": "Debian DSA-6656-1",
+          "u": "https://security-tracker.debian.org/tracker/DSA-6656-1"
+        }
+      ]
+    },
+    {
+      "id": "libzstd-124851",
+      "titulo": "zstd: falha na biblioteca de compressão",
+      "tecnologia": "zstd",
+      "tipo": "pacote",
+      "situacao": "urgente",
+      "publicado_em": "2026-11-24",
+      "cves": [
+        "CVE-2026-124851"
+      ],
+      "fontes": {
+        "deb12": [
+          "libzstd"
+        ],
+        "deb13": [
+          "libzstd"
+        ],
+        "u2204": [
+          "libzstd"
+        ],
+        "u2404": [
+          "libzstd"
+        ],
+        "u2604": [
+          "libzstd"
+        ]
+      },
+      "resumo": "Falha na biblioteca zstd (Ubuntu: prioridade média).",
+      "afetadas": "libzstd sem a correção.",
+      "softwares": [
+        "APT/dpkg",
+        "systemd-journald",
+        "rsync",
+        "curl",
+        "PostgreSQL (backups)",
+        "btrfs",
+        "MariaDB"
+      ],
+      "mitigacao": [
+        "Reiniciar serviços que carregam libzstd após atualizar"
+      ],
+      "referencias": [
+        {
+          "t": "Debian tracker",
+          "u": "https://security-tracker.debian.org/tracker/CVE-2026-124851"
+        }
+      ],
+      "bibliotecas": [
+        "libzstd1"
+      ]
+    },
+    {
+      "id": "expat-2026-11",
+      "titulo": "Expat: falhas no parser XML",
+      "tecnologia": "expat",
+      "tipo": "pacote",
+      "situacao": "urgente",
+      "publicado_em": "2026-11-25",
+      "cves_de": [
+        "USN-9196-1",
+        "DSA-6566-1",
+        "DLA-4849-1"
+      ],
+      "cves": [],
+      "fontes": {
+        "deb12": [
+          "expat"
+        ],
+        "deb13": [
+          "expat"
+        ],
+        "u2204": [
+          "expat"
+        ],
+        "u2404": [
+          "expat"
+        ],
+        "u2604": [
+          "expat"
+        ]
+      },
+      "resumo": "Falhas no Expat (CVSS até 8.2) afetam todo programa que lê XML com a biblioteca do sistema.",
+      "afetadas": "expat/libexpat1 sem as correções.",
+      "softwares": [
+        "Apache httpd (apr-util)",
+        "PHP (extensão xml)",
+        "Python (xml.parsers.expat)",
+        "Git",
+        "D-Bus",
+        "Shibboleth SP"
+      ],
+      "mitigacao": [
+        "Reiniciar serviços que carregam libexpat após atualizar"
+      ],
+      "referencias": [
+        {
+          "t": "Ubuntu USN-9196-1",
+          "u": "https://ubuntu.com/security/notices/USN-9196-1"
+        }
+      ],
+      "bibliotecas": [
+        "libexpat1"
+      ]
+    },
+    {
+      "id": "pcre2-2026-11",
+      "titulo": "PCRE2: falhas na biblioteca de expressões regulares",
+      "tecnologia": "pcre2",
+      "tipo": "pacote",
+      "situacao": "urgente",
+      "publicado_em": "2026-11-03",
+      "cves_de": [
+        "USN-8974-1",
+        "DLA-4816-1"
+      ],
+      "cves": [],
+      "fontes": {
+        "deb12": [
+          "pcre2"
+        ],
+        "deb13": [
+          "pcre2"
+        ],
+        "u2204": [
+          "pcre2"
+        ],
+        "u2404": [
+          "pcre2"
+        ],
+        "u2604": [
+          "pcre2"
+        ]
+      },
+      "resumo": "Falhas no PCRE2 (CVSS até 8.2).",
+      "afetadas": "pcre2/libpcre2-8-0 sem as correções.",
+      "softwares": [
+        "PHP (preg_*)",
+        "nginx",
+        "Apache httpd",
+        "HAProxy",
+        "Exim",
+        "Git",
+        "grep"
+      ],
+      "mitigacao": [
+        "Reiniciar PHP-FPM, nginx e Apache após atualizar"
+      ],
+      "referencias": [
+        {
+          "t": "Ubuntu USN-8974-1",
+          "u": "https://ubuntu.com/security/notices/USN-8974-1"
+        }
+      ],
+      "bibliotecas": [
+        "libpcre2-8-0"
+      ]
+    },
+    {
+      "id": "libssh-2026-11",
+      "titulo": "libssh: falhas na biblioteca SSH",
+      "tecnologia": "libssh",
+      "tipo": "pacote",
+      "situacao": "urgente",
+      "publicado_em": "2026-11-23",
+      "cves_de": [
+        "USN-9187-1",
+        "DLA-4844-1"
+      ],
+      "cves": [],
+      "fontes": {
+        "deb12": [
+          "libssh"
+        ],
+        "deb13": [
+          "libssh"
+        ],
+        "u2204": [
+          "libssh"
+        ],
+        "u2404": [
+          "libssh"
+        ],
+        "u2604": [
+          "libssh"
+        ]
+      },
+      "resumo": "Falhas na libssh (CVSS até 6.5). Não afeta o OpenSSH.",
+      "afetadas": "libssh sem as correções.",
+      "softwares": [
+        "curl/libcurl (SFTP/SCP)",
+        "QEMU",
+        "KDE",
+        "Ansible (pylibssh)"
+      ],
+      "mitigacao": [],
+      "referencias": [
+        {
+          "t": "Ubuntu USN-9187-1",
+          "u": "https://ubuntu.com/security/notices/USN-9187-1"
+        }
+      ],
+      "bibliotecas": [
+        "libssh-4",
+        "libssh-gcrypt-4"
+      ]
+    },
+    {
+      "id": "glibc-2026-11",
+      "titulo": "glibc: correções de novembro",
+      "tecnologia": "glibc",
+      "tipo": "pacote",
+      "situacao": "urgente",
+      "publicado_em": "2026-11-12",
+      "cves_de": [
+        "USN-9065-1"
+      ],
+      "cves": [],
+      "fontes": {
+        "deb12": [
+          "glibc"
+        ],
+        "deb13": [
+          "glibc"
+        ],
+        "u2204": [
+          "glibc"
+        ],
+        "u2404": [
+          "glibc"
+        ],
+        "u2604": [
+          "glibc"
+        ]
+      },
+      "resumo": "Falhas na biblioteca C do sistema (CVSS até 7.0).",
+      "afetadas": "glibc/libc6 sem as correções.",
+      "softwares": [
+        "Todos os programas do sistema"
+      ],
+      "mitigacao": [
+        "Após atualizar, reiniciar serviços ou o servidor (needrestart lista os processos)"
+      ],
+      "referencias": [
+        {
+          "t": "Ubuntu USN-9065-1",
+          "u": "https://ubuntu.com/security/notices/USN-9065-1"
+        }
+      ],
+      "bibliotecas": [
+        "libc6"
+      ]
+    },
+    {
+      "id": "openssl-2026-10",
+      "titulo": "OpenSSL: correções de outubro",
+      "tecnologia": "openssl",
+      "tipo": "pacote",
+      "situacao": "urgente",
+      "publicado_em": "2026-10-26",
+      "cves_de": [
+        "DLA-4859-1"
+      ],
+      "cves": [],
+      "fontes": {
+        "deb12": [
+          "openssl"
+        ],
+        "deb13": [
+          "openssl"
+        ],
+        "u2204": [
+          "openssl"
+        ],
+        "u2404": [
+          "openssl"
+        ],
+        "u2604": [
+          "openssl"
+        ]
+      },
+      "resumo": "Falhas no OpenSSL (CVSS até 8.2, uma de prioridade alta no Ubuntu).",
+      "afetadas": "openssl/libssl3 sem as correções.",
+      "softwares": [
+        "TLS de todos os serviços web, e-mail e VPN"
+      ],
+      "mitigacao": [
+        "Reiniciar serviços TLS após atualizar"
+      ],
+      "referencias": [
+        {
+          "t": "Debian DLA-4859-1",
+          "u": "https://security-tracker.debian.org/tracker/DLA-4859-1"
+        }
+      ],
+      "bibliotecas": [
+        "libssl3",
+        "libssl3t64"
+      ]
+    },
+    {
+      "id": "curl-2026-10",
+      "titulo": "curl/libcurl: correções de outubro",
+      "tecnologia": "curl",
+      "tipo": "pacote",
+      "situacao": "urgente",
+      "publicado_em": "2026-10-14",
+      "cves_de": [
+        "DSA-6558-1",
+        "USN-8932-1"
+      ],
+      "cves": [],
+      "fontes": {
+        "deb12": [
+          "curl"
+        ],
+        "deb13": [
+          "curl"
+        ],
+        "u2204": [
+          "curl"
+        ],
+        "u2404": [
+          "curl"
+        ],
+        "u2604": [
+          "curl"
+        ]
+      },
+      "resumo": "Falhas no curl/libcurl (CVSS até 9.1, prioridade baixa no Ubuntu).",
+      "afetadas": "curl/libcurl sem as correções.",
+      "softwares": [
+        "PHP (extensão curl)",
+        "Moodle (requisições externas)",
+        "Git",
+        "APT (métodos https)"
+      ],
+      "mitigacao": [],
+      "referencias": [
+        {
+          "t": "Ubuntu USN-8932-1",
+          "u": "https://ubuntu.com/security/notices/USN-8932-1"
+        }
+      ],
+      "bibliotecas": [
+        "libcurl4",
+        "libcurl4t64",
+        "libcurl3t64-gnutls",
+        "libcurl3-gnutls"
+      ]
+    },
+    {
+      "id": "libgd2-dsa-6645",
+      "titulo": "libgd: falha na biblioteca de imagens",
+      "tecnologia": "libgd",
+      "tipo": "pacote",
+      "situacao": "urgente",
+      "publicado_em": "2026-11-20",
+      "cves": [],
+      "pontuacao_manual": {
+        "valor": null,
+        "rotulo": "Sem nota",
+        "fonte": "Aviso sem CVE na data da coleta"
+      },
+      "linhas_manuais": {
+        "deb13": {
+          "estado": "corrigido",
+          "pacote": "libgd2",
+          "versao": "2.3.3-14~deb13u3",
+          "aviso": "DSA-6645-1"
+        },
+        "deb12": {
+          "estado": "nao_verificado"
+        },
+        "u2204": {
+          "estado": "nao_verificado"
+        },
+        "u2404": {
+          "estado": "nao_verificado"
+        },
+        "u2604": {
+          "estado": "nao_verificado"
+        }
+      },
+      "resumo": "Falha na libgd, usada pela extensão gd do PHP para processar imagens enviadas por usuários.",
+      "afetadas": "libgd3 no Debian 13 antes de 2.3.3-14~deb13u3.",
+      "softwares": [
+        "PHP (extensão gd): Moodle, WordPress, GLPI, OJS"
+      ],
+      "mitigacao": [
+        "Reiniciar PHP-FPM ou Apache após atualizar"
+      ],
+      "referencias": [
+        {
+          "t": "Debian DSA-6645-1",
+          "u": "https://security-tracker.debian.org/tracker/DSA-6645-1"
+        }
+      ],
+      "bibliotecas": [
+        "libgd3"
+      ]
+    },
+    {
+      "id": "krb5-2026-11",
+      "titulo": "Kerberos (krb5): 19 correções",
+      "tecnologia": "krb5",
+      "tipo": "pacote",
+      "situacao": "urgente",
+      "publicado_em": "2026-11-22",
+      "cves_de": [
+        "DSA-6650-1",
+        "USN-9202-1"
+      ],
+      "cves": [],
+      "fontes": {
+        "deb12": [
+          "krb5"
+        ],
+        "deb13": [
+          "krb5"
+        ],
+        "u2204": [
+          "krb5"
+        ],
+        "u2404": [
+          "krb5"
+        ],
+        "u2604": [
+          "krb5"
+        ]
+      },
+      "resumo": "Várias falhas no MIT Kerberos (CVSS até 7.5).",
+      "afetadas": "krb5/libkrb5 sem as correções.",
+      "softwares": [
+        "Integração com Active Directory",
+        "Samba",
+        "SSH com GSSAPI",
+        "NFSv4",
+        "PostgreSQL com GSS"
+      ],
+      "mitigacao": [],
+      "referencias": [
+        {
+          "t": "Ubuntu USN-9202-1",
+          "u": "https://ubuntu.com/security/notices/USN-9202-1"
+        }
+      ],
+      "bibliotecas": [
+        "libkrb5-3",
+        "libgssapi-krb5-2"
+      ]
+    },
+    {
+      "id": "tomcat-2026-11",
+      "titulo": "Apache Tomcat: correções de novembro",
+      "tecnologia": "tomcat",
+      "tipo": "pacote",
+      "situacao": "urgente",
+      "publicado_em": "2026-11-13",
+      "cves_de": [
+        "DSA-6623-1",
+        "DLA-4889-1",
+        "USN-9186-1"
+      ],
+      "cves": [],
+      "fontes": {
+        "deb12": [
+          "tomcat10",
+          "tomcat9"
+        ],
+        "deb13": [
+          "tomcat10"
+        ],
+        "u2204": [
+          "tomcat9",
+          "tomcat10"
+        ],
+        "u2404": [
+          "tomcat10"
+        ],
+        "u2604": [
+          "tomcat10"
+        ]
+      },
+      "resumo": "Dezenas de falhas no Tomcat (CVSS até 10.0 no Ubuntu).",
+      "afetadas": "tomcat9/tomcat10 sem as correções. Tomcat embutido em aplicações precisa de atualização própria.",
+      "softwares": [
+        "DSpace (repositório institucional)",
+        "Shibboleth IdP (CAFe/RNP)",
+        "Apereo CAS",
+        "GeoServer",
+        "Jenkins"
+      ],
+      "mitigacao": [
+        "Após atualizar: systemctl restart tomcat10"
+      ],
+      "referencias": [
+        {
+          "t": "Ubuntu USN-9186-1",
+          "u": "https://ubuntu.com/security/notices/USN-9186-1"
+        }
+      ]
+    },
+    {
+      "id": "django-2026-11",
+      "titulo": "Django: correções de novembro",
+      "tecnologia": "django",
+      "tipo": "pacote",
+      "situacao": "urgente",
+      "publicado_em": "2026-11-22",
+      "cves_de": [
+        "DSA-6648-1",
+        "DLA-4903-1"
+      ],
+      "cves": [],
+      "fontes": {
+        "deb12": [
+          "python-django"
+        ],
+        "deb13": [
+          "python-django"
+        ],
+        "u2204": [
+          "python-django"
+        ],
+        "u2404": [
+          "python-django"
+        ],
+        "u2604": [
+          "python-django"
+        ]
+      },
+      "resumo": "Falhas no Django empacotado pela distro. Aplicações em virtualenv precisam de pip install -U django.",
+      "afetadas": "python3-django sem as correções.",
+      "softwares": [
+        "SUAP",
+        "Open edX",
+        "Mailman 3",
+        "NetBox",
+        "Sites Wagtail"
+      ],
+      "mitigacao": [
+        "Virtualenvs: pip list --outdated | grep -i django"
+      ],
+      "referencias": [
+        {
+          "t": "Debian DSA-6648-1",
+          "u": "https://security-tracker.debian.org/tracker/DSA-6648-1"
+        }
+      ]
+    },
+    {
+      "id": "postgresql-2026-11",
+      "titulo": "PostgreSQL: correções de novembro",
+      "tecnologia": "postgresql",
+      "tipo": "pacote",
+      "situacao": "urgente",
+      "publicado_em": "2026-11-13",
+      "cves_de": [
+        "DSA-6625-1",
+        "DLA-4905-1"
+      ],
+      "cves": [],
+      "fontes": {
+        "deb12": [
+          "postgresql-15"
+        ],
+        "deb13": [
+          "postgresql-17"
+        ],
+        "u2204": [
+          "postgresql-14"
+        ],
+        "u2404": [
+          "postgresql-16"
+        ],
+        "u2604": [
+          "postgresql-18"
+        ]
+      },
+      "resumo": "Falhas no PostgreSQL (CVSS até 8.8).",
+      "afetadas": "Servidor PostgreSQL sem as correções. Repositório PGDG: atualize pelo apt.postgresql.org.",
+      "softwares": [
+        "Moodle",
+        "SUAP",
+        "DSpace",
+        "GitLab",
+        "Zabbix",
+        "Odoo"
+      ],
+      "mitigacao": [
+        "Após atualizar: systemctl restart postgresql"
+      ],
+      "referencias": [
+        {
+          "t": "Debian DSA-6625-1",
+          "u": "https://security-tracker.debian.org/tracker/DSA-6625-1"
+        }
+      ]
+    },
+    {
+      "id": "squid-2026-11",
+      "titulo": "Squid: correções de outubro e novembro",
+      "tecnologia": "squid",
+      "tipo": "pacote",
+      "situacao": "urgente",
+      "publicado_em": "2026-11-03",
+      "cves_de": [
+        "DSA-6606-1",
+        "USN-8941-1",
+        "USN-8998-1"
+      ],
+      "cves": [],
+      "fontes": {
+        "deb12": [
+          "squid"
+        ],
+        "deb13": [
+          "squid"
+        ],
+        "u2204": [
+          "squid"
+        ],
+        "u2404": [
+          "squid"
+        ],
+        "u2604": [
+          "squid"
+        ]
+      },
+      "resumo": "Falhas no Squid (CVSS até 7.7).",
+      "afetadas": "squid sem as correções.",
+      "softwares": [
+        "Proxy institucional",
+        "Controle de acesso de laboratórios"
+      ],
+      "mitigacao": [
+        "Após atualizar: squid -k parse && systemctl restart squid"
+      ],
+      "referencias": [
+        {
+          "t": "Debian DSA-6606-1",
+          "u": "https://security-tracker.debian.org/tracker/DSA-6606-1"
+        }
+      ]
+    },
+    {
+      "id": "mediawiki-dsa-6654",
+      "titulo": "MediaWiki: 33 correções",
+      "tecnologia": "mediawiki",
+      "tipo": "pacote",
+      "situacao": "urgente",
+      "publicado_em": "2026-11-23",
+      "cves_de": [
+        "DSA-6654-1"
+      ],
+      "cves": [],
+      "fontes": {
+        "deb12": [
+          "mediawiki"
+        ],
+        "deb13": [
+          "mediawiki"
+        ],
+        "u2204": [
+          "mediawiki"
+        ],
+        "u2404": [
+          "mediawiki"
+        ],
+        "u2604": [
+          "mediawiki"
+        ]
+      },
+      "resumo": "Várias falhas no MediaWiki (CVSS até 6.5).",
+      "afetadas": "mediawiki sem as correções. Instalações a partir do tarball oficial: atualize pelo site do MediaWiki.",
+      "softwares": [
+        "Wikis institucionais e de disciplinas"
+      ],
+      "mitigacao": [
+        "Após atualizar: php maintenance/run.php update"
+      ],
+      "referencias": [
+        {
+          "t": "Debian DSA-6654-1",
+          "u": "https://security-tracker.debian.org/tracker/DSA-6654-1"
+        }
+      ]
+    },
+    {
+      "id": "openjdk-2026-11",
+      "titulo": "OpenJDK: correções de outubro e novembro (Java 8, 11, 17, 21 e 25)",
+      "tecnologia": "java",
+      "tipo": "pacote",
+      "situacao": "urgente",
+      "publicado_em": "2026-11-19",
+      "cves_de": [
+        "DSA-6639-1",
+        "DSA-6640-1",
+        "DLA-4917-1",
+        "USN-9154-1",
+        "USN-9155-1",
+        "USN-9156-1",
+        "USN-9157-1",
+        "USN-9181-1"
+      ],
+      "cves": [],
+      "fontes": {
+        "deb12": [
+          "openjdk-17"
+        ],
+        "deb13": [
+          "openjdk-21",
+          "openjdk-25"
+        ],
+        "u2204": [
+          "openjdk-lts",
+          "openjdk-17",
+          "openjdk-21",
+          "openjdk-8"
+        ],
+        "u2404": [
+          "openjdk-lts",
+          "openjdk-17",
+          "openjdk-21",
+          "openjdk-25",
+          "openjdk-8"
+        ],
+        "u2604": [
+          "openjdk-lts",
+          "openjdk-17",
+          "openjdk-21",
+          "openjdk-25",
+          "openjdk-8"
+        ]
+      },
+      "resumo": "Atualizações trimestrais e extras do OpenJDK com dezenas de CVEs (componentes de rede, TLS, XML e bibliotecas).",
+      "afetadas": "Pacotes openjdk-* sem as correções listadas. JDKs embutidos em aplicações (Elasticsearch/OpenSearch, Jenkins em contêiner) precisam de atualização própria.",
+      "softwares": [
+        "SIGAA, SIPAC e SIGRH (SIG-UFRN)",
+        "DSpace",
+        "Shibboleth IdP (CAFe/RNP)",
+        "Aplicações no Tomcat",
+        "Jenkins",
+        "GeoServer",
+        "OpenSearch/Elasticsearch"
+      ],
+      "mitigacao": [
+        "Após atualizar, reiniciar os serviços Java (Tomcat, IdP, DSpace)"
+      ],
+      "referencias": [
+        {
+          "t": "Ubuntu USN-9156-1",
+          "u": "https://ubuntu.com/security/notices/USN-9156-1"
+        },
+        {
+          "t": "Debian DSA-6639-1",
+          "u": "https://security-tracker.debian.org/tracker/DSA-6639-1"
+        }
+      ]
+    },
+    {
+      "id": "mysql-mariadb-2026",
+      "titulo": "MySQL e MariaDB: correções de outubro e novembro",
+      "tecnologia": "banco-dados",
+      "tipo": "pacote",
+      "situacao": "urgente",
+      "publicado_em": "2026-11-11",
+      "cves_de": [
+        "DLA-4835-1",
+        "USN-9046-1"
+      ],
+      "cves": [],
+      "fontes": {
+        "deb12": [
+          "mariadb"
+        ],
+        "deb13": [
+          "mariadb"
+        ],
+        "u2204": [
+          "mysql-8.0",
+          "mariadb-10.6"
+        ],
+        "u2404": [
+          "mysql-8.0",
+          "mariadb"
+        ],
+        "u2604": [
+          "mysql-8.4",
+          "mariadb"
+        ]
+      },
+      "resumo": "Atualização de MySQL (73 CVEs no Ubuntu) e MariaDB.",
+      "afetadas": "Servidores mysql-server/mariadb-server sem as correções. Repositórios oficiais do MySQL/MariaDB: atualize por eles.",
+      "softwares": [
+        "Moodle",
+        "WordPress",
+        "GLPI",
+        "SEI",
+        "Zabbix",
+        "Nextcloud",
+        "OJS"
+      ],
+      "mitigacao": [
+        "Manter o banco acessível só pela rede interna",
+        "Após atualizar: systemctl restart mysql ou mariadb"
+      ],
+      "referencias": [
+        {
+          "t": "Ubuntu USN-9046-1",
+          "u": "https://ubuntu.com/security/notices/USN-9046-1"
+        },
+        {
+          "t": "Debian DLA-4835-1",
+          "u": "https://security-tracker.debian.org/tracker/DLA-4835-1"
+        }
+      ]
+    },
+    {
+      "id": "firefox-thunderbird-2026-11",
+      "titulo": "Firefox ESR e Thunderbird: correções de 25/11",
+      "tecnologia": "navegadores-email",
+      "tipo": "pacote",
+      "situacao": "urgente",
+      "publicado_em": "2026-11-25",
+      "cves_de": [
+        "DSA-6662-1",
+        "DSA-6663-1",
+        "DLA-4896-1",
+        "DLA-4898-1"
+      ],
+      "cves": [],
+      "fontes": {
+        "deb12": [
+          "firefox-esr",
+          "thunderbird"
+        ],
+        "deb13": [
+          "firefox-esr",
+          "thunderbird"
+        ],
+        "u2204": [
+          "thunderbird"
+        ]
+      },
+      "linhas_manuais": {
+        "u2404": {
+          "estado": "nao_empacotado",
+          "nota": "No Ubuntu 24.04+ Firefox e Thunderbird são snap: snap refresh firefox thunderbird"
+        },
+        "u2604": {
+          "estado": "nao_empacotado",
+          "nota": "No Ubuntu 24.04+ Firefox e Thunderbird são snap: snap refresh firefox thunderbird"
+        }
+      },
+      "resumo": "Atualizações frequentes do Firefox ESR e do Thunderbird (10 avisos de cada no Debian desde outubro).",
+      "afetadas": "firefox-esr/thunderbird sem as correções; no Ubuntu, Firefox é snap.",
+      "softwares": [
+        "Laboratórios de informática",
+        "Estações administrativas"
+      ],
+      "mitigacao": [
+        "Ubuntu: snap refresh firefox thunderbird"
+      ],
+      "referencias": [
+        {
+          "t": "Debian DSA-6662-1",
+          "u": "https://security-tracker.debian.org/tracker/DSA-6662-1"
+        },
+        {
+          "t": "Debian DSA-6663-1",
+          "u": "https://security-tracker.debian.org/tracker/DSA-6663-1"
+        }
+      ]
+    },
+    {
+      "id": "libreoffice-2026-11",
+      "titulo": "LibreOffice: correções de novembro",
+      "tecnologia": "escritorio",
+      "tipo": "pacote",
+      "situacao": "urgente",
+      "publicado_em": "2026-11-18",
+      "cves_de": [
+        "DSA-6635-1",
+        "DSA-6615-1"
+      ],
+      "cves": [],
+      "fontes": {
+        "deb12": [
+          "libreoffice"
+        ],
+        "deb13": [
+          "libreoffice"
+        ],
+        "u2204": [
+          "libreoffice"
+        ],
+        "u2404": [
+          "libreoffice"
+        ],
+        "u2604": [
+          "libreoffice"
+        ]
+      },
+      "resumo": "Documentos maliciosos podem explorar falhas do LibreOffice.",
+      "afetadas": "libreoffice sem as correções.",
+      "softwares": [
+        "Laboratórios",
+        "Administração",
+        "Conversão de documentos em servidores (unoconv, Moodle)"
+      ],
+      "mitigacao": [
+        "Servidores que convertem documentos enviados por usuários (Moodle, SEI) também precisam atualizar"
+      ],
+      "referencias": [
+        {
+          "t": "Debian DSA-6635-1",
+          "u": "https://security-tracker.debian.org/tracker/DSA-6635-1"
+        }
+      ]
+    },
+    {
+      "id": "imagemagick-ghostscript-2026",
+      "titulo": "ImageMagick e Ghostscript: processamento de imagens e PDF",
+      "tecnologia": "imagens-pdf",
+      "tipo": "pacote",
+      "situacao": "urgente",
+      "publicado_em": "2026-11-17",
+      "cves_de": [
+        "DSA-6611-1",
+        "DLA-4875-1",
+        "DSA-6550-1",
+        "DLA-4914-1",
+        "USN-8949-1"
+      ],
+      "cves": [],
+      "fontes": {
+        "deb12": [
+          "imagemagick",
+          "ghostscript"
+        ],
+        "deb13": [
+          "imagemagick",
+          "ghostscript"
+        ],
+        "u2204": [
+          "imagemagick",
+          "ghostscript"
+        ],
+        "u2404": [
+          "imagemagick",
+          "ghostscript"
+        ],
+        "u2604": [
+          "imagemagick",
+          "ghostscript"
+        ]
+      },
+      "resumo": "Imagens e PDFs enviados por usuários podem explorar o ImageMagick e o Ghostscript nos servidores que geram miniaturas e convertem arquivos.",
+      "afetadas": "imagemagick/ghostscript sem as correções.",
+      "softwares": [
+        "Moodle (miniaturas, conversão de PDF)",
+        "WordPress",
+        "DSpace (miniaturas)",
+        "Nextcloud (pré-visualização)",
+        "CUPS e impressão"
+      ],
+      "mitigacao": [
+        "Restringir formatos no policy.xml do ImageMagick (PS, EPS, PDF, MVG)"
+      ],
+      "bibliotecas": [
+        "libmagickcore-6.q16-7",
+        "libmagickcore-7.q16-10",
+        "libgs10"
+      ],
+      "referencias": [
+        {
+          "t": "Debian DSA-6611-1",
+          "u": "https://security-tracker.debian.org/tracker/DSA-6611-1"
+        },
+        {
+          "t": "Ubuntu USN-8949-1",
+          "u": "https://ubuntu.com/security/notices/USN-8949-1"
+        }
+      ]
+    },
+    {
+      "id": "dns-bind-unbound-pdns",
+      "titulo": "DNS: BIND, Unbound e PowerDNS",
+      "tecnologia": "dns",
+      "tipo": "pacote",
+      "situacao": "urgente",
+      "publicado_em": "2026-11-14",
+      "cves_de": [
+        "DSA-6576-1",
+        "DLA-4865-1",
+        "USN-8969-1",
+        "USN-8929-1",
+        "DSA-6581-1",
+        "USN-8946-1",
+        "DSA-6587-1",
+        "DSA-6630-1"
+      ],
+      "cves": [],
+      "fontes": {
+        "deb12": [
+          "bind9",
+          "unbound",
+          "pdns",
+          "pdns-recursor"
+        ],
+        "deb13": [
+          "bind9",
+          "unbound",
+          "pdns",
+          "pdns-recursor"
+        ],
+        "u2204": [
+          "bind9",
+          "unbound",
+          "pdns",
+          "pdns-recursor"
+        ],
+        "u2404": [
+          "bind9",
+          "unbound",
+          "pdns",
+          "pdns-recursor"
+        ],
+        "u2604": [
+          "bind9",
+          "unbound",
+          "pdns",
+          "pdns-recursor"
+        ]
+      },
+      "resumo": "Várias falhas nos servidores DNS mais usados, incluindo negação de serviço e envenenamento de cache.",
+      "afetadas": "bind9, unbound, pdns e pdns-recursor sem as correções.",
+      "softwares": [
+        "DNS autoritativo do domínio institucional",
+        "Resolvedores recursivos do campus"
+      ],
+      "mitigacao": [
+        "Restringir recursão à rede do campus"
+      ],
+      "referencias": [
+        {
+          "t": "Ubuntu USN-8969-1",
+          "u": "https://ubuntu.com/security/notices/USN-8969-1"
+        },
+        {
+          "t": "Debian DSA-6576-1",
+          "u": "https://security-tracker.debian.org/tracker/DSA-6576-1"
+        }
+      ]
+    },
+    {
+      "id": "email-dovecot-sogo-sympa",
+      "titulo": "E-mail: Dovecot, SOGo, Sympa, Postfixadmin, Cyrus SASL e ClamAV",
+      "tecnologia": "email",
+      "tipo": "pacote",
+      "situacao": "urgente",
+      "publicado_em": "2026-11-20",
+      "cves_de": [
+        "DLA-4873-1",
+        "DSA-6561-1",
+        "DLA-4908-1",
+        "USN-8993-1",
+        "DSA-6624-1",
+        "DLA-4923-1",
+        "DLA-4925-1",
+        "DLA-4871-1",
+        "DLA-4852-1"
+      ],
+      "cves": [],
+      "fontes": {
+        "deb12": [
+          "dovecot",
+          "sogo",
+          "sympa",
+          "postfixadmin",
+          "cyrus-sasl2",
+          "clamav"
+        ],
+        "deb13": [
+          "dovecot",
+          "sogo",
+          "sympa",
+          "postfixadmin",
+          "cyrus-sasl2",
+          "clamav"
+        ],
+        "u2204": [
+          "dovecot",
+          "sogo",
+          "sympa",
+          "postfixadmin",
+          "cyrus-sasl2",
+          "clamav"
+        ],
+        "u2404": [
+          "dovecot",
+          "sogo",
+          "sympa",
+          "postfixadmin",
+          "cyrus-sasl2",
+          "clamav"
+        ],
+        "u2604": [
+          "dovecot",
+          "sogo",
+          "sympa",
+          "postfixadmin",
+          "cyrus-sasl2",
+          "clamav"
+        ]
+      },
+      "resumo": "Correções em componentes de e-mail e listas de discussão.",
+      "afetadas": "Pacotes sem as correções listadas.",
+      "softwares": [
+        "Servidor de e-mail institucional",
+        "Listas de discussão (Sympa)",
+        "Webmail SOGo",
+        "Antivírus do e-mail (ClamAV)"
+      ],
+      "mitigacao": [
+        "Após atualizar: systemctl restart dovecot sogo sympa clamav-daemon"
+      ],
+      "referencias": [
+        {
+          "t": "Debian DSA-6624-1",
+          "u": "https://security-tracker.debian.org/tracker/DSA-6624-1"
+        },
+        {
+          "t": "Debian DLA-4873-1",
+          "u": "https://security-tracker.debian.org/tracker/DLA-4873-1"
+        }
+      ]
+    },
+    {
+      "id": "eduroam-vpn-2026",
+      "titulo": "eduroam e VPN: radsecproxy, strongSwan e OpenVPN",
+      "tecnologia": "eduroam-vpn",
+      "tipo": "pacote",
+      "situacao": "urgente",
+      "publicado_em": "2026-11-23",
+      "cves_de": [
+        "DSA-6632-1",
+        "DLA-4931-1",
+        "DSA-6540-1",
+        "DLA-4879-1",
+        "USN-8953-1"
+      ],
+      "cves": [],
+      "fontes": {
+        "deb12": [
+          "radsecproxy",
+          "strongswan",
+          "openvpn"
+        ],
+        "deb13": [
+          "radsecproxy",
+          "strongswan",
+          "openvpn"
+        ],
+        "u2204": [
+          "radsecproxy",
+          "strongswan",
+          "openvpn"
+        ],
+        "u2404": [
+          "radsecproxy",
+          "strongswan",
+          "openvpn"
+        ],
+        "u2604": [
+          "radsecproxy",
+          "strongswan",
+          "openvpn"
+        ]
+      },
+      "resumo": "Falhas no radsecproxy (usado na federação eduroam) e nas VPNs strongSwan e OpenVPN.",
+      "afetadas": "Pacotes sem as correções listadas.",
+      "softwares": [
+        "eduroam (proxy RADIUS/RadSec para a federação)",
+        "VPN de acesso remoto",
+        "Túneis entre campi"
+      ],
+      "mitigacao": [
+        "Após atualizar: systemctl restart radsecproxy strongswan openvpn"
+      ],
+      "referencias": [
+        {
+          "t": "Debian DSA-6632-1",
+          "u": "https://security-tracker.debian.org/tracker/DSA-6632-1"
+        },
+        {
+          "t": "Ubuntu USN-8953-1",
+          "u": "https://ubuntu.com/security/notices/USN-8953-1"
+        }
+      ]
+    },
+    {
+      "id": "xen-2026-11",
+      "titulo": "Xen: falhas no hipervisor",
+      "tecnologia": "virtualizacao",
+      "tipo": "pacote",
+      "situacao": "urgente",
+      "publicado_em": "2026-11-04",
+      "cves_de": [
+        "DSA-6610-1",
+        "DLA-4881-1"
+      ],
+      "cves": [],
+      "fontes": {
+        "deb12": [
+          "xen"
+        ],
+        "deb13": [
+          "xen"
+        ],
+        "u2204": [
+          "xen"
+        ],
+        "u2404": [
+          "xen"
+        ],
+        "u2604": [
+          "xen"
+        ]
+      },
+      "resumo": "Falhas no hipervisor Xen podem permitir que uma VM afete o host ou outras VMs.",
+      "afetadas": "xen sem as correções. XCP-ng e Citrix Hypervisor: atualize pelo fornecedor.",
+      "softwares": [
+        "Hosts Xen",
+        "XCP-ng (gerenciado pelo Xen Orchestra)"
+      ],
+      "mitigacao": [
+        "Exige reiniciar o host"
+      ],
+      "referencias": [
+        {
+          "t": "Debian DSA-6610-1",
+          "u": "https://security-tracker.debian.org/tracker/DSA-6610-1"
+        }
+      ]
+    },
+    {
+      "id": "ruby-rails-2026-11",
+      "titulo": "Ruby e Rails: correções de outubro e novembro",
+      "tecnologia": "ruby",
+      "tipo": "pacote",
+      "situacao": "urgente",
+      "publicado_em": "2026-11-24",
+      "cves_de": [
+        "DSA-6644-1",
+        "DLA-4926-2",
+        "DSA-6546-1",
+        "DLA-4934-1",
+        "DLA-4829-1"
+      ],
+      "cves": [],
+      "fontes": {
+        "deb12": [
+          "ruby3.1",
+          "rails"
+        ],
+        "deb13": [
+          "ruby3.3",
+          "rails"
+        ],
+        "u2204": [
+          "ruby3.0",
+          "rails"
+        ],
+        "u2404": [
+          "ruby3.2",
+          "rails"
+        ],
+        "u2604": [
+          "ruby3.3",
+          "rails"
+        ]
+      },
+      "resumo": "Falhas no interpretador Ruby e no Rails empacotados pela distro.",
+      "afetadas": "Pacotes sem as correções. Aplicações com Ruby próprio (GitLab Omnibus) não usam estes pacotes.",
+      "softwares": [
+        "Redmine",
+        "Discourse",
+        "Canvas LMS",
+        "GitLab instalado a partir de código"
+      ],
+      "mitigacao": [
+        "Aplicações com Bundler: bundle update rails"
+      ],
+      "referencias": [
+        {
+          "t": "Debian DSA-6644-1",
+          "u": "https://security-tracker.debian.org/tracker/DSA-6644-1"
+        }
+      ]
+    },
+    {
+      "id": "symfony-2026-11",
+      "titulo": "Symfony: correções de novembro",
+      "tecnologia": "php",
+      "tipo": "pacote",
+      "situacao": "urgente",
+      "publicado_em": "2026-11-09",
+      "cves_de": [
+        "DSA-6617-1",
+        "DSA-6612-1"
+      ],
+      "cves": [],
+      "fontes": {
+        "deb12": [
+          "symfony"
+        ],
+        "deb13": [
+          "symfony"
+        ],
+        "u2204": [
+          "symfony"
+        ],
+        "u2404": [
+          "symfony"
+        ],
+        "u2604": [
+          "symfony"
+        ]
+      },
+      "resumo": "Falhas no framework PHP Symfony empacotado pela distro.",
+      "afetadas": "symfony sem as correções. Projetos com Composer: composer update symfony/*.",
+      "softwares": [
+        "Drupal (componentes Symfony)",
+        "Matomo",
+        "Mautic",
+        "Aplicações internas em PHP"
+      ],
+      "mitigacao": [
+        "Projetos com Composer: composer audit"
+      ],
+      "referencias": [
+        {
+          "t": "Debian DSA-6617-1",
+          "u": "https://security-tracker.debian.org/tracker/DSA-6617-1"
+        }
+      ]
+    },
+    {
+      "id": "redis-valkey-2026-10",
+      "titulo": "Redis e Valkey: correções de outubro",
+      "tecnologia": "cache",
+      "tipo": "pacote",
+      "situacao": "urgente",
+      "publicado_em": "2026-10-27",
+      "cves_de": [
+        "DSA-6538-1",
+        "DSA-6586-1"
+      ],
+      "cves": [],
+      "fontes": {
+        "deb12": [
+          "redis",
+          "valkey"
+        ],
+        "deb13": [
+          "redis",
+          "valkey"
+        ],
+        "u2204": [
+          "redis",
+          "valkey"
+        ],
+        "u2404": [
+          "redis",
+          "valkey"
+        ],
+        "u2604": [
+          "redis",
+          "valkey"
+        ]
+      },
+      "resumo": "Falhas no Redis e no Valkey.",
+      "afetadas": "redis/valkey sem as correções.",
+      "softwares": [
+        "Cache e sessões do Moodle",
+        "Nextcloud",
+        "GitLab (instalação própria)",
+        "Filas de aplicações"
+      ],
+      "mitigacao": [
+        "Exigir senha (requirepass) e escutar só em localhost ou rede interna"
+      ],
+      "referencias": [
+        {
+          "t": "Debian DSA-6538-1",
+          "u": "https://security-tracker.debian.org/tracker/DSA-6538-1"
+        }
+      ]
+    },
+    {
+      "id": "nodejs-2026-10",
+      "titulo": "Node.js: correções de outubro",
+      "tecnologia": "nodejs",
+      "tipo": "pacote",
+      "situacao": "urgente",
+      "publicado_em": "2026-10-01",
+      "cves_de": [
+        "DLA-4809-1"
+      ],
+      "cves": [],
+      "fontes": {
+        "deb12": [
+          "nodejs"
+        ],
+        "deb13": [
+          "nodejs"
+        ],
+        "u2204": [
+          "nodejs"
+        ],
+        "u2404": [
+          "nodejs"
+        ],
+        "u2604": [
+          "nodejs"
+        ]
+      },
+      "resumo": "Falhas no Node.js empacotado pela distro.",
+      "afetadas": "nodejs sem as correções. Instalações via NodeSource/nvm: atualize por elas.",
+      "softwares": [
+        "Aplicações internas em Node.js",
+        "Ferramentas de build de sites"
+      ],
+      "mitigacao": [],
+      "referencias": [
+        {
+          "t": "Debian DLA-4809-1",
+          "u": "https://security-tracker.debian.org/tracker/DLA-4809-1"
+        }
+      ]
+    },
+    {
+      "id": "python-tornado-pillow",
+      "titulo": "Python: Tornado, Pillow e Python 3.11",
+      "tecnologia": "python",
+      "tipo": "pacote",
+      "situacao": "urgente",
+      "publicado_em": "2026-11-12",
+      "cves_de": [
+        "USN-8952-1",
+        "USN-9064-1",
+        "USN-8999-1",
+        "DLA-4827-1"
+      ],
+      "cves": [],
+      "fontes": {
+        "deb12": [
+          "python-tornado",
+          "pillow",
+          "python3.11"
+        ],
+        "deb13": [
+          "python-tornado",
+          "pillow"
+        ],
+        "u2204": [
+          "python-tornado",
+          "pillow"
+        ],
+        "u2404": [
+          "python-tornado",
+          "pillow"
+        ],
+        "u2604": [
+          "python-tornado",
+          "pillow"
+        ]
+      },
+      "resumo": "Falhas no Tornado (servidor web), no Pillow (imagens) e no Python 3.11.",
+      "afetadas": "Pacotes sem as correções. Virtualenvs e conda precisam de pip install -U tornado pillow.",
+      "softwares": [
+        "JupyterHub e Jupyter (Tornado)",
+        "SUAP e outros sistemas Django (Pillow)",
+        "Notebooks de pesquisa"
+      ],
+      "mitigacao": [
+        "Virtualenvs: pip list --outdated | grep -Ei 'tornado|pillow'"
+      ],
+      "referencias": [
+        {
+          "t": "Ubuntu USN-9064-1",
+          "u": "https://ubuntu.com/security/notices/USN-9064-1"
+        },
+        {
+          "t": "Ubuntu USN-8952-1",
+          "u": "https://ubuntu.com/security/notices/USN-8952-1"
+        }
+      ]
+    },
+    {
+      "id": "sistema-base-2026-11",
+      "titulo": "Base do sistema: sudo, needrestart, shadow, rsync e PAM",
+      "tecnologia": "sistema-base",
+      "tipo": "pacote",
+      "situacao": "urgente",
+      "publicado_em": "2026-11-25",
+      "cves_de": [
+        "USN-8895-2",
+        "DSA-6637-1",
+        "DLA-4921-1",
+        "USN-9151-1",
+        "DSA-6661-1",
+        "DLA-4888-1",
+        "DLA-4941-1"
+      ],
+      "cves": [],
+      "fontes": {
+        "deb12": [
+          "sudo",
+          "needrestart",
+          "shadow",
+          "rsync",
+          "pam"
+        ],
+        "deb13": [
+          "sudo",
+          "needrestart",
+          "shadow",
+          "rsync",
+          "pam"
+        ],
+        "u2204": [
+          "sudo",
+          "needrestart",
+          "shadow",
+          "rsync",
+          "pam"
+        ],
+        "u2404": [
+          "sudo",
+          "needrestart",
+          "shadow",
+          "rsync",
+          "pam"
+        ],
+        "u2604": [
+          "sudo",
+          "needrestart",
+          "shadow",
+          "rsync",
+          "pam"
+        ]
+      },
+      "resumo": "Falhas em ferramentas presentes em praticamente todo servidor; algumas permitem escalada local de privilégio (inclui pam_namespace, CVE-2025-6020, CVSS 7.8, corrigido no Debian 12 pelo DLA-4941-1).",
+      "afetadas": "Pacotes sem as correções listadas.",
+      "softwares": [
+        "Todos os servidores Debian/Ubuntu",
+        "Servidores de backup com rsync"
+      ],
+      "mitigacao": [],
+      "referencias": [
+        {
+          "t": "Debian DSA-6637-1",
+          "u": "https://security-tracker.debian.org/tracker/DSA-6637-1"
+        },
+        {
+          "t": "Debian DSA-6661-1",
+          "u": "https://security-tracker.debian.org/tracker/DSA-6661-1"
+        },
+        {
+          "t": "Debian DLA-4941-1",
+          "u": "https://security-tracker.debian.org/tracker/DLA-4941-1"
+        }
+      ]
+    },
+    {
+      "id": "nagios4-2026-10",
+      "titulo": "Nagios: correções de outubro",
+      "tecnologia": "monitoramento",
+      "tipo": "pacote",
+      "situacao": "urgente",
+      "publicado_em": "2026-10-13",
+      "cves_de": [
+        "DSA-6556-1",
+        "DLA-4832-1"
+      ],
+      "cves": [],
+      "fontes": {
+        "deb12": [
+          "nagios4"
+        ],
+        "deb13": [
+          "nagios4"
+        ],
+        "u2204": [
+          "nagios4"
+        ],
+        "u2404": [
+          "nagios4"
+        ],
+        "u2604": [
+          "nagios4"
+        ]
+      },
+      "resumo": "Falhas no Nagios Core empacotado pela distro.",
+      "afetadas": "nagios4 sem as correções.",
+      "softwares": [
+        "Monitoramento de rede e servidores"
+      ],
+      "mitigacao": [
+        "Restringir a interface web do Nagios à rede de gerência"
+      ],
+      "referencias": [
+        {
+          "t": "Debian DSA-6556-1",
+          "u": "https://security-tracker.debian.org/tracker/DSA-6556-1"
+        }
+      ]
+    },
+    {
+      "id": "nvd-moodle",
+      "titulo": "Moodle e plugins: CVEs recentes",
+      "tecnologia": "moodle",
+      "tipo": "manual",
+      "situacao": "urgente",
+      "cves": [],
+      "nvd": {
+        "cpe": [
+          "cpe:2.3:a:moodle:moodle"
+        ],
+        "palavra": "Moodle",
+        "regex": "\\bMoodle\\b"
+      },
+      "softwares": [
+        "AVA institucional",
+        "Plugins de terceiros (blocks, mods)"
+      ],
+      "mitigacao": [
+        "Atualizar para a última versão do ramo",
+        "Remover plugins sem manutenção"
+      ],
+      "referencias": [
+        {
+          "t": "Moodle Security",
+          "u": "https://moodle.org/security/"
+        }
+      ],
+      "como_verificar": "Administração do site > Notificações; ou grep '\\$release' version.php",
+      "app": {
+        "tipo": "moodle",
+        "derivar": true,
+        "excluir": "(?i)plugin|\\bblock\\b|\\bmod_|local_|theme|socialwall|configurable reports|format_|qtype_"
+      },
+      "correcao_app": "No diretório do Moodle: git pull no ramo MOODLE_<versão>_STABLE (ou extraia o pacote novo preservando config.php e moodledata) e depois sudo -u www-data php admin/cli/upgrade.php --non-interactive",
+      "rollback_app": "Restaure o backup do código, do banco e do moodledata feito antes; o Moodle não suporta voltar a versão do banco."
+    },
+    {
+      "id": "nvd-glpi",
+      "titulo": "GLPI: CVEs recentes",
+      "tecnologia": "gestao-ti",
+      "tipo": "manual",
+      "situacao": "urgente",
+      "cves": [],
+      "nvd": {
+        "cpe": [
+          "cpe:2.3:a:glpi-project:glpi"
+        ],
+        "palavra": "GLPI",
+        "regex": "\\bGLPI\\b"
+      },
+      "softwares": [
+        "Central de serviços e inventário de TI"
+      ],
+      "mitigacao": [
+        "Atualizar o GLPI e plugins"
+      ],
+      "referencias": [
+        {
+          "t": "GLPI no GitHub",
+          "u": "https://github.com/glpi-project/glpi/security/advisories"
+        }
+      ],
+      "como_verificar": "Configurar > Geral > Sistema (versão)",
+      "app": {
+        "tipo": "glpi",
+        "derivar": true,
+        "excluir": "(?i)plugin"
+      },
+      "correcao_app": "Extraia a versão nova do GLPI preservando config/, files/, marketplace/ e plugins/; depois sudo -u www-data php bin/console db:update",
+      "rollback_app": "Restaure o backup de código e banco feito antes da atualização."
+    },
+    {
+      "id": "nvd-ojs",
+      "titulo": "OJS/PKP: CVEs recentes",
+      "tecnologia": "publicacao",
+      "tipo": "manual",
+      "situacao": "urgente",
+      "cves": [],
+      "nvd": {
+        "cpe": [
+          "cpe:2.3:a:pkp:open_journal_systems"
+        ],
+        "palavra": "Open Journal Systems",
+        "regex": "Open Journal Systems|\\bPKP\\b"
+      },
+      "softwares": [
+        "Portal de periódicos (SEER/OJS)"
+      ],
+      "mitigacao": [
+        "Atualizar para o último release do ramo 3.x"
+      ],
+      "referencias": [
+        {
+          "t": "PKP",
+          "u": "https://pkp.sfu.ca/"
+        }
+      ],
+      "como_verificar": "Administração > Informações do sistema",
+      "app": {
+        "tipo": "ojs",
+        "derivar": true,
+        "excluir": "(?i)plugin"
+      },
+      "correcao_app": "Extraia a versão nova do OJS preservando config.inc.php e public/; depois sudo -u www-data php tools/upgrade.php upgrade",
+      "rollback_app": "Restaure o backup de código, banco e files_dir feito antes."
+    },
+    {
+      "id": "nvd-dspace",
+      "titulo": "DSpace: CVEs recentes",
+      "tecnologia": "publicacao",
+      "tipo": "manual",
+      "situacao": "urgente",
+      "cves": [],
+      "nvd": {
+        "cpe": [
+          "cpe:2.3:a:lyrasis:dspace"
+        ],
+        "palavra": "DSpace",
+        "regex": "\\bDSpace\\b"
+      },
+      "softwares": [
+        "Repositório institucional"
+      ],
+      "mitigacao": [
+        "Atualizar para o último release do ramo"
+      ],
+      "referencias": [
+        {
+          "t": "DSpace",
+          "u": "https://github.com/DSpace/DSpace/security/advisories"
+        }
+      ],
+      "como_verificar": "Rodapé da interface ou dspace version",
+      "app": {
+        "tipo": "dspace",
+        "derivar": true,
+        "excluir": "(?i)\\bangular\\b"
+      },
+      "correcao_app": "Atualize o backend (mvn package e ant update no dspace-installer) e o frontend Angular para o mesmo release; depois reinicie o Tomcat.",
+      "rollback_app": "Restaure o diretório [dspace] e o banco a partir do backup feito antes."
+    },
+    {
+      "id": "nvd-koha",
+      "titulo": "Koha: CVEs recentes",
+      "tecnologia": "bibliotecas-acervo",
+      "tipo": "manual",
+      "situacao": "urgente",
+      "cves": [],
+      "nvd": {
+        "cpe": [],
+        "palavra": "Koha",
+        "regex": "\\bKoha\\b"
+      },
+      "softwares": [
+        "Sistema de bibliotecas"
+      ],
+      "mitigacao": [
+        "Atualizar o Koha"
+      ],
+      "referencias": [],
+      "como_verificar": "Sobre o Koha > Versão"
+    },
+    {
+      "id": "nvd-nextcloud",
+      "titulo": "Nextcloud: CVEs recentes",
+      "tecnologia": "nuvem-arquivos",
+      "tipo": "manual",
+      "situacao": "urgente",
+      "cves": [],
+      "nvd": {
+        "cpe": [
+          "cpe:2.3:a:nextcloud:nextcloud_server"
+        ],
+        "palavra": "Nextcloud",
+        "regex": "\\bNextcloud\\b",
+        "excluir": "Tandoor"
+      },
+      "softwares": [
+        "Armazenamento e compartilhamento de arquivos"
+      ],
+      "mitigacao": [
+        "Atualizar servidor e apps"
+      ],
+      "referencias": [
+        {
+          "t": "Nextcloud Security",
+          "u": "https://github.com/nextcloud/security-advisories/security/advisories"
+        }
+      ],
+      "como_verificar": "Configurações > Visão geral",
+      "app": {
+        "tipo": "nextcloud",
+        "derivar": true,
+        "excluir": "(?i)\\bapp\\b|collabora|richdocuments|circles|3d viewer|talk|deck|desktop|android|ios"
+      },
+      "correcao_app": "sudo -u www-data php updater/updater.phar --no-interaction && sudo -u www-data php occ upgrade",
+      "rollback_app": "Restaure o backup do diretório e do banco feito pelo updater (data/updater-*/backups)."
+    },
+    {
+      "id": "nvd-jupyterhub",
+      "titulo": "JupyterHub: CVEs recentes",
+      "tecnologia": "pesquisa",
+      "tipo": "manual",
+      "situacao": "urgente",
+      "cves": [],
+      "nvd": {
+        "cpe": [],
+        "palavra": "JupyterHub",
+        "regex": "\\bJupyterHub\\b"
+      },
+      "softwares": [
+        "Notebooks para ensino e pesquisa"
+      ],
+      "mitigacao": [
+        "pip install -U jupyterhub"
+      ],
+      "referencias": [],
+      "como_verificar": "jupyterhub --version"
+    },
+    {
+      "id": "nvd-shibboleth",
+      "titulo": "Shibboleth: CVEs recentes",
+      "tecnologia": "identidade",
+      "tipo": "manual",
+      "situacao": "urgente",
+      "cves": [],
+      "nvd": {
+        "cpe": [
+          "cpe:2.3:a:shibboleth:identity_provider",
+          "cpe:2.3:a:shibboleth:service_provider"
+        ],
+        "palavra": "Shibboleth",
+        "regex": "(^|\\. |\\bin |\\bof |\\bon )(the )?Shibboleth( Identity Provider| IdP| Service Provider| SP)?\\b|\\bShibboleth( Identity Provider| IdP| Service Provider| SP)?\\b[^.;]{0,60}?\\b(before|prior to|through|versions?|up to|from|server|daemon)\\b"
+      },
+      "softwares": [
+        "Federação CAFe (RNP)",
+        "Login único institucional"
+      ],
+      "mitigacao": [
+        "Atualizar IdP e SP"
+      ],
+      "referencias": [
+        {
+          "t": "Shibboleth Security",
+          "u": "https://shibboleth.net/community/advisories/"
+        }
+      ],
+      "como_verificar": "IdP: bin/version.sh; SP: shibd -v"
+    },
+    {
+      "id": "nvd-keycloak",
+      "titulo": "Keycloak: CVEs recentes",
+      "tecnologia": "identidade",
+      "tipo": "manual",
+      "situacao": "urgente",
+      "cves": [],
+      "nvd": {
+        "cpe": [
+          "cpe:2.3:a:redhat:keycloak"
+        ],
+        "palavra": "Keycloak",
+        "regex": "(^|\\. )(Red Hat build of )?Keycloak\\b(?! (auth|provider))|\\bin Keycloak\\b|\\bKeycloak(?:'s)? (server|admin|before|prior|through|version)",
+        "excluir": "aeriOS|pac4j|Apache Airflow"
+      },
+      "softwares": [
+        "Login único (SSO)"
+      ],
+      "mitigacao": [
+        "Atualizar o Keycloak"
+      ],
+      "referencias": [],
+      "como_verificar": "Console de administração > Server info",
+      "app": {
+        "tipo": "keycloak",
+        "derivar": true,
+        "excluir": "(?i)provider|pac4j|airflow|aerios"
+      },
+      "correcao_app": "Instale a distribuição nova do Keycloak, copie conf/ e providers/ e rode bin/kc.sh build antes de reiniciar.",
+      "rollback_app": "Volte a distribuição anterior com o mesmo banco apenas se a nova não migrou o esquema; caso contrário, restaure o backup do banco."
+    },
+    {
+      "id": "nvd-apereo-cas",
+      "titulo": "Apereo CAS: CVEs recentes",
+      "tecnologia": "identidade",
+      "tipo": "manual",
+      "situacao": "urgente",
+      "cves": [],
+      "nvd": {
+        "cpe": [
+          "cpe:2.3:a:apereo:central_authentication_service"
+        ],
+        "palavra": "Apereo CAS",
+        "regex": "Apereo CAS|CAS Server"
+      },
+      "softwares": [
+        "Login único (SSO)"
+      ],
+      "mitigacao": [
+        "Atualizar o CAS"
+      ],
+      "referencias": []
+    },
+    {
+      "id": "nvd-samba",
+      "titulo": "Samba: CVEs recentes",
+      "tecnologia": "identidade",
+      "tipo": "pacote",
+      "situacao": "urgente",
+      "cves": [],
+      "nvd": {
+        "cpe": [
+          "cpe:2.3:a:samba:samba"
+        ],
+        "palavra": "Samba",
+        "regex": "(^|\\. |\\bin |\\bof |\\bon )(the )?Samba\\b|\\bSamba\\b[^.;]{0,60}?\\b(before|prior to|through|versions?|up to|from|server|daemon)\\b"
+      },
+      "softwares": [
+        "Controlador de domínio Samba AD",
+        "Compartilhamento de arquivos SMB"
+      ],
+      "mitigacao": [
+        "Restringir SMB à rede interna"
+      ],
+      "referencias": [],
+      "fontes": {
+        "deb12": [
+          "samba"
+        ],
+        "deb13": [
+          "samba"
+        ],
+        "u2204": [
+          "samba"
+        ],
+        "u2404": [
+          "samba"
+        ],
+        "u2604": [
+          "samba"
+        ]
+      }
+    },
+    {
+      "id": "nvd-openldap",
+      "titulo": "OpenLDAP: CVEs recentes",
+      "tecnologia": "identidade",
+      "tipo": "pacote",
+      "situacao": "urgente",
+      "cves": [],
+      "nvd": {
+        "cpe": [
+          "cpe:2.3:a:openldap:openldap"
+        ],
+        "palavra": "OpenLDAP",
+        "regex": "(^|\\. |\\bin |\\bof |\\bon )(the )?OpenLDAP\\b|\\bOpenLDAP\\b[^.;]{0,60}?\\b(before|prior to|through|versions?|up to|from|server|daemon)\\b",
+        "excluir": "aeriOS"
+      },
+      "softwares": [
+        "Diretório de usuários",
+        "Autenticação de sistemas acadêmicos"
+      ],
+      "mitigacao": [
+        "Restringir o LDAP à rede interna e exigir TLS"
+      ],
+      "referencias": [],
+      "fontes": {
+        "deb12": [
+          "openldap"
+        ],
+        "deb13": [
+          "openldap"
+        ],
+        "u2204": [
+          "openldap"
+        ],
+        "u2404": [
+          "openldap"
+        ],
+        "u2604": [
+          "openldap"
+        ]
+      }
+    },
+    {
+      "id": "nvd-freeradius",
+      "titulo": "FreeRADIUS: CVEs recentes",
+      "tecnologia": "eduroam-vpn",
+      "tipo": "pacote",
+      "situacao": "urgente",
+      "cves": [],
+      "nvd": {
+        "cpe": [
+          "cpe:2.3:a:freeradius:freeradius"
+        ],
+        "palavra": "FreeRADIUS",
+        "regex": "(^|\\. |\\bin |\\bof |\\bon )(the )?FreeRADIUS\\b|\\bFreeRADIUS\\b[^.;]{0,60}?\\b(before|prior to|through|versions?|up to|from|server|daemon)\\b"
+      },
+      "softwares": [
+        "eduroam",
+        "Autenticação de Wi-Fi e VPN"
+      ],
+      "mitigacao": [],
+      "referencias": [],
+      "fontes": {
+        "deb12": [
+          "freeradius"
+        ],
+        "deb13": [
+          "freeradius"
+        ],
+        "u2204": [
+          "freeradius"
+        ],
+        "u2404": [
+          "freeradius"
+        ],
+        "u2604": [
+          "freeradius"
+        ]
+      }
+    },
+    {
+      "id": "nvd-zabbix",
+      "titulo": "Zabbix: CVEs recentes",
+      "tecnologia": "monitoramento",
+      "tipo": "pacote",
+      "situacao": "urgente",
+      "cves": [],
+      "nvd": {
+        "cpe": [
+          "cpe:2.3:a:zabbix:zabbix"
+        ],
+        "palavra": "Zabbix",
+        "regex": "\\bZabbix\\b"
+      },
+      "softwares": [
+        "Monitoramento de rede e servidores"
+      ],
+      "mitigacao": [
+        "Repositório oficial da Zabbix: atualize por ele"
+      ],
+      "referencias": [],
+      "fontes": {
+        "deb12": [
+          "zabbix"
+        ],
+        "deb13": [
+          "zabbix"
+        ],
+        "u2204": [
+          "zabbix"
+        ],
+        "u2404": [
+          "zabbix"
+        ],
+        "u2604": [
+          "zabbix"
+        ]
+      },
+      "como_verificar": "Rodapé da interface web"
+    },
+    {
+      "id": "nvd-grafana",
+      "titulo": "Grafana: CVEs recentes",
+      "tecnologia": "monitoramento",
+      "tipo": "manual",
+      "situacao": "urgente",
+      "cves": [],
+      "nvd": {
+        "cpe": [
+          "cpe:2.3:a:grafana:grafana"
+        ],
+        "palavra": "Grafana",
+        "regex": "\\bGrafana\\b"
+      },
+      "softwares": [
+        "Painéis de monitoramento"
+      ],
+      "mitigacao": [
+        "Atualizar o Grafana"
+      ],
+      "referencias": [],
+      "como_verificar": "grafana-server -v"
+    },
+    {
+      "id": "nvd-jenkins",
+      "titulo": "Jenkins e plugins: CVEs recentes",
+      "tecnologia": "ci-devops",
+      "tipo": "manual",
+      "situacao": "urgente",
+      "cves": [],
+      "nvd": {
+        "cpe": [
+          "cpe:2.3:a:jenkins:jenkins"
+        ],
+        "palavra": "Jenkins",
+        "regex": "\\bJenkins\\b"
+      },
+      "softwares": [
+        "Integração contínua de projetos"
+      ],
+      "mitigacao": [
+        "Atualizar Jenkins e plugins"
+      ],
+      "referencias": [
+        {
+          "t": "Jenkins Security",
+          "u": "https://www.jenkins.io/security/advisories/"
+        }
+      ],
+      "como_verificar": "Gerenciar Jenkins > Sobre"
+    },
+    {
+      "id": "nvd-proxmox",
+      "titulo": "Proxmox VE: CVEs recentes",
+      "tecnologia": "virtualizacao",
+      "tipo": "manual",
+      "situacao": "urgente",
+      "cves": [],
+      "nvd": {
+        "cpe": [
+          "cpe:2.3:a:proxmox:virtual_environment"
+        ],
+        "palavra": "Proxmox",
+        "regex": "\\bProxmox\\b"
+      },
+      "softwares": [
+        "Virtualização de laboratórios e serviços"
+      ],
+      "mitigacao": [
+        "apt dist-upgrade pelo repositório do Proxmox"
+      ],
+      "referencias": [],
+      "como_verificar": "pveversion"
+    },
+    {
+      "id": "nvd-pfsense-opnsense",
+      "titulo": "pfSense: CVEs recentes",
+      "tecnologia": "vpn-firewall",
+      "tipo": "manual",
+      "situacao": "urgente",
+      "cves": [],
+      "nvd": {
+        "cpe": [
+          "cpe:2.3:a:netgate:pfsense"
+        ],
+        "palavra": "pfSense",
+        "regex": "\\bpfSense\\b"
+      },
+      "softwares": [
+        "Firewall de campus e laboratórios"
+      ],
+      "mitigacao": [
+        "Restringir a interface web à rede de gerência"
+      ],
+      "referencias": [],
+      "como_verificar": "Dashboard > System Information"
+    },
+    {
+      "id": "nvd-opnsense",
+      "titulo": "OPNsense: CVEs recentes",
+      "tecnologia": "vpn-firewall",
+      "tipo": "manual",
+      "situacao": "urgente",
+      "cves": [],
+      "nvd": {
+        "cpe": [],
+        "palavra": "OPNsense",
+        "regex": "\\bOPNsense\\b"
+      },
+      "softwares": [
+        "Firewall de campus e laboratórios"
+      ],
+      "mitigacao": [
+        "Restringir a interface web à rede de gerência"
+      ],
+      "referencias": [],
+      "como_verificar": "Lobby > Dashboard"
+    },
+    {
+      "id": "nvd-mikrotik",
+      "titulo": "MikroTik RouterOS: CVEs recentes",
+      "tecnologia": "rede",
+      "tipo": "manual",
+      "situacao": "urgente",
+      "cves": [],
+      "nvd": {
+        "cpe": [
+          "cpe:2.3:o:mikrotik:routeros"
+        ],
+        "palavra": "MikroTik",
+        "regex": "\\bMikroTik\\b|\\bRouterOS\\b"
+      },
+      "softwares": [
+        "Roteadores e enlaces de campi"
+      ],
+      "mitigacao": [
+        "Desativar Winbox/WebFig na interface externa"
+      ],
+      "referencias": [],
+      "como_verificar": "/system resource print"
+    },
+    {
+      "id": "nvd-unifi-aruba",
+      "titulo": "Wi-Fi (UniFi e Aruba): CVEs recentes",
+      "tecnologia": "rede",
+      "tipo": "manual",
+      "situacao": "urgente",
+      "cves": [],
+      "nvd": {
+        "cpe": [
+          "cpe:2.3:a:ui:unifi_network_application",
+          "cpe:2.3:o:arubanetworks:arubaos"
+        ],
+        "palavra": "UniFi",
+        "regex": "\\bUniFi\\b|\\bArubaOS\\b|\\bAruba\\b"
+      },
+      "softwares": [
+        "Controladoras de Wi-Fi"
+      ],
+      "mitigacao": [
+        "Não expor a controladora à internet"
+      ],
+      "referencias": []
+    },
+    {
+      "id": "nvd-cftv",
+      "titulo": "Câmeras e interfones (Intelbras, Hikvision): CVEs recentes",
+      "tecnologia": "cftv",
+      "tipo": "manual",
+      "situacao": "urgente",
+      "cves": [],
+      "nvd": {
+        "cpe": [],
+        "palavra": "Intelbras",
+        "regex": "\\bIntelbras\\b"
+      },
+      "softwares": [
+        "CFTV dos campi",
+        "Controle de acesso"
+      ],
+      "mitigacao": [
+        "Isolar câmeras em VLAN sem acesso à internet",
+        "Trocar senhas padrão"
+      ],
+      "referencias": []
+    },
+    {
+      "id": "nvd-hikvision",
+      "titulo": "Hikvision: CVEs recentes",
+      "tecnologia": "cftv",
+      "tipo": "manual",
+      "situacao": "urgente",
+      "cves": [],
+      "nvd": {
+        "cpe": [],
+        "palavra": "Hikvision",
+        "regex": "\\bHikvision\\b"
+      },
+      "softwares": [
+        "CFTV dos campi",
+        "Interfones"
+      ],
+      "mitigacao": [
+        "Isolar câmeras em VLAN sem acesso à internet"
+      ],
+      "referencias": []
+    },
+    {
+      "id": "nvd-fortinet",
+      "titulo": "Fortinet (FortiOS, FortiClient e outros): CVEs recentes",
+      "tecnologia": "vpn-firewall",
+      "tipo": "manual",
+      "situacao": "urgente",
+      "cves": [],
+      "nvd": {
+        "cpe": [
+          "cpe:2.3:o:fortinet:fortios",
+          "cpe:2.3:a:fortinet:forticlient"
+        ],
+        "palavra": "Fortinet",
+        "regex": "\\bFortinet\\b|\\bForti[A-Z][A-Za-z]+"
+      },
+      "softwares": [
+        "Firewall e VPN (FortiGate)",
+        "Cliente VPN (FortiClient)"
+      ],
+      "mitigacao": [
+        "Acompanhar o PSIRT da Fortinet"
+      ],
+      "referencias": [
+        {
+          "t": "Fortinet PSIRT",
+          "u": "https://www.fortiguard.com/psirt"
+        }
+      ],
+      "como_verificar": "get system status (FortiOS)"
+    },
+    {
+      "id": "nvd-veeam",
+      "titulo": "Veeam: CVEs recentes",
+      "tecnologia": "backup",
+      "tipo": "manual",
+      "situacao": "urgente",
+      "cves": [],
+      "nvd": {
+        "cpe": [],
+        "palavra": "Veeam",
+        "regex": "\\bVeeam\\b"
+      },
+      "softwares": [
+        "Backup de servidores e VMs"
+      ],
+      "mitigacao": [
+        "Não ingressar o servidor Veeam no domínio de produção",
+        "Isolar a rede de backup"
+      ],
+      "referencias": [
+        {
+          "t": "Veeam Security",
+          "u": "https://www.veeam.com/knowledge-base.html"
+        }
+      ],
+      "como_verificar": "Help > About no console"
+    },
+    {
+      "id": "nvd-zimbra",
+      "titulo": "Zimbra: CVEs recentes",
+      "tecnologia": "email",
+      "tipo": "manual",
+      "situacao": "urgente",
+      "cves": [],
+      "nvd": {
+        "cpe": [
+          "cpe:2.3:a:synacor:zimbra_collaboration_suite"
+        ],
+        "palavra": "Zimbra",
+        "regex": "\\bZimbra\\b"
+      },
+      "softwares": [
+        "E-mail institucional (Zimbra)"
+      ],
+      "mitigacao": [
+        "Aplicar o último patch do Zimbra"
+      ],
+      "referencias": [],
+      "como_verificar": "su - zimbra -c 'zmcontrol -v'"
+    },
+    {
+      "id": "nvd-exchange-sharepoint",
+      "titulo": "Microsoft Exchange e SharePoint: CVEs de nota 8,0 ou mais",
+      "tecnologia": "microsoft",
+      "tipo": "manual",
+      "situacao": "urgente",
+      "cves": [],
+      "nvd": {
+        "cpe": [
+          "cpe:2.3:a:microsoft:exchange_server",
+          "cpe:2.3:a:microsoft:sharepoint_server"
+        ],
+        "nota_minima": 8.0
+      },
+      "softwares": [
+        "E-mail e intranet (on-premises)"
+      ],
+      "mitigacao": [
+        "Aplicar o Patch Tuesday"
+      ],
+      "referencias": [
+        {
+          "t": "MSRC",
+          "u": "https://msrc.microsoft.com/update-guide"
+        }
+      ]
+    },
+    {
+      "id": "nvd-netscaler",
+      "titulo": "Citrix NetScaler: CVEs recentes",
+      "tecnologia": "vpn-firewall",
+      "tipo": "manual",
+      "situacao": "urgente",
+      "cves": [],
+      "nvd": {
+        "cpe": [
+          "cpe:2.3:a:citrix:netscaler_application_delivery_controller"
+        ],
+        "palavra": "NetScaler",
+        "regex": "\\bNetScaler\\b"
+      },
+      "softwares": [
+        "Acesso remoto e balanceamento"
+      ],
+      "mitigacao": [
+        "Aplicar os boletins da Citrix"
+      ],
+      "referencias": []
+    },
+    {
+      "id": "nvd-sigaa-sei",
+      "titulo": "SIGAA e SEI: CVEs recentes",
+      "tecnologia": "sistemas-gov",
+      "tipo": "manual",
+      "situacao": "urgente",
+      "cves": [],
+      "nvd": {
+        "cpe": [],
+        "palavra": "SIGAA",
+        "regex": "\\bSIGAA\\b|\\bSIPAC\\b|\\bSIGRH\\b"
+      },
+      "softwares": [
+        "Sistemas acadêmicos e administrativos (SIG-UFRN)"
+      ],
+      "mitigacao": [
+        "Acompanhar a cooperação SIG e a atualização da sua instituição"
+      ],
+      "referencias": []
+    },
+    {
+      "id": "nvd-sei",
+      "titulo": "SEI (Sistema Eletrônico de Informações): CVEs recentes",
+      "tecnologia": "sistemas-gov",
+      "tipo": "manual",
+      "situacao": "urgente",
+      "cves": [],
+      "nvd": {
+        "cpe": [],
+        "palavra": "Sistema Eletrônico de Informações",
+        "regex": "Sistema Eletr[oô]nico de Informa[cç][oõ]es"
+      },
+      "softwares": [
+        "Processo eletrônico (SEI)"
+      ],
+      "mitigacao": [
+        "Acompanhar os comunicados do PEN/MGI"
+      ],
+      "referencias": []
+    },
+    {
+      "id": "cisco-esa-76519",
+      "titulo": "Cisco Secure Email Gateway: gravação arbitrária de arquivos sem autenticação",
+      "tecnologia": "email-gateway",
+      "tipo": "manual",
+      "situacao": "explorado",
+      "exploracao": "CISA KEV desde 14/10; alerta CAIS/RNP de 10/11.",
+      "kev": "2026-10-14",
+      "publicado_em": "2026-10-14",
+      "cves": [
+        "CVE-2026-76519"
+      ],
+      "resumo": "Falha de travessia de diretório (path traversal) permite a um atacante remoto, sem login, gravar arquivos arbitrários no sistema operacional do gateway (AsyncOS).",
+      "afetadas": "Cisco Secure Email Gateway (antigo ESA/IronPort) nas versões indicadas no aviso cisco-sa-esa-afw-zqYJkjxp.",
+      "softwares": [
+        "Gateway de e-mail institucional (antispam/antivírus na frente do Exim/Zimbra/Microsoft 365)"
+      ],
+      "mitigacao": [
+        "Aplicar a versão corrigida do AsyncOS indicada pela Cisco",
+        "Restringir o acesso às interfaces de gerência à rede de administração",
+        "Procurar arquivos e contas inesperados e revisar logs (KEV exige triagem forense)"
+      ],
+      "como_verificar": "CLI do gateway: version (ou System Administration > System Upgrade na interface web).",
+      "referencias": [
+        {
+          "t": "Aviso Cisco cisco-sa-esa-afw-zqYJkjxp",
+          "u": "https://sec.cloudapps.cisco.com/security/center/content/CiscoSecurityAdvisory/cisco-sa-esa-afw-zqYJkjxp"
+        },
+        {
+          "t": "NVD CVE-2026-76519",
+          "u": "https://nvd.nist.gov/vuln/detail/CVE-2026-76519"
+        },
+        {
+          "t": "CISA KEV",
+          "u": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog"
+        }
+      ]
+    },
+    {
+      "id": "juniper-ssr-103406",
+      "titulo": "Juniper Session Smart Router/Conductor: injeção de comando como root",
+      "tecnologia": "rede",
+      "tipo": "manual",
+      "situacao": "explorado",
+      "exploracao": "CISA KEV desde 25/11.",
+      "kev": "2026-11-25",
+      "publicado_em": "2026-11-25",
+      "cves": [
+        "CVE-2026-103406"
+      ],
+      "resumo": "Um atacante remoto executa comandos como root no Session Smart Router ou Conductor por meio de um ID de minion Salt forjado.",
+      "afetadas": "Juniper (HPE) Session Smart Router e Session Smart Conductor nas versões indicadas no boletim de outubro/2026 da Juniper.",
+      "softwares": [
+        "Roteadores SD-WAN de campi e polos",
+        "Conductor de gerência SD-WAN"
+      ],
+      "mitigacao": [
+        "Aplicar a versão corrigida indicada no boletim da Juniper",
+        "Restringir o acesso à porta do Salt (4505-4506/tcp) e à gerência do Conductor",
+        "Verificar minions desconhecidos e comandos inesperados (KEV exige triagem forense)"
+      ],
+      "como_verificar": "No Conductor ou no roteador: show system version.",
+      "referencias": [
+        {
+          "t": "Boletim Juniper SSR (out/2026)",
+          "u": "https://supportportal.juniper.net/s/article/2026-10-On-Demand-Security-Bulletin-Session-Smart-Router-and-Session-Smart-Conductor-Multiple-internally-discovered-vulnerabilities-resolved"
+        },
+        {
+          "t": "NVD CVE-2026-103406",
+          "u": "https://nvd.nist.gov/vuln/detail/CVE-2026-103406"
+        },
+        {
+          "t": "CISA KEV",
+          "u": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog"
+        }
+      ]
+    }
+  ]
+}

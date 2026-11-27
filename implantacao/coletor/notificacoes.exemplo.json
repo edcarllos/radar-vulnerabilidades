@@ -1,0 +1,13 @@
+{
+ "_sobre": "Copie para /etc/radar/notificacoes.json (root:radar-coletor, 0640) e apague os canais que não usar. Segredos ficam em arquivos próprios, também 0640 root:radar-coletor. 'eventos' aceita 'imediato' e 'resumo' (padrão: os dois). Teste com: sudo -u radar-coletor python3 /opt/radar/ferramentas/notificar.py testar --site /var/www/radar",
+ "painel_url": "https://intranet.SUA-INSTITUICAO/radar/",
+ "epss_minimo": 0.1,
+ "canais": [
+  {"tipo": "email", "smtp": "smtp.SUA-INSTITUICAO", "porta": 587, "starttls": true,
+   "usuario": "radar", "senha_arquivo": "/etc/radar/smtp.senha",
+   "de": "radar@SUA-INSTITUICAO", "para": ["seguranca@SUA-INSTITUICAO"]},
+  {"tipo": "telegram", "token_arquivo": "/etc/radar/telegram.token", "chat_id": "-1001234567890", "eventos": ["imediato"]},
+  {"tipo": "mattermost", "url_arquivo": "/etc/radar/mattermost.url"},
+  {"tipo": "teams", "url_arquivo": "/etc/radar/teams.url", "eventos": ["resumo"]}
+ ]
+}

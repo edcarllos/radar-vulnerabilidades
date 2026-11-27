@@ -1,0 +1,53 @@
+# Radar de Vulnerabilidades: confere pull requests sem segredos e sem rede.
+# Reconstrói o painel e os scripts com o cache da última coleta e valida o resultado.
+name: Verificar
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verificar:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: JSON válido
+        run: |
+          python3 -I -m json.tool itens.json > /dev/null
+          python3 -I -m json.tool criticidade.json > /dev/null
+
+      - name: Sintaxe dos scripts e ferramentas
+        run: |
+          for f in ferramentas/*.sh ferramentas/modelos/*.sh laboratorio/*.sh; do bash -n "$f"; done
+          python3 -I -m py_compile ferramentas/*.py
+          node --check ferramentas/gerador.js
+
+      - id: cache
+        name: Restaurar o cache da última coleta
+        uses: actions/cache/restore@v6
+        with:
+          path: ~/.cache/radar-vulnerabilidades
+          key: radar-fontes-pr-${{ github.run_id }}
+          restore-keys: radar-fontes-
+
+      - name: Construir sem rede e validar
+        if: steps.cache.outputs.cache-matched-key != ''
+        env:
+          RADAR_PUBLICO: "1"
+          RADAR_REPO: ${{ github.repository }}
+        run: |
+          bash ferramentas/coletar.sh --sem-rede 2>&1 | tee /tmp/construcao.log
+          ! grep -q "^ERRO:" /tmp/construcao.log
+          ! grep -Eq "[1-9][0-9]* descartadas|AVISO: linha descartada" /tmp/construcao.log
+          bash ferramentas/montar-publico.sh /tmp/publico
+
+      - name: Aviso quando não há cache
+        if: steps.cache.outputs.cache-matched-key == ''
+        run: echo "::notice::Sem cache de coleta ainda; a construção completa será conferida na próxima coleta."

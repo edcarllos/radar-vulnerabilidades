@@ -1,0 +1,19 @@
+{
+  "_sobre": "Importância de cada tecnologia para a missão da instituição, usada na decisão SSVC (F4). Valores: alta, media, baixa. Ajuste com a gestão de TI. 'itens' sobrescreve por id de item.",
+  "padrao": "media",
+  "tecnologias": {
+    "php": "alta", "kernel": "alta", "apt": "media", "nginx": "alta", "apache2": "alta", "haproxy": "alta",
+    "brotli": "media", "zstd": "media", "expat": "media", "pcre2": "media", "libssh": "media", "glibc": "alta",
+    "openssl": "alta", "curl": "media", "libgd": "media", "krb5": "alta", "openssh": "alta", "exim": "alta",
+    "roundcube": "alta", "squid": "media", "postgresql": "alta", "tomcat": "alta", "axis": "media", "django": "alta",
+    "mediawiki": "baixa", "conteineres": "media", "puppet": "media", "chromium": "baixa", "drupal": "alta",
+    "wordpress": "media", "gitlab": "media", "webconferencia": "alta", "pesquisa": "media", "virtualizacao": "alta",
+    "vpn-firewall": "alta", "email-gateway": "alta", "nas": "media", "estacoes": "baixa", "outros": "baixa",
+    "java": "alta", "banco-dados": "alta", "navegadores-email": "baixa", "escritorio": "baixa", "imagens-pdf": "media",
+    "dns": "alta", "email": "alta", "eduroam-vpn": "alta", "ruby": "media", "cache": "media", "nodejs": "media",
+    "python": "media", "sistema-base": "alta", "monitoramento": "media", "moodle": "alta", "gestao-ti": "media",
+    "publicacao": "media", "bibliotecas-acervo": "media", "nuvem-arquivos": "media", "identidade": "alta",
+    "ci-devops": "media", "rede": "alta", "cftv": "media", "backup": "alta", "microsoft": "media", "sistemas-gov": "alta"
+  },
+  "itens": {}
+}

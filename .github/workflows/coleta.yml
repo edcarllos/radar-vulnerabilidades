@@ -1,0 +1,88 @@
+# Radar de Vulnerabilidades: coleta diária e sob demanda, publicada no GitHub Pages.
+# Sob demanda: Actions > Coleta > Run workflow, ou: gh workflow run coleta.yml
+# A lógica fica em ferramentas/ci-coleta.sh (dá para rodar o mesmo script fora do GitHub).
+name: Coleta
+
+on:
+  schedule:
+    - cron: "40 9 * * *"   # 06:40 em Brasília (UTC-3); o GitHub pode atrasar alguns minutos
+  workflow_dispatch:
+    inputs:
+      renovar_cache:
+        description: "Baixar de novo também o que fica no cache (OVAL, EPSS, NVD por produto)"
+        type: boolean
+        default: false
+      primeira_coleta:
+        description: "Primeira coleta: começar sem estado anterior (use só na primeira vez)"
+        type: boolean
+        default: false
+
+permissions: {}
+
+env:
+  TZ: America/Sao_Paulo   # horários da coleta no painel em horário de Brasília
+
+concurrency:
+  group: coleta
+  cancel-in-progress: false
+
+jobs:
+  coletar:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    permissions:
+      contents: write   # grava o estado da coleta no branch "dados"
+      issues: write     # mantém a issue de candidatos a item novo
+      pages: read       # configure-pages lê o endereço do site
+    steps:
+      - uses: actions/checkout@v7
+
+      - id: pages
+        uses: actions/configure-pages@v6
+
+      - name: Restaurar o cache das fontes
+        uses: actions/cache/restore@v6
+        with:
+          path: ~/.cache/radar-vulnerabilidades
+          key: radar-fontes-${{ github.run_id }}
+          restore-keys: radar-fontes-
+
+      - name: Coletar, construir e montar o site
+        env:
+          NVD_API_KEY: ${{ secrets.NVD_API_KEY }}
+          RADAR_GPG_PRIVADA: ${{ secrets.RADAR_GPG_PRIVADA }}
+          RADAR_REPO: ${{ github.repository }}
+          RADAR_SITE_URL: ${{ steps.pages.outputs.base_url }}/
+          PRIMEIRA_COLETA: ${{ inputs.primeira_coleta && '1' || '0' }}
+          RENOVAR_CACHE: ${{ inputs.renovar_cache && '1' || '0' }}
+        run: bash ferramentas/ci-coleta.sh publico
+
+      - name: Guardar o cache das fontes
+        uses: actions/cache/save@v6
+        with:
+          path: ~/.cache/radar-vulnerabilidades
+          key: radar-fontes-${{ github.run_id }}
+
+      - uses: actions/upload-pages-artifact@v5
+        with:
+          path: publico
+
+      - name: Atualizar a issue de candidatos
+        continue-on-error: true   # a issue é ajuda à curadoria; nunca barra a publicação
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RADAR_SITE_URL: ${{ steps.pages.outputs.base_url }}/
+        run: bash ferramentas/ci-candidatos.sh site/vulns.json
+
+  publicar:
+    needs: coletar
+    runs-on: ubuntu-24.04
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - id: deploy
+        uses: actions/deploy-pages@v5

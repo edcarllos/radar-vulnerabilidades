@@ -1,0 +1,134 @@
+zabbix_export:
+  version: '7.0'
+  template_groups:
+    - uuid: 425c74d49e735e5eb1538a76340f3f7d
+      name: Templates/Security
+  templates:
+    - uuid: 8de06886b98f51c7a19f7e62cd15ac19
+      template: 'Radar de Vulnerabilidades'
+      name: 'Radar de Vulnerabilidades'
+      description: 'Lê /var/lib/radar/verificacao.json gerado pelo radar-verificar.sh --json (cron). Requer userparameter_radar.conf no agente.'
+      groups:
+        - name: Templates/Security
+      items:
+        - uuid: 082d3eb8f9775cf1b04d069d181d9ad4
+          name: 'Radar: resultado da verificação (JSON)'
+          key: radar.verificacao
+          delay: 10m
+          history: 7d
+          trends: '0'
+          value_type: TEXT
+          description: 'Saída JSON do radar-verificar.sh, atualizada a cada hora pelo cron.'
+          tags:
+            - tag: component
+              value: security
+          triggers:
+            - uuid: 6edaff26495c5c86b61b4e7a03fa0343
+              expression: 'nodata(/Radar de Vulnerabilidades/radar.verificacao,3h)=1'
+              name: 'Radar: verificação sem resultado há 3 horas em {HOST.NAME}'
+              priority: WARNING
+              description: 'O cron do radar parou ou o arquivo não está legível pelo agente.'
+        - uuid: eb8efeb07c9b5b90bc93fbcaba996d78
+          name: 'Radar: itens vulneráveis com correção disponível'
+          type: DEPENDENT
+          key: radar.vulneravel
+          delay: '0'
+          history: 30d
+          description: 'Pacotes ou aplicações abaixo da versão corrigida.'
+          preprocessing:
+            - type: JSONPATH
+              parameters:
+                - '$.resumo.vulneravel'
+          master_item:
+            key: radar.verificacao
+          tags:
+            - tag: component
+              value: security
+          triggers:
+            - uuid: 4d52a61ce095561abe02a24386df9a8f
+              expression: 'last(/Radar de Vulnerabilidades/radar.vulneravel)>0'
+              name: 'Radar: {HOST.NAME} tem {ITEM.LASTVALUE} item(ns) com correção disponível'
+              priority: AVERAGE
+              description: 'Rode radar-corrigir.sh ou atualize os pacotes.'
+        - uuid: 570c9bb89bc05d389b7ac9508115dd4c
+          name: 'Radar: itens com decisão Agir agora'
+          type: DEPENDENT
+          key: radar.agir_agora
+          delay: '0'
+          history: 30d
+          description: 'Vulneráveis cuja decisão SSVC é Agir agora (prazo de 1 dia).'
+          preprocessing:
+            - type: JSONPATH
+              parameters:
+                - '$.resumo.agir_agora'
+          master_item:
+            key: radar.verificacao
+          tags:
+            - tag: component
+              value: security
+          triggers:
+            - uuid: 3cbe9f8d23cb5920b59573eef5dbe11e
+              expression: 'last(/Radar de Vulnerabilidades/radar.agir_agora)>0'
+              name: 'Radar: {HOST.NAME} tem {ITEM.LASTVALUE} item(ns) para agir agora'
+              priority: HIGH
+              description: 'Exploração ativa ou provável em sistema importante. Corrija ou mitigue hoje.'
+        - uuid: 531fb45a1796530fa2350e8eed5fb603
+          name: 'Radar: itens sem correção na distro'
+          type: DEPENDENT
+          key: radar.sem_correcao
+          delay: '0'
+          history: 30d
+          description: 'Instalados e sem pacote corrigido; aplicar mitigação.'
+          preprocessing:
+            - type: JSONPATH
+              parameters:
+                - '$.resumo.sem_correcao'
+          master_item:
+            key: radar.verificacao
+          tags:
+            - tag: component
+              value: security
+        - uuid: 07dadbda17dd535f9475177e13d623dd
+          name: 'Radar: reinício pendente'
+          type: DEPENDENT
+          key: radar.reiniciar
+          delay: '0'
+          history: 30d
+          description: 'Kernel corrigido instalado, mas não em execução.'
+          preprocessing:
+            - type: JSONPATH
+              parameters:
+                - '$.resumo.reiniciar'
+          master_item:
+            key: radar.verificacao
+          tags:
+            - tag: component
+              value: security
+          triggers:
+            - uuid: a7237c8f773e5f8fbd8294b5a2ce5ca9
+              expression: 'last(/Radar de Vulnerabilidades/radar.reiniciar)>0'
+              name: 'Radar: {HOST.NAME} precisa reiniciar para concluir a correção do kernel'
+              priority: WARNING
+              description: 'Agende a reinicialização.'
+        - uuid: 85cf027a778b54fa8a7e3ee04da2cb73
+          name: 'Radar: idade dos dados do script (dias)'
+          type: DEPENDENT
+          key: radar.idade_dados
+          delay: '0'
+          history: 30d
+          description: 'Dias desde a coleta usada para gerar o script.'
+          preprocessing:
+            - type: JSONPATH
+              parameters:
+                - '$.idade_dados_dias'
+          master_item:
+            key: radar.verificacao
+          tags:
+            - tag: component
+              value: security
+          triggers:
+            - uuid: 25d303eee5fe559984308fe15e25345c
+              expression: 'last(/Radar de Vulnerabilidades/radar.idade_dados)>7'
+              name: 'Radar: script de verificação de {HOST.NAME} usa dados com mais de 7 dias'
+              priority: INFO
+              description: 'Atualize /usr/local/lib/radar/radar-verificar.sh com uma versão nova do painel.'

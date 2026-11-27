@@ -1,0 +1,29 @@
+name: Falso positivo
+description: Um CVE aparece num item, mas não é desse produto.
+title: "Falso positivo: "
+labels: ["falso-positivo"]
+body:
+  - type: markdown
+    attributes:
+      value: "Obrigado! Itens `nvd-*` acham CVEs pela busca na NVD; às vezes a busca traz CVEs de outro produto com nome parecido."
+  - type: input
+    id: item
+    attributes:
+      label: Item do Radar
+      description: "O id do item, como nvd-moodle."
+    validations:
+      required: true
+  - type: input
+    id: cve
+    attributes:
+      label: CVE
+      placeholder: CVE-2026-12345
+    validations:
+      required: true
+  - type: textarea
+    id: motivo
+    attributes:
+      label: Por que não é deste produto?
+      description: "Por exemplo: o aviso oficial fala de outro fornecedor. Um link ajuda."
+    validations:
+      required: true

@@ -1,0 +1,29 @@
+name: Produto novo
+description: Sugira um produto usado em instituições de ensino e pesquisa que o Radar ainda não acompanha.
+title: "Produto novo: "
+labels: ["produto-novo"]
+body:
+  - type: input
+    id: produto
+    attributes:
+      label: Produto e fornecedor
+      placeholder: "Ex.: Koha (biblioteca)"
+    validations:
+      required: true
+  - type: textarea
+    id: uso
+    attributes:
+      label: Onde é usado
+      description: "Que tipo de instituição usa e para quê."
+    validations:
+      required: true
+  - type: input
+    id: avisos
+    attributes:
+      label: Página oficial de avisos de segurança
+      description: "Se souber. Só fontes oficiais (fornecedor, NVD, distro)."
+  - type: input
+    id: cpe
+    attributes:
+      label: CPE na NVD
+      description: "Se souber, por exemplo cpe:2.3:a:koha:koha"

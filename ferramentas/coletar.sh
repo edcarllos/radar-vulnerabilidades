@@ -1,0 +1,163 @@
+#!/usr/bin/env bash
+# Baixa os dados oficiais usados pelo Radar e reconstrói site/vulns.json.
+# Uso: ferramentas/coletar.sh [--sem-rede | --so-baixar]
+#   --sem-rede   reconstrói só com o cache, sem baixar nada (registra a coleta no histórico como as demais)
+#   --so-baixar  baixa as fontes e sai, sem construir nem registrar coleta
+#   RADAR_CACHE  diretório de cache (padrão: ~/.cache/radar-vulnerabilidades)
+#   Chave da API da NVD (opcional; aumenta o limite de 5 para 50 consultas a cada 30 s):
+#     variável NVD_API_KEY ou arquivo ~/.config/radar-vulnerabilidades/nvd-api-key (permissão 600).
+#     A chave nunca é impressa nem passada na linha de comando.
+# Só acessa fontes oficiais: cisa.gov, debian.org, salsa.debian.org, ubuntu.com, nist.gov.
+set -euo pipefail
+PROJ="$(cd "$(dirname "$0")/.." && pwd)"
+CACHE="${RADAR_CACHE:-$HOME/.cache/radar-vulnerabilidades}"
+mkdir -p "$CACHE/usn" "$CACHE/ubuntu" "$CACHE/nvd" "$CACHE/nvd-produtos" "$CACHE/oval"
+baixar() { curl -fsSL --compressed -m 120 -o "$1.tmp" "$2" && mv "$1.tmp" "$1"; }
+
+# NVD: usa a chave de API se existir; o cabeçalho vai pela entrada padrão do curl (não aparece em ps).
+NVD_CHAVE_ARQ="${RADAR_NVD_CHAVE_ARQ:-$HOME/.config/radar-vulnerabilidades/nvd-api-key}"
+NVD_CHAVE="${NVD_API_KEY:-}"
+if [ -z "$NVD_CHAVE" ] && [ -r "$NVD_CHAVE_ARQ" ]; then NVD_CHAVE=$(tr -d ' \r\n' < "$NVD_CHAVE_ARQ"); fi
+if [ -n "$NVD_CHAVE" ] && ! [[ "$NVD_CHAVE" =~ ^[A-Za-z0-9-]{20,64}$ ]]; then
+  echo "AVISO: chave da NVD em formato inesperado; seguindo sem chave."; NVD_CHAVE=""
+fi
+if [ -n "$NVD_CHAVE" ]; then NVD_PAUSA=0.7; echo "== NVD: usando chave de API (limite maior)"; else NVD_PAUSA=6.5; fi
+baixar_nvd() {
+  local cod
+  if [ -n "$NVD_CHAVE" ]; then
+    local cab
+    cab=$(printf 'apiKey: %s\n' "$NVD_CHAVE" | curl -sS --compressed -m 120 -H @- -o "$1.tmp" -D - "$2" 2>/dev/null) || true
+    cod=$(printf '%s\n' "$cab" | awk 'toupper($1) ~ /^HTTP/ {c=$2} END {print c+0}')
+    # A NVD responde 404 com "message: Invalid apiKey." para chave inválida.
+    if [ "$cod" = 403 ] || [ "$cod" = 401 ] || printf '%s' "$cab" | grep -qi '^message: *invalid apikey'; then
+      echo "AVISO: a NVD recusou a chave (HTTP $cod); seguindo sem chave."; NVD_CHAVE=""; NVD_PAUSA=6.5
+      sleep 6.5; baixar "$1" "$2"; return
+    fi
+    if [ "$cod" = 200 ]; then mv "$1.tmp" "$1"; return 0; fi
+    return 1
+  fi
+  baixar "$1" "$2"
+}
+
+if [ "${1:-}" != "--sem-rede" ]; then
+  echo "== CISA KEV"
+  baixar "$CACHE/kev.json" https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json
+  echo "== Debian"
+  baixar "$CACHE/deb.json" https://security-tracker.debian.org/tracker/data/json
+  baixar "$CACHE/dsa-list.txt" https://salsa.debian.org/security-tracker-team/security-tracker/-/raw/master/data/DSA/list
+  baixar "$CACHE/dla-list.txt" https://salsa.debian.org/security-tracker-team/security-tracker/-/raw/master/data/DLA/list
+  echo "== Ubuntu OVAL (histórico completo; uma vez por dia)"
+  for cod in jammy noble resolute; do
+    f="$CACHE/oval/com.ubuntu.$cod.cve.oval.xml.bz2"
+    if [ ! -s "$f" ] || [ -n "$(find "$f" -mmin +1380 2>/dev/null)" ]; then
+      baixar "$f" "https://security-metadata.canonical.com/oval/com.ubuntu.$cod.cve.oval.xml.bz2" || echo "falhou OVAL $cod"
+    fi
+  done
+  echo "== EPSS (FIRST; uma vez por dia)"
+  f="$CACHE/epss.csv.gz"
+  if [ ! -s "$f" ] || [ -n "$(find "$f" -mmin +1380 2>/dev/null)" ]; then
+    baixar "$f" https://epss.empiricalsecurity.com/epss_scores-current.csv.gz || echo "falhou EPSS"
+  fi
+  echo "== Ubuntu CVE Tracker (estados de triagem; uma vez por dia)"
+  if [ ! -d "$CACHE/uct.git" ]; then
+    git clone -q --bare --depth 1 https://git.launchpad.net/ubuntu-cve-tracker "$CACHE/uct.git" || echo "falhou clone do Ubuntu CVE Tracker"
+    rm -f "$CACHE/uct.tsv"
+  elif [ -n "$(find "$CACHE/uct.tsv" -mmin +1380 2>/dev/null)" ] || [ ! -s "$CACHE/uct.tsv" ]; then
+    git -C "$CACHE/uct.git" fetch -q --depth 1 origin +refs/heads/master:refs/heads/master || echo "falhou atualização do Ubuntu CVE Tracker"
+    rm -f "$CACHE/uct.tsv"
+  fi
+  if [ -d "$CACHE/uct.git" ] && [ ! -s "$CACHE/uct.tsv" ]; then
+    git -C "$CACHE/uct.git" archive HEAD active | python3 -I "$PROJ/ferramentas/completo.py" uct --saida "$CACHE/uct.tsv" || echo "falhou leitura do Ubuntu CVE Tracker"
+  fi
+  echo "== CAIS/RNP (alertas assinados com PGP)"
+  mkdir -p "$CACHE/cais"
+  baixar "$CACHE/cais/pagina1.html" https://www.rnp.br/servicos/cais/ || echo "falhou página do CAIS"
+  baixar "$CACHE/cais/pagina2.html" https://www.rnp.br/servicos/cais/page/2/ || true
+  cat "$CACHE"/cais/pagina*.html 2>/dev/null | python3 -I "$PROJ/ferramentas/nacionais.py" links /dev/stdin > "$CACHE/cais/links.txt" || : > "$CACHE/cais/links.txt"
+  GPG_CAIS=""
+  if command -v gpg >/dev/null 2>&1; then
+    GPG_CAIS="$CACHE/cais/gnupg"; mkdir -p "$GPG_CAIS"; chmod 700 "$GPG_CAIS"
+    if [ ! -s "$CACHE/cais/cais-pgp.key" ]; then
+      baixar "$CACHE/cais/cais-pgp.key" https://plataforma.rnp.br/cais/cais-pgp.key && GNUPGHOME="$GPG_CAIS" gpg --batch --quiet --import "$CACHE/cais/cais-pgp.key" 2>/dev/null || echo "falhou importar a chave do CAIS"
+    fi
+  fi
+  while read -r u; do
+    case "$u" in https://plataforma.rnp.br/arquivos/documents/CAIS-Alerta*.txt*) ;; *) continue ;; esac
+    id=$(printf '%s' "${u%%\?*}" | sha256sum | cut -c1-16)
+    f="$CACHE/cais/$id.txt"
+    [ -s "$f" ] || baixar "$f" "$u" || continue
+    printf '%s\n' "$u" > "$f.url"
+    if [ ! -s "$f.verif" ]; then
+      if [ -n "$GPG_CAIS" ]; then
+        if GNUPGHOME="$GPG_CAIS" gpg --batch --verify "$f" >/dev/null 2>&1; then echo ok > "$f.verif"; else echo falha > "$f.verif"; fi
+      else
+        echo sem-gpg > "$f.verif"
+      fi
+    fi
+  done < "$CACHE/cais/links.txt"
+  echo "== Ubuntu (USNs recentes)"
+  for off in $(seq 0 20 300); do
+    baixar "$CACHE/usn/p$off.json" "https://ubuntu.com/security/notices.json?limit=20&offset=$off&order=newest" || true
+  done
+  echo "== NVD por produto (janela móvel de 90 dias; pausa de ${NVD_PAUSA} s entre consultas)"
+  python3 -I "$PROJ/ferramentas/construir_dados.py" --cache "$CACHE" --projeto "$PROJ" --listar-consultas > "$CACHE/consultas-nvd.tsv"
+  while IFS=$'\t' read -r arq url; do
+    [[ "$arq" =~ ^[a-z0-9-]+__(cpe[0-9]+|palavra)\.json$ ]] || continue
+    f="$CACHE/nvd-produtos/$arq"
+    if [ ! -s "$f" ] || [ -n "$(find "$f" -mmin +600 2>/dev/null)" ]; then
+      baixar_nvd "$f" "$url" || echo "falhou consulta NVD: $arq"
+      sleep "$NVD_PAUSA"
+    fi
+  done < "$CACHE/consultas-nvd.tsv"
+  echo "== Ubuntu e NVD por CVE"
+  python3 -I "$PROJ/ferramentas/construir_dados.py" --cache "$CACHE" --projeto "$PROJ" --listar-cves > "$CACHE/cves.txt"
+  # Ubuntu: rebaixa arquivos com mais de 1 dia (8 downloads em paralelo).
+  while read -r c; do
+    [[ "$c" =~ ^CVE-[0-9]{4}-[0-9]{4,7}$ ]] || continue
+    f="$CACHE/ubuntu/$c.json"
+    if [ ! -s "$f" ] || [ -n "$(find "$f" -mmin +1440 2>/dev/null)" ]; then echo "$c"; fi
+  done < "$CACHE/cves.txt" | xargs -r -P8 -I{} sh -c 'curl -fsSL --compressed -m 60 -o "$0/ubuntu/{}.json.tmp" "https://ubuntu.com/security/cves/{}.json" 2>/dev/null && mv "$0/ubuntu/{}.json.tmp" "$0/ubuntu/{}.json"; rm -f "$0/ubuntu/{}.json.tmp"' "$CACHE"
+  # NVD: só CVEs ainda sem arquivo ou com mais de 3 dias; limite de 5 req/30 s sem chave.
+  while read -r c; do
+    [[ "$c" =~ ^CVE-[0-9]{4}-[0-9]{4,7}$ ]] || continue
+    f="$CACHE/nvd/$c.json"
+    if [ ! -s "$f" ] || [ -n "$(find "$f" -mmin +4320 2>/dev/null)" ]; then
+      baixar_nvd "$f" "https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=$c" || true
+      sleep "$NVD_PAUSA"
+    fi
+  done < <(RADAR_NVD_TODOS="${NVD_CHAVE:+1}" python3 -I - "$CACHE/cves.txt" <<'PY'
+import sys
+# Prioriza CVEs de itens explorados não cobertos pelo Ubuntu (produtos de fornecedores).
+import json, os
+cache = os.path.dirname(sys.argv[1])
+import glob
+ja = set()
+for f in glob.glob(os.path.join(cache, "nvd-produtos", "*.json")):
+    try:
+        for v in json.load(open(f)).get("vulnerabilities", []):
+            ja.add(v["cve"]["id"])
+    except Exception:
+        pass
+todos = os.environ.get("RADAR_NVD_TODOS") == "1"  # com chave da NVD: todos (traz o SSVC da CISA)
+for c in open(sys.argv[1]).read().split():
+    if c in ja:
+        continue
+    if todos:
+        print(c)
+        continue
+    u = os.path.join(cache, "ubuntu", c + ".json")
+    try:
+        d = json.load(open(u)); tem = isinstance(d.get("cvss3"), (int, float))
+    except Exception:
+        tem = False
+    if not tem:
+        print(c)
+PY
+)
+fi
+
+if [ "${1:-}" = "--so-baixar" ]; then echo "== Download concluído (sem construir)"; exit 0; fi
+echo "== Construindo site/vulns.json"
+python3 -I "$PROJ/ferramentas/construir_dados.py" --cache "$CACHE" --projeto "$PROJ"
+echo "== Gerando painel e scripts"
+node "$PROJ/ferramentas/build.mjs"
