@@ -27,6 +27,7 @@ if (-not $Simular -and -not $admin) { Write-Host 'Rode como administrador (ou us
 
 $s = Get-RadarSistema
 Test-RadarSistema $s
+Test-RadarDados $s
 Write-Host 'Radar de Vulnerabilidades: correção passo a passo' -ForegroundColor White
 if ($Simular) { Write-Host 'MODO SIMULAÇÃO: nada será alterado.' -ForegroundColor Yellow }
 Write-Host "Host: $RadarHost · $($s.Rotulo) · build $($s.Versao)"

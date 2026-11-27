@@ -341,7 +341,7 @@ PY
             windows-10-and-windows-server-2019-update-history-725fc2e1-4443-6831-a5ca-51ff5cbcb059 \
             windows-server-2022-update-history-e1caa597-00c5-4ab9-9f3e-8212fe80b2ee; do
     u="https://support.microsoft.com/en-us/topic/$pg"
-    curl -sSfL --compressed -m 90 -o "$mstmp/$pg.html" "$u" 2>/dev/null || curl -sSfL --compressed -m 90 -A "Mozilla/5.0" -o "$mstmp/$pg.html" "$u" 2>/dev/null || rm -f "$mstmp/$pg.html"
+    curl -sSfL --compressed -m 90 -o "$mstmp/$pg.html" "$u" 2>/dev/null || rm -f "$mstmp/$pg.html"
   done
   if ls "$mstmp"/*.html >/dev/null 2>&1; then
     python3 -I "$PROJ/ferramentas/msrc.py" builds "$CACHE/msrc-builds.json" "$mstmp"/*.html || echo "AVISO: falha ao ler o histórico de atualizações da Microsoft."

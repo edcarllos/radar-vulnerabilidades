@@ -308,7 +308,7 @@ footer { color: var(--muted); font-size: .82rem; display: grid; gap: 6px; }
             <p style="margin:4px 0 0;color:var(--muted)">Scripts prontos para o Windows Server 2016, 2019, 2022 e 2025, refeitos a cada coleta com as falhas exploradas (KEV) que a Microsoft corrigiu nessas versões; algumas antigas, cujo build a Microsoft não informa, ficam de fora. Não dependem dos filtros acima. As atualizações do Windows são cumulativas: o servidor está corrigido quando o build dele é igual ou maior que o build corrigido de cada falha.</p>
           </div>
           <ul style="margin:0;padding-left:20px;display:grid;gap:8px">
-            <li><a href="scripts/radar-verificar.ps1" download><b>radar-verificar.ps1</b></a>: somente leitura, não precisa de administrador. <code>powershell -ExecutionPolicy Bypass -File radar-verificar.ps1</code>. Opções: <code>-Todos</code> lista também as corrigidas; <code>-Csv</code> e <code>-Json</code> para planilha ou sistemas; <code>-Registro</code> gera o CSV do registro de vulnerabilidades do PPSI, que fica no servidor; <code>-Saida arquivo.csv</code> grava em UTF-8, que o Excel abre com acentos. Saída 0 = nada vulnerável, 1 = falta atualização, 2 = sistema não suportado.</li>
+            <li><a href="scripts/radar-verificar.ps1" download><b>radar-verificar.ps1</b></a>: somente leitura, não precisa de administrador. <code>powershell -ExecutionPolicy Bypass -File radar-verificar.ps1</code>. Opções: <code>-Todos</code> lista também as corrigidas; <code>-Csv</code> e <code>-Json</code> para planilha ou sistemas; <code>-Registro</code> gera o CSV do registro de vulnerabilidades do PPSI, que fica no servidor; <code>-Saida arquivo.csv</code> grava em UTF-8, que o Excel abre com acentos. Saída 0 = nada vulnerável, 1 = falta atualização, 2 = sistema não suportado ou script sem dados.</li>
             <li><a href="scripts/radar-corrigir.ps1" download><b>radar-corrigir.ps1</b></a>: instala as atualizações de segurança pendentes pelo próprio Windows Update (ou pelo WSUS da instituição). Teste com <code>-Simular</code>; para valer, rode como administrador. Pergunta antes de instalar, guarda a lista de atualizações e o build em <code>C:\ProgramData\radar-vuln\</code> e nunca reinicia sozinho.</li>
             <li><a href="scripts/radar-rollback.ps1" download><b>radar-rollback.ps1</b></a>: desinstala a atualização cumulativa instalada pela correção (wusa no 2016, DISM do 2019 em diante). Reexpõe o servidor às falhas: use só para recuperar um serviço quebrado e prefira voltar o snapshot da VM.</li>
           </ul>
@@ -1330,7 +1330,7 @@ sha256sum -c --ignore-missing SHA256SUMS</pre>
     if (typeof e.nota === "number") pills.push(el("span", { class: "pill", text: "CVSS " + e.nota.toFixed(1) }));
     pills.push(el("span", { class: "pill", text: (X.categorias || {})[e.cat] || e.cat }));
     (e.nac || []).forEach(function (a) { pills.push(el("a", { class: "pill p-info", href: a.url, target: "_blank", rel: "noopener", title: a.titulo, text: a.fonte + " " + dataBR(a.data) })); });
-    var rels = XF.rel ? [XF.rel] : Object.keys(e.so || {});
+    var rels = XF.rel ? [XF.rel] : (D ? Object.keys(D.releases) : Object.keys(e.so || {}));
     var so = rels.filter(function (r) { return e.so && e.so[r]; }).map(function (r) {
       var x = e.so[r], es = SO_EST[x.e] || [x.e, ""];
       return el("span", { class: "pill " + es[1], title: /^ws/.test(r) ? "Corrigido pela atualização " + x.p + " (build " + x.v + " ou mais novo)" : "Pacote-fonte " + x.p + (x.v ? ", corrigido em " + x.v : ""), text: ((D && D.releases[r]) ? D.releases[r].rotulo.replace(/ \(.*\)$/, "") : r) + ": " + es[0] });
@@ -1427,6 +1427,7 @@ sha256sum -c --ignore-missing SHA256SUMS</pre>
 
   // F25: Windows Server. As atualizações são cumulativas: basta o build do servidor ser igual ou maior que o do KB mais novo.
   function sistemaWindows(rel, nesta) {
+    if (!nesta.length) return [el("p", { class: "aviso w", style: "margin:0", text: "Sem dados da Microsoft para esta versão nesta coleta. A situação volta a aparecer quando a coleta conseguir consultar o guia de atualizações da Microsoft." })];
     var maior = nesta.slice().sort(function (a, b) { return cmpBuild(b.so[rel].v, a.so[rel].v); })[0];
     var ano = addDias(HOJE, -365), recentes = nesta.filter(function (e) { return e.d >= ano; });
     var out = [el("div", { class: "resumo" }, [

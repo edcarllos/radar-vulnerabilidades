@@ -45,6 +45,14 @@ function Get-RadarLinhas($rel) {
   }
 }
 
+# Sem nenhuma linha para a versão, a coleta não trouxe os dados da Microsoft: nunca responder "nada vulnerável".
+function Test-RadarDados($s) {
+  if (-not @(Get-RadarLinhas $s.Rel).Count) {
+    Write-Host "Sem dados da Microsoft para o $($s.Rotulo) nesta coleta ($RadarColeta). Não dá para concluir nada: baixe a versão mais nova do script no painel." -ForegroundColor Yellow
+    exit 2
+  }
+}
+
 # Atualizações cumulativas: corrigido quando o build instalado (10.0.build.UBR) é igual ou maior que o do KB.
 function Get-RadarResultado($s) {
   foreach ($x in @(Get-RadarLinhas $s.Rel)) {

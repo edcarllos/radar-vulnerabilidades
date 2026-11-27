@@ -7,7 +7,7 @@ Uso: powershell -ExecutionPolicy Bypass -File radar-verificar.ps1 [-Todos] [-Csv
   -Json       um objeto JSON com resumo e itens
   -Registro   CSV com os campos do modelo de norma de gestão de vulnerabilidades do PPSI; fica neste servidor
   -Saida      grava o CSV, o JSON ou o registro num arquivo UTF-8 (abre certo no Excel), em vez de mostrar na tela
-Saída: 0 = nada vulnerável; 1 = há falhas exploradas sem a atualização; 2 = sistema não suportado.
+Saída: 0 = nada vulnerável; 1 = há falhas exploradas sem a atualização; 2 = sistema não suportado ou sem dados.
 #>
 param([switch]$Todos, [switch]$Csv, [switch]$Json, [switch]$Registro, [string]$Saida = '')
 Set-StrictMode -Version 2
@@ -16,6 +16,7 @@ $ErrorActionPreference = 'Stop'
 
 $s = Get-RadarSistema
 Test-RadarSistema $s
+Test-RadarDados $s
 $r = @(Get-RadarResultado $s)
 $vuln = @($r | Where-Object { $_.Status -eq 'VULNERAVEL' } | Sort-Object Build -Descending)
 $ok = @($r | Where-Object { $_.Status -eq 'OK' })
