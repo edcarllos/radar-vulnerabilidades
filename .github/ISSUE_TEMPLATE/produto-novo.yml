@@ -3,6 +3,9 @@ description: Sugira um produto usado em instituições de ensino e pesquisa que 
 title: "Produto novo: "
 labels: ["produto-novo"]
 body:
+  - type: markdown
+    attributes:
+      value: "Issues são públicas: não informe servidores, versões instaladas, IPs ou o nome da sua instituição. Descreva o produto de forma geral."
   - type: input
     id: produto
     attributes:
@@ -13,8 +16,8 @@ body:
   - type: textarea
     id: uso
     attributes:
-      label: Onde é usado
-      description: "Que tipo de instituição usa e para quê."
+      label: Por que importa para instituições de ensino
+      description: "Para que esse tipo de produto costuma ser usado (por exemplo, biblioteca, ensino a distância, rede). Não diga onde está instalado."
     validations:
       required: true
   - type: input

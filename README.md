@@ -4,12 +4,14 @@ Painel público e gratuito com as falhas de segurança **exploradas ou urgentes*
 
 **Painel:** https://edcarllos.github.io/radar-vulnerabilidades/
 
-Para cada falha, o painel mostra:
-- gravidade, versões afetadas e correção em cada distro (Debian 12/13, Ubuntu 22.04/24.04/26.04);
-- mitigação e referências oficiais;
-- uma decisão com prazo: Agir agora, Agir em breve, Acompanhar de perto ou Acompanhar.
-
-Também gera scripts para verificar e corrigir servidores, com ponto de restauração e rollback.
+O painel tem estas abas:
+- **Hoje:** o que mudou desde a coleta anterior (falhas que entraram no catálogo de exploradas, alertas do CTIR Gov e do CAIS, itens novos) e a situação de cada fonte.
+- **Exploradas:** o catálogo KEV inteiro da CISA, de qualquer ano, com a situação da correção no Debian e na Ubuntu. Por padrão, só categorias de servidor e rede.
+- **Novas:** itens curados, com gravidade, versões afetadas, correção por distro (Debian 12/13, Ubuntu 22.04/24.04/26.04), mitigação, referências e uma decisão com prazo sugerido. Antes de 01/11/2026 só entram falhas exploradas; a partir dessa data, todas as dos produtos acompanhados.
+- **Por sistema:** as falhas exploradas e o histórico completo de CVEs de uma versão de distro.
+- **Scripts:** verificação, correção com ponto de restauração, rollback e playbook Ansible.
+- **Relatório:** boletim mensal com números gerais e o uso no PPSI.
+- **Aprender:** como usar, prazos e normas (PPSI, CTIR Gov, ANPD), glossário e laboratório.
 
 ## Como funciona
 
@@ -17,11 +19,12 @@ Também gera scripts para verificar e corrigir servidores, com ponto de restaura
 - **Fontes:** só oficiais:
   - CISA KEV, NVD e FIRST EPSS;
   - Debian Security Tracker (DSA/DLA) e Ubuntu Security (CVE Tracker, OVAL, USN);
-  - alertas do CAIS/RNP (título, data e link, com a conferência da assinatura PGP);
+  - alertas do CTIR Gov e do CAIS/RNP (só título, data, CVEs e link);
   - avisos dos fornecedores.
 - **Publicação:** a coleta valida tudo antes de publicar (sintaxe dos scripts, `SHA256SUMS` e assinatura). Só então publica no GitHub Pages.
 - **Estado:** o estado de uma coleta para a outra (datas de primeira coleta e histórico) fica no branch `dados`. Sem ele, a coleta para em vez de recomeçar do zero.
-- **Meu contexto:** cada visitante marca as tecnologias que usa e a importância de cada uma. A decisão e os prazos são recalculados no navegador e nada é enviado para fora.
+- **Privacidade:** o Radar nunca pede que a instituição informe os sistemas que usa e não coleta inventário, IPs ou resultados de verificação. A importância de cada tecnologia é um padrão do projeto (`criticidade.json`), revisado pela comunidade.
+- **Prazos:** 1, 7, 30 e 90 dias são sugestão do Radar (método SSVC). A referência oficial é o PPSI (controle 7.7: correção no ciclo mensal ou menor) e, para órgãos federais, o Decreto 10.748/2021 (art. 12, IX) nos alertas do CTIR Gov.
 
 ## Verificar os scripts antes de rodar
 

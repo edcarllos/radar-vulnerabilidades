@@ -32,6 +32,27 @@ radar_release() {
   esac
 }
 
+# Equipamentos baseados em Debian que se identificam como Debian no /etc/os-release, mas têm kernel, pacotes e
+# atualização próprios: Proxmox VE (kernel proxmox-kernel, atualização com apt full-upgrade) e TrueNAS (apt bloqueado;
+# atualiza só pelo atualizador do TrueNAS). Ignorado na verificação de imagens de contêiner.
+radar_appliance() {
+  [ -n "${RADAR_DPKG_STATUS:-}" ] && return 0
+  if [ -e /usr/bin/pveversion ] || [ -d /etc/pve ]; then echo proxmox; return 0; fi
+  if [ -e /usr/bin/midclt ] || grep -qi truenas /etc/version 2>/dev/null; then echo truenas; return 0; fi
+}
+
+radar_bloquear_appliance() {
+  case "$(radar_appliance)" in
+    proxmox)
+      echo "${C_VERM}Este host é um Proxmox VE.${C_FIM} A correção e o rollback do Radar ainda não tratam o kernel e os pacotes do Proxmox."
+      echo "Atualize pelo caminho do Proxmox (apt update && apt full-upgrade, com snapshot ou backup antes) e confira com radar-verificar.sh."
+      exit 2 ;;
+    truenas)
+      echo "${C_VERM}Este host é um TrueNAS.${C_FIM} Ele não deve ser alterado com apt: atualize pelo atualizador do próprio TrueNAS."
+      exit 2 ;;
+  esac
+}
+
 radar_rotulo() {
   case "$1" in
     deb12) echo "Debian 12 (bookworm)" ;;

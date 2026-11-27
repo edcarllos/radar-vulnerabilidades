@@ -5,7 +5,7 @@ labels: ["falso-positivo"]
 body:
   - type: markdown
     attributes:
-      value: "Obrigado! Itens `nvd-*` acham CVEs pela busca na NVD; às vezes a busca traz CVEs de outro produto com nome parecido."
+      value: "Obrigado! Itens `nvd-*` acham CVEs pela busca na NVD; às vezes a busca traz CVEs de outro produto com nome parecido. Issues são públicas: não informe servidores, versões instaladas ou IPs da sua instituição."
   - type: input
     id: item
     attributes:

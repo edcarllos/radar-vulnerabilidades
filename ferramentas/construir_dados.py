@@ -311,6 +311,10 @@ def validar_linha(linha, item_id):
 
 # ---------- NVD por produto (sistemas fora das distros ou com poucos avisos de distro) ----------
 JANELA_NVD_DIAS = 90
+# Fase 5: antes do marco só entra o que é explorado; a partir dele, tudo dos produtos acompanhados.
+MARCO = os.environ.get("RADAR_MARCO", "2026-11-01")
+if not RE_DATA.match(MARCO):
+    MARCO = ""
 NVD_IDX = {}  # CVE -> objeto cve da NVD vindo das consultas por produto
 
 
@@ -553,6 +557,139 @@ def derivar_app(cves, excluir):
     return minimos[-8:], sorted(plugins.values(), key=lambda p: p["componente"])[:40]
 
 
+# ---------- F22: frescor das fontes e aba Exploradas ----------
+FONTES_CACHE = [
+    ("CISA KEV", ["kev.json"]), ("Debian Security Tracker", ["deb.json"]), ("Avisos DSA/DLA", ["dsa-list.txt", "dla-list.txt"]),
+    ("Ubuntu OVAL", ["oval/com.ubuntu.noble.cve.oval.xml.bz2"]), ("Ubuntu CVE Tracker", ["uct.tsv"]), ("Avisos USN", ["usn/p0.json"]),
+    ("FIRST EPSS", ["epss.csv.gz"]), ("CAIS/RNP", ["cais/pagina1.html"]), ("CTIR Gov", ["ctir/links.txt"]),
+    ("NVD (produtos)", ["nvd-produtos"]),
+]
+
+
+def frescor_fontes(cache):
+    """Idade da cópia de cada fonte no cache: 'em dia' se baixada nas últimas 26 h (a coleta segue com o cache quando uma fonte falha)."""
+    agora = datetime.datetime.now().timestamp()
+    try:
+        falhas = {l.strip() for l in open(os.path.join(cache, "falhas.txt"), encoding="utf-8") if l.strip()}
+    except OSError:
+        falhas = set()
+    out = []
+    for nome in sorted(falhas - {n for n, _ in FONTES_CACHE}):
+        out.append({"fonte": nome[:60], "estado": "falhou nesta coleta", "copia": None})
+    for nome, arqs in FONTES_CACHE:
+        ts = []
+        for a in arqs:
+            f = os.path.join(cache, a)
+            if os.path.isdir(f):
+                ts += [os.path.getmtime(x) for x in glob.glob(os.path.join(f, "*.json"))]
+            elif os.path.exists(f):
+                ts.append(os.path.getmtime(f))
+        if not ts:
+            out.append({"fonte": nome, "estado": "sem dados", "copia": None})
+            continue
+        t = max(ts)
+        horas = (agora - t) / 3600
+        out.append({"fonte": nome, "estado": "falhou nesta coleta" if nome in falhas else ("em dia" if horas <= 26 else "desatualizada"),
+                    "copia": datetime.datetime.fromtimestamp(t).astimezone().isoformat(timespec="minutes")})
+    return out
+
+
+def categoria_kev(cfg, v):
+    for r in cfg.get("produtos", []):
+        if r.get("fornecedor") == v.get("vendorProject") and re.search(r.get("regex", "^$"), v.get("product", ""), re.I):
+            return r.get("categoria", "outros")
+    return (cfg.get("fornecedores") or {}).get(v.get("vendorProject", ""), "outros")
+
+
+def gerar_exploradas(kev, cfg, saida_dir, itens, ctir_todos, alertas_cais, cache, epss):
+    """site/exploradas.json: o catálogo KEV inteiro, com categoria, EPSS, nota, situação nas distros e ligações
+    com itens curados e alertas nacionais. Os textos do KEV são da CISA (domínio público, CC0)."""
+    cats = cfg.get("categorias") or {}
+    # Situação por distro a partir dos índices do histórico completo (P|pacote|estado|versão|CVEs).
+    por_cve, notas_idx = {}, {}
+    for idx in sorted(glob.glob(os.path.join(saida_dir, "indices", "idx-*.txt"))):
+        rel = os.path.basename(idx)[4:-4]
+        if rel not in RELEASES:
+            continue
+        with open(idx, encoding="utf-8") as fh:
+            for ln in fh:
+                if ln.startswith("C|"):
+                    pc = ln.split("|")
+                    if len(pc) > 2 and pc[2] not in ("", "-"):
+                        try:
+                            notas_idx.setdefault(pc[1], float(pc[2]))
+                        except ValueError:
+                            pass
+                    continue
+                if not (ln.startswith("P|") or ln.startswith("K|")):
+                    continue
+                partes = ln.rstrip("\n").split("|")
+                if len(partes) < 5:
+                    continue
+                for c in partes[4].split():
+                    por_cve.setdefault(c, {}).setdefault(rel, []).append([partes[1], partes[2], partes[3]])
+    item_por_cve = {}
+    for i in itens:
+        for c in i["cves"]:
+            item_por_cve.setdefault(c, i["id"])
+    nac_por_cve = {}
+    for a in ctir_todos + alertas_cais:
+        for c in a["cves"]:
+            nac_por_cve.setdefault(c, []).append({"fonte": a["fonte"], "titulo": a["titulo"], "data": a["data"], "url": a["url"]})
+    lista = []
+    for v in kev.get("vulnerabilities", []):
+        c = v.get("cveID", "")
+        if not RE_CVE.match(c):
+            continue
+        links = [u.rstrip(".,;") for u in re.findall(r"https://[^\s;]+", v.get("notes", ""))][:4]
+        nn = nota_nvd(cache, c)
+        nota = nn["valor"] if nn else notas_idx.get(c)
+        e = epss.get(c)
+        so = {}
+        for rel, linhas in (por_cve.get(c) or {}).items():
+            # Pior caso por distro: sem correção > só Pro > corrigido.
+            ordem = {"a": 0, "u": 1, "t": 2, "d": 3, "p": 4, "c": 5}
+            pior = min(linhas, key=lambda x: ordem.get(x[1], 9))
+            so[rel] = {"e": pior[1], "v": pior[2] if pior[2] != "-" else None, "p": pior[0]}
+        cat = categoria_kev(cfg, v)
+        lista.append({
+            "cve": c, "f": limpar_texto(v.get("vendorProject"), 80), "p": limpar_texto(v.get("product"), 120),
+            "n": limpar_texto(v.get("vulnerabilityName"), 200), "d": v.get("dateAdded"), "pz": v.get("dueDate"),
+            "r": v.get("knownRansomwareCampaignUse") == "Known", "desc": limpar_texto(v.get("shortDescription"), 600),
+            "acao": limpar_texto(v.get("requiredAction"), 300), "links": links, "cwe": (v.get("cwes") or [])[:3],
+            "cat": cat if cat in cats else "outros", "nota": nota, "epss": e[0] if e else None, "pct": e[1] if e else None,
+            "so": so, "item": item_por_cve.get(c), "nac": nac_por_cve.get(c, [])[:3],
+        })
+    lista.sort(key=lambda x: (x["d"] or "", x["cve"]), reverse=True)
+    out = {"gerado_em": datetime.datetime.now().astimezone().isoformat(timespec="minutes"), "kev_versao": kev.get("catalogVersion"),
+           "categorias": cats, "padrao": [c for c in cfg.get("padrao", []) if c in cats], "itens": lista}
+    with open(os.path.join(saida_dir, "exploradas.json"), "w", encoding="utf-8") as fh:
+        json.dump(out, fh, ensure_ascii=False, separators=(",", ":"))
+    return len(lista)
+
+
+# ---------- F22: alertas do CTIR Gov (páginas do GSI) ----------
+def ler_alertas_ctir(cache):
+    import importlib.util
+    spec = importlib.util.spec_from_file_location("nacionais", os.path.join(os.path.dirname(os.path.abspath(__file__)), "nacionais.py"))
+    nac = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(nac)
+    out = []
+    for f in sorted(glob.glob(os.path.join(cache, "ctir", "alerta-*.html"))):
+        try:
+            url = open(f + ".url", encoding="utf-8").read().strip()
+        except OSError:
+            continue
+        a = nac.ler_ctir(open(f, encoding="utf-8", errors="replace").read(), url)
+        if not a["url"] or not a["data"] or not RE_DATA.match(a["data"]):
+            continue
+        a["titulo"] = limpar_texto(a["titulo"], 200)
+        a["cves"] = [c for c in a["cves"] if RE_CVE.match(c)]
+        out.append(a)
+    out.sort(key=lambda a: a["data"], reverse=True)
+    return out
+
+
 # ---------- F3: alertas nacionais (CAIS/RNP) ----------
 def ler_alertas_cais(cache, data_ref, dias=120):
     import importlib.util
@@ -654,7 +791,10 @@ def main():
     # F8: inventário consolidado pelo receptor (só existe na coleta institucional)
     inv = ler_json(os.environ.get("RADAR_INVENTARIO", ""), {}) if os.environ.get("RADAR_INVENTARIO") else {}
     inv_item = (inv or {}).get("por_item") or {}
-    alertas = ler_alertas_cais(args.cache, args.data)
+    alertas_cais = ler_alertas_cais(args.cache, args.data)
+    ctir_todos = ler_alertas_ctir(args.cache)
+    lim_ctir = (datetime.date.fromisoformat(args.data) - datetime.timedelta(days=120)).isoformat()
+    alertas = sorted(alertas_cais + [a for a in ctir_todos if a["data"] >= lim_ctir], key=lambda a: a["data"], reverse=True)
     alertas_por_cve = {}
     for a in alertas:
         for c in a["cves"]:
@@ -693,12 +833,18 @@ def main():
 
     itens = []
     novos, alterados, sem_cve, cves_novos = [], [], [], []
+    fora_marco, fora_marco_cves, cobertos_fora = [], {}, set()
     for it in itens_def["itens"]:
         if not RE_ID.match(it.get("id", "")):
             aviso("id inválido: %r" % it.get("id"))
             continue
         cves = cves_do_item(it)
         detalhes = []
+        if it.get("nvd") and MARCO:
+            antes = {c for c in cves if c in NVD_IDX and (NVD_IDX[c].get("published") or "")[:10] < MARCO and c not in kev_idx}
+            if antes:
+                fora_marco_cves[it["id"]] = len(antes)
+                cves = [c for c in cves if c not in antes]
         if it.get("nvd"):
             if not cves:
                 sem_cve.append(it["id"])
@@ -788,6 +934,12 @@ def main():
             situacao = "explorado"
             exploracao = "Inclui CVE no catálogo KEV da CISA: " + ", ".join(
                 "%s (desde %s)" % (c, kev_idx[c]["dateAdded"]) for c in kev_cves[:4])
+        # Marco (Fase 5): item curado anterior ao marco e sem exploração não entra (os CVEs seguem no histórico completo).
+        if (MARCO and not it.get("nvd") and situacao in ("urgente", "atencao")
+                and RE_DATA.match(it.get("publicado_em") or "") and it["publicado_em"] < MARCO):
+            fora_marco.append(it["id"])
+            cobertos_fora.update(cves)
+            continue
 
         # F4: decisão SSVC
         missao = (crit.get("itens") or {}).get(it["id"]) or (crit.get("tecnologias") or {}).get(it["tecnologia"]) or crit.get("padrao", "media")
@@ -826,10 +978,7 @@ def main():
         vence = (datetime.date.fromisoformat(ref) + datetime.timedelta(days=prazo_dec)).isoformat() if prazo_dec else None
         decisao = {"codigo": dec, "rotulo": ROTULO_DECISAO[dec], "prazo_dias": prazo_dec, "referencia": ref, "vence_em": vence,
                    "exposto": subiu,
-                   "exploracao": expl, "automatizavel": auto, "impacto_total": total, "missao": missao, "fontes": fonte_ssvc,
-                   # F18 (Meu contexto): a decisão para cada importância, para o painel recalcular no navegador.
-                   "por_missao": {m: ("nao_se_aplica" if situacao == "nao_afetado" else decidir(expl, auto, total, m))
-                                  for m in ("alta", "media", "baixa")}}
+                   "exploracao": expl, "automatizavel": auto, "impacto_total": total, "missao": missao, "fontes": fonte_ssvc}
         # F3: alertas nacionais ligados por CVE
         nacs, vistos_a = [], set()
         for c in cves:
@@ -910,8 +1059,10 @@ def main():
 
     # ---------- histórico completo: índices por versão e resumo por pacote ----------
     historico = gerar_historico(args.cache, saida_dir, args.data)
+    cfg_kev = ler_json(os.path.join(args.projeto, "categorias-kev.json"), {}) or {}
+    n_expl = gerar_exploradas(kev, cfg_kev, saida_dir, itens, ctir_todos, alertas_cais, args.cache, EPSS)
 
-    cobertos = {c for i in itens for c in i["cves"]}
+    cobertos = {c for i in itens for c in i["cves"]} | cobertos_fora
     candidatos = []
     lim_kev = (datetime.date.fromisoformat(args.data) - datetime.timedelta(days=14)).isoformat()
     for v in kev.get("vulnerabilities", []):
@@ -939,8 +1090,13 @@ def main():
         "historico": {r: {k: v for k, v in h.items() if k != "itens"} for r, h in historico.items()},
         "candidatos": candidatos[:60],
         "alertas_nacionais": len(alertas),
+        "alertas_ctir": len(ctir_todos),
         "nvd_descartados": {k: v[:50] for k, v in sorted(NVD_DESCARTES.items()) if v},
-        "fontes": ["CISA KEV", "Debian Security Tracker", "Ubuntu Security (CVE e USN)", "NVD", "avisos dos fornecedores"],
+        "marco": MARCO,
+        "fora_do_marco": fora_marco,
+        "cves_fora_do_marco": fora_marco_cves,
+        "fontes_estado": frescor_fontes(args.cache),
+        "fontes": ["CISA KEV", "Debian Security Tracker", "Ubuntu Security (CVE e USN)", "NVD", "FIRST EPSS", "CTIR Gov", "CAIS/RNP", "avisos dos fornecedores"],
     }
     coletas.append(coleta)
     coletas = coletas[-200:]
@@ -956,13 +1112,16 @@ def main():
         "alertas_nacionais": [{k: a[k] for k in ("fonte", "data", "titulo", "cves", "url", "assinatura", "resumo")
                                if not (k == "resumo" and os.environ.get("RADAR_PUBLICO") == "1")} for a in alertas[:60]],
         "candidatos": candidatos[:60],
+        # Alertas do CTIR Gov do ano: só número, assunto, data, CVEs e link (o site do GSI não permite obras derivadas).
+        "alertas_ctir": [{k: a[k] for k in ("fonte", "data", "titulo", "cves", "url")} for a in ctir_todos[:400]],
         "itens": itens,
     }
     with open(os.path.join(saida_dir, "vulns.json"), "w", encoding="utf-8") as f:
         json.dump(saida, f, ensure_ascii=False, indent=1)
     with open(os.path.join(saida_dir, "coletas.json"), "w", encoding="utf-8") as f:
         json.dump(coletas, f, ensure_ascii=False, indent=1)
-    print("itens=%d novos=%d alterados=%d kev=%s" % (len(itens), len(novos), len(alterados), kev.get("catalogVersion")))
+    print("itens=%d novos=%d alterados=%d kev=%s exploradas=%d fora_do_marco=%d ctir=%d" % (
+        len(itens), len(novos), len(alterados), kev.get("catalogVersion"), n_expl, len(fora_marco), len(ctir_todos)))
 
 
 if __name__ == "__main__":

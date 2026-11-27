@@ -58,14 +58,30 @@ legend button { background: none; border: 0; color: var(--accent); font-size: .7
 .chk input { accent-color: var(--accent); width: 16px; height: 16px; flex: none; }
 .chk .n { margin-left: auto; font-family: var(--f-mono); font-size: .75rem; color: var(--muted); }
 .chips { display: flex; flex-wrap: wrap; gap: 5px; }
-dialog.ctx { border: 1px solid var(--line); border-radius: 8px; padding: 0; width: min(720px, calc(100vw - 32px)); max-height: calc(100vh - 48px); background: var(--surface); color: var(--fg); }
-dialog.ctx::backdrop { background: rgba(10, 14, 20, .45); }
-dialog.ctx .ctx-cab { position: sticky; top: 0; background: var(--surface); padding: 14px 16px 10px; border-bottom: 1px solid var(--line); display: grid; gap: 8px; z-index: 1; }
-dialog.ctx .ctx-corpo { padding: 8px 16px 16px; }
-dialog.ctx table { width: 100%; border-collapse: collapse; font-size: .88rem; }
-dialog.ctx td { padding: 5px 4px; border-bottom: 1px solid var(--line); vertical-align: middle; }
-dialog.ctx select { min-width: 7.5em; font: inherit; padding: 3px 6px; border: 1px solid var(--line); border-radius: 4px; background: var(--surface); color: var(--fg); }
-dialog.ctx .sug { color: var(--muted); font-size: .78rem; }
+/* F22: abas sem a barra de filtros, cartões do KEV, gráfico do relatório */
+.grade.so-conteudo { grid-template-columns: minmax(0, 1fr); }
+.grade.so-conteudo aside.filtros { display: none; }
+.kev { background: var(--surface); border: 1px solid var(--line); border-left: 4px solid var(--line); border-radius: 6px; padding: 10px 14px; display: grid; gap: 6px; }
+.kev.r { border-left-color: var(--crit); }
+.kev .tit { font-weight: 600; overflow-wrap: anywhere; }
+.kev .lin { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; font-size: .82rem; color: var(--muted); }
+.kev details { font-size: .88rem; }
+.kev details > div { display: grid; gap: 6px; margin-top: 6px; }
+.lista-kev { display: grid; gap: 8px; min-width: 0; }
+.lista-kev, .kev, .kev details > div { grid-template-columns: minmax(0, 1fr); }
+.lista-kev > *, .kev details > div, .kev details > div > * { min-width: 0; }
+.kev, .kev p, .kev a { overflow-wrap: anywhere; }
+.kev .pill { white-space: normal; }
+.ref { font-size: .82rem; color: var(--muted); border-left: 3px solid var(--line); padding-left: 8px; }
+.barras { width: 100%; max-width: 760px; height: auto; }
+.barras text { font-family: var(--f-mono); font-size: 11px; fill: var(--muted); }
+.barras rect.b { fill: var(--accent); }
+.barras rect.b:hover { opacity: .8; }
+@media print {
+  header.top .btn, nav.abas, .tour-convite, aside.filtros, #resumo, footer .btn, #r-imprimir, #r-mes { display: none !important; }
+  .grade { grid-template-columns: 1fr !important; }
+  body { background: #fff; color: #000; }
+}
 .sobre { display: grid; gap: 14px; max-width: 78ch; }
 .sobre h3 { font-size: 1.05rem; margin-top: 6px; }
 .sobre p, .sobre li { margin: 0; }
@@ -165,7 +181,6 @@ footer { color: var(--muted); font-size: .82rem; display: grid; gap: 6px; }
     <div style="display:grid;gap:8px;justify-items:end">
       <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end">
         <button type="button" class="btn" id="atualizar" hidden>Atualizar agora</button>
-        <button type="button" class="btn" id="ctx-abrir" data-so-publico hidden>Meu contexto <span id="ctx-estado" class="mono" style="font-size:.75rem;opacity:.8"></span></button>
         <button type="button" class="btn prim" id="tour-abrir">Tour guiado: como usar o Radar</button>
       </div>
       <div id="atualizar-estado" role="status" aria-live="polite" style="font-size:.82rem;color:var(--muted);text-align:right;max-width:46ch" hidden></div>
@@ -178,12 +193,14 @@ footer { color: var(--muted); font-size: .82rem; display: grid; gap: 6px; }
   </div>
 
   <nav class="abas" aria-label="Seções">
-    <a href="#itens" data-aba="itens">Vulnerabilidades<span class="cont" id="c-itens">0</span></a>
+    <a href="#hoje" data-aba="hoje">Hoje</a>
+    <a href="#exploradas" data-aba="exploradas">Exploradas<span class="cont" id="c-expl">–</span></a>
+    <a href="#itens" data-aba="itens"><span id="rot-itens">Novas</span><span class="cont" id="c-itens">0</span></a>
+    <a href="#historico" data-aba="historico">Por sistema</a>
     <a href="#scripts" data-aba="scripts">Scripts<span class="cont" id="c-scripts">0</span></a>
     <a href="#servidores" data-aba="servidores" data-so-interno>Servidores<span class="cont" id="c-servidores">–</span></a>
-    <a href="#historico" data-aba="historico">Histórico completo</a>
-    <a href="#coletas" data-aba="coletas">Coletas</a>
-    <a href="#sobre" data-aba="sobre" data-so-publico hidden>Sobre</a>
+    <a href="#relatorio" data-aba="relatorio">Relatório</a>
+    <a href="#sobre" data-aba="sobre" data-so-publico hidden>Aprender</a>
   </nav>
 
   <div class="resumo" id="resumo"></div>
@@ -296,10 +313,42 @@ footer { color: var(--muted); font-size: .82rem; display: grid; gap: 6px; }
         </div>
       </section>
 
+      <section id="aba-exploradas" data-aba-sec="exploradas" hidden>
+        <div class="painel">
+          <div>
+            <h2>Falhas exploradas: o catálogo KEV inteiro</h2>
+            <p style="margin:4px 0 0;color:var(--muted)">Todas as falhas com ataques reais confirmados pela CISA, de qualquer ano. Por padrão aparecem só as categorias que costumam existir em servidores e na rede de instituições de ensino; use "mostrar tudo" para ver celulares, estações e equipamentos industriais. Quando a falha está num pacote do Debian ou da Ubuntu, a situação da correção aparece em cada versão.</p>
+          </div>
+          <div class="barra" style="justify-content:flex-start;flex-wrap:wrap">
+            <input type="search" id="x-busca" placeholder="CVE, fornecedor ou produto" style="width:auto;min-width:200px" autocomplete="off" aria-label="Buscar">
+            <select id="x-periodo" style="width:auto" aria-label="Período de entrada no KEV">
+              <option value="0">Catálogo inteiro (desde 2021)</option>
+              <option value="365">Entrou nos últimos 12 meses</option>
+              <option value="30">Entrou nos últimos 30 dias</option>
+            </select>
+            <select id="x-rel" style="width:auto" aria-label="Situação nas distros"><option value="">Situação em todas as distros</option></select>
+            <select id="x-ordem" style="width:auto" aria-label="Ordenar">
+              <option value="data">Mais recentes no KEV</option>
+              <option value="epss">Maior EPSS</option>
+              <option value="nota">Maior nota CVSS</option>
+            </select>
+            <label class="chk"><input type="checkbox" id="x-ransom"> Usadas por ransomware</label>
+            <label class="chk"><input type="checkbox" id="x-sem"> Sem correção na distro escolhida</label>
+          </div>
+          <div style="display:grid;gap:6px">
+            <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;font-size:.8rem"><span style="color:var(--muted)">Categorias</span><button type="button" class="btn" id="x-servidor">Só as de servidor</button><button type="button" class="btn" id="x-tudo">Mostrar tudo</button></div>
+            <div class="chips" id="x-cats"></div>
+          </div>
+          <p id="x-info" style="margin:0;color:var(--muted);font-size:.88rem"></p>
+          <div class="lista-kev" id="x-lista"></div>
+          <div class="barra"><span id="x-pag"></span><button type="button" class="btn" id="x-mais" hidden>Mostrar mais 50</button></div>
+        </div>
+      </section>
+
       <section id="aba-historico" data-aba-sec="historico" hidden>
         <div class="painel">
           <div>
-            <h2>Histórico completo por distro</h2>
+            <h2>Por sistema</h2>
             <p style="margin:4px 0 0;color:var(--muted)">Todos os CVEs conhecidos por pacote-fonte, segundo o Debian Security Tracker, o OVAL, os USNs e o Ubuntu CVE Tracker, com probabilidade de exploração (EPSS, FIRST). "Confirmados" são falhas que a distro reconhece e ainda não corrigiu; "adiados" a distro julgou de baixo risco; "em triagem" ainda não foram avaliados e muitos não afetam a versão. A contagem vale para a distro inteira, não para um servidor: para saber o que afeta um servidor, rode o script de verificação com <code>--completo</code>.</p>
           </div>
           <div class="barra" style="justify-content:flex-start">
@@ -315,6 +364,8 @@ footer { color: var(--muted); font-size: .82rem; display: grid; gap: 6px; }
             </select>
             <label class="chk"><input type="checkbox" id="h-so-kev"> Só pacotes com CVE no KEV</label>
           </div>
+          <div id="s-expl" style="display:grid;gap:10px"></div>
+          <h3 style="font-size:1rem;margin:6px 0 0">Histórico completo da distro</h3>
           <div class="resumo" id="h-resumo"></div>
           <div id="h-baixar" class="aviso"></div>
           <div class="scroll"><table id="h-tab"><thead><tr><th>Pacote-fonte</th><th>Confirmados sem correção</th><th>Adiados ou ignorados</th><th>Em triagem</th><th>Corrigidos (histórico)</th><th>Só Ubuntu Pro</th><th>KEV sem correção / total</th><th>Maior EPSS sem correção</th><th>Maior nota sem correção</th><th>Piores CVEs (KEV, EPSS, nota)</th></tr></thead><tbody></tbody></table></div>
@@ -322,10 +373,21 @@ footer { color: var(--muted); font-size: .82rem; display: grid; gap: 6px; }
         </div>
       </section>
 
-      <section id="aba-coletas" data-aba-sec="coletas" hidden>
+      <section id="aba-hoje" data-aba-sec="hoje" hidden>
         <div class="painel">
           <div>
-            <h2>Coletas</h2>
+            <h2>Hoje</h2>
+            <p id="hoje-sub" style="margin:4px 0 0;color:var(--muted)">O que mudou nas fontes oficiais desde a coleta anterior.</p>
+          </div>
+          <div class="resumo" id="hoje-resumo"></div>
+          <div id="hoje-kev" style="display:grid;gap:8px"></div>
+          <div id="hoje-alertas" style="display:grid;gap:6px"></div>
+          <div id="hoje-mudou" style="display:grid;gap:6px"></div>
+          <details id="hoje-fontes-d"><summary><b>Situação das fontes</b> <span id="hoje-fontes-sum" style="color:var(--muted)"></span></summary><div id="hoje-fontes" style="margin-top:8px"></div></details>
+        </div>
+        <div class="painel">
+          <div>
+            <h2>Coletas e candidatos</h2>
             <p style="margin:4px 0 0;color:var(--muted)">Cada coleta consulta CISA KEV, Debian Security Tracker (DSA/DLA desde 01/10/2026), Ubuntu Security (USN) e NVD (produtos sem pacote na distro, janela móvel de 90 dias). Clique numa data para filtrar os itens coletados ou atualizados nela.</p>
           </div>
           <p id="sem-cve" style="margin:0;color:var(--muted);font-size:.88rem"></p>
@@ -335,15 +397,44 @@ footer { color: var(--muted); font-size: .82rem; display: grid; gap: 6px; }
         </div>
       </section>
 
+      <section id="aba-relatorio" data-aba-sec="relatorio" hidden>
+        <div class="painel">
+          <div class="barra" style="align-items:flex-start;flex-wrap:wrap">
+            <div style="flex:1;min-width:240px">
+              <h2>Relatório para a gestão</h2>
+              <p style="margin:4px 0 0;color:var(--muted)">Boletim mensal com números gerais das fontes oficiais. Não contém dado de nenhuma instituição: os números da sua, gere no próprio servidor (veja abaixo).</p>
+            </div>
+            <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><label for="r-mes">Mês</label><select id="r-mes" style="width:auto"></select><button type="button" class="btn" id="r-imprimir">Imprimir ou salvar PDF</button></div>
+          </div>
+          <div class="resumo" id="r-resumo"></div>
+          <div id="r-grafico"></div>
+          <div class="sobre" style="max-width:none">
+            <h3>Como usar no Programa de Privacidade e Segurança da Informação (PPSI)</h3>
+            <ul>
+              <li><b>Controle 7 (gestão contínua de vulnerabilidades):</b> o PPSI pede um processo de gestão de vulnerabilidades (7.1), remediação baseada em risco (7.2), atualização de sistemas operacionais e aplicações no ciclo mensal ou menor (7.3 e 7.4), varreduras periódicas (7.5 e 7.6) e correção das falhas detectadas no ciclo mensal ou menor (7.7). A aba Exploradas e a decisão de cada item ajudam a ordenar a remediação.</li>
+              <li><b>Controle 2.2 (só software com suporte):</b> a aba Por sistema mostra a situação de suporte de cada versão; sistema sem suporte precisa de exceção documentada.</li>
+              <li><b>Controles 1.1 e 2.1 (inventários):</b> o inventário é da instituição e fica nela. O Radar não pede nem guarda inventário.</li>
+              <li><b>Alertas do CTIR Gov:</b> para órgãos federais, o Decreto 10.748/2021 (art. 12, IX) pede sanar com urgência as vulnerabilidades, em especial as apontadas nos alertas.</li>
+            </ul>
+            <p>Referências: <a href="https://www.gov.br/governodigital/pt-br/privacidade-e-seguranca/ppsi-2.0" target="_blank" rel="noopener">PPSI 2.0 (Guia do Framework e modelos de política e norma de gestão de vulnerabilidades)</a> · <a href="https://www.planalto.gov.br/ccivil_03/_ato2019-2022/2021/decreto/d10748.htm" target="_blank" rel="noopener">Decreto 10.748/2021</a> · <a href="https://www.gov.br/gsi/pt-br/assuntos/ctir/alertas" target="_blank" rel="noopener">Alertas do CTIR Gov</a>.</p>
+            <h3>Registro da sua instituição, gerado no próprio servidor</h3>
+            <p>O script de verificação gera, no servidor, um registro com os campos que o modelo de norma de gestão de vulnerabilidades do PPSI pede (identificação, ativo, severidade, fonte, situação, responsável e prazo). Nada é enviado para fora; guarde o arquivo junto com as evidências da instituição.</p>
+            <pre class="code">sudo bash radar-verificar.sh --registro &gt; registro-$(hostname)-$(date +%F).csv</pre>
+          </div>
+        </div>
+      </section>
+
       <section id="aba-sobre" data-aba-sec="sobre" data-so-publico hidden>
         <div class="painel sobre">
-          <h2>Sobre o Radar</h2>
+          <h2>Aprender</h2>
           <p>O Radar reúne, todo dia, os avisos oficiais sobre falhas de segurança exploradas ou urgentes em software comum em instituições de ensino e pesquisa: Debian e Ubuntu, PHP, servidores web, e-mail, bancos de dados, Moodle, WordPress, Drupal, GLPI, OJS, DSpace, GitLab, VPN, virtualização e outros. Para cada falha, mostra a gravidade, as versões afetadas, a correção em cada distro, a mitigação e as referências oficiais, e gera scripts para verificar e corrigir servidores.</p>
 
           <h3>Como usar</h3>
           <ul>
-            <li>Comece por <b>Meu contexto</b>, no topo: marque as tecnologias que você usa e a importância de cada uma. A ordem e os prazos passam a refletir a sua realidade.</li>
-            <li>Veja primeiro os itens <b>Agir agora</b>, principalmente os com prazo vencido.</li>
+            <li>Todo dia, abra <b>Hoje</b>: entradas novas no catálogo de falhas exploradas, alertas do CTIR Gov e do CAIS e o que mudou nos itens.</li>
+            <li>Em <b>Exploradas</b>, procure os produtos que a sua instituição tem: ali estão todas as falhas com ataques confirmados, de qualquer ano.</li>
+            <li>Em <b>Novas</b>, veja primeiro os itens <b>Agir agora</b>. Antes de 01/11/2026 só entram falhas exploradas; a partir dessa data, todas as dos produtos acompanhados.</li>
+            <li>Em <b>Por sistema</b>, escolha a versão de um servidor para ver as falhas exploradas que seguem sem correção nela e gerar os scripts.</li>
             <li>Na aba Scripts, gere a verificação (só lê o sistema), depois simule a correção com <code>--simular</code> e só então corrija, numa janela combinada e com snapshot.</li>
             <li>O <b>Tour guiado</b> explica cada parte do painel em 5 minutos.</li>
           </ul>
@@ -361,7 +452,7 @@ footer { color: var(--muted); font-size: .82rem; display: grid; gap: 6px; }
           <p>Os textos dos avisos pertencem às fontes. O Radar resume e aponta para o original: leia o aviso oficial antes de mudar produção. O catálogo KEV é de domínio público (CC0). Os estados por distro e o histórico completo derivam do Debian Security Tracker e do Ubuntu Security (OVAL © Canonical Ltd.), usados com atribuição, para fins educacionais e não comerciais.</p>
 
           <h3>Como a decisão é calculada</h3>
-          <p>Cada item recebe uma decisão inspirada no SSVC, o método da CISA. A falha está sendo explorada (KEV ou fornecedor) ou tem boa chance de ser (EPSS de 10% ou mais, ou prova de conceito)? O ataque pode ser automatizado? O impacto é total? O sistema é importante para você (Meu contexto)? As respostas levam a Agir agora (prazo de 1 dia), Agir em breve (7 dias), Acompanhar de perto (30 dias) ou Acompanhar (90 dias). O prazo conta da data mais recente entre a entrada no KEV, a publicação e a primeira vez que o Radar viu o item.</p>
+          <p>Cada item recebe uma decisão inspirada no SSVC, o método da CISA. A falha está sendo explorada (KEV ou fornecedor) ou tem boa chance de ser (EPSS de 10% ou mais, ou prova de conceito)? O ataque pode ser automatizado? O impacto é total? O sistema é importante para a missão (a importância de cada tecnologia é um padrão do projeto, revisado pela comunidade)? As respostas levam a Agir agora (prazo de 1 dia), Agir em breve (7 dias), Acompanhar de perto (30 dias) ou Acompanhar (90 dias). O prazo conta da data mais recente entre a entrada no KEV, a publicação e a primeira vez que o Radar viu o item.</p>
 
           <h3>Limites</h3>
           <ul>
@@ -371,15 +462,36 @@ footer { color: var(--muted); font-size: .82rem; display: grid; gap: 6px; }
             <li>Os scripts de correção rodam como root no seu servidor. Leia antes, rode a verificação e o <code>--simular</code> primeiro e tenha backup.</li>
           </ul>
 
+          <h3>Prazos e normas</h3>
+          <ul>
+            <li><b>Prazos do Radar (1, 7, 30 e 90 dias):</b> são uma sugestão do Radar, pelo método SSVC. Nenhuma norma brasileira fixa prazo em dias.</li>
+            <li><b>PPSI (controle 7.7):</b> corrigir as vulnerabilidades detectadas no ciclo mensal ou menor, pelo processo de remediação da instituição.</li>
+            <li><b>Decreto 10.748/2021 (art. 12, IX):</b> órgãos federais devem sanar com urgência as vulnerabilidades, em especial as dos alertas do CTIR Gov. Instituições estaduais e municipais seguem as próprias normas e a LGPD.</li>
+            <li><b>Prazo do KEV:</b> a data de cada entrada do catálogo é uma obrigação do governo dos EUA; aqui serve só como referência.</li>
+            <li><b>LGPD:</b> se uma falha explorada afetar dados pessoais, a comunicação à ANPD é em até 3 dias úteis a partir do momento em que a instituição sabe que dados pessoais foram afetados (Resolução CD/ANPD 15/2024, art. 6). Acione o encarregado de dados da instituição.</li>
+            <li><b>O que não publicar:</b> configurações e características técnicas dos ativos de um órgão são informação restrita (Decreto 10.748/2021, art. 15). Não publique em issues ou fóruns os servidores, versões ou IPs da sua instituição.</li>
+          </ul>
+
+          <h3>Glossário</h3>
+          <ul>
+            <li><b>CVE:</b> o número de uma falha conhecida. <b>CVSS:</b> a nota de gravidade, de 0 a 10.</li>
+            <li><b>KEV:</b> o catálogo da CISA com falhas que já estão sendo usadas em ataques. <b>EPSS:</b> a probabilidade de uma falha ser explorada nos próximos 30 dias (FIRST).</li>
+            <li><b>DSA, DLA e USN:</b> os avisos de segurança do Debian e da Ubuntu. <b>Mitigação:</b> reduzir o risco quando ainda não há correção. <b>Rollback:</b> voltar à versão anterior.</li>
+            <li><b>Fim de suporte:</b> a versão não recebe mais correções gratuitas; falhas novas ficam abertas para sempre.</li>
+          </ul>
+
+          <h3>Para aprender na prática</h3>
+          <p>O <b>Tour guiado</b>, no topo, explica o painel em 5 minutos. O <a data-repo-href="tree/main/laboratorio" target="_blank" rel="noopener">laboratório do Radar</a> tem exercícios num contêiner descartável: ler a verificação, simular e aplicar a correção, fazer rollback e decidir o que fazer quando não há correção.</p>
+
           <h3>Integridade dos scripts</h3>
-          <p>Os scripts completos em <a href="scripts/">scripts/</a> usam a importância sugerida (não o seu Meu contexto; para isso, gere os scripts na aba Scripts) e vêm com <code>SHA256SUMS</code> e, quando a chave do projeto está configurada, com a assinatura <code>SHA256SUMS.asc</code>. Confira antes de rodar:</p>
+          <p>Os scripts completos em <a href="scripts/">scripts/</a> vêm com <code>SHA256SUMS</code> e, quando a chave do projeto está configurada, com a assinatura <code>SHA256SUMS.asc</code>. Confira antes de rodar:</p>
           <pre class="code">gpg --import chave-radar.asc
 gpg --verify SHA256SUMS.asc SHA256SUMS
 sha256sum -c --ignore-missing SHA256SUMS</pre>
           <p>Compare a impressão digital da chave com a publicada no README do repositório, que fica fora deste site.</p>
 
           <h3>Privacidade</h3>
-          <p>Esta página não usa cookies, rastreamento nem fontes ou scripts de terceiros. Suas escolhas (filtros e Meu contexto) ficam só no seu navegador. A página é hospedada no GitHub Pages, que pode registrar acessos conforme a política de privacidade do GitHub.</p>
+          <p>Esta página não usa cookies, rastreamento nem fontes ou scripts de terceiros. Seus filtros ficam só no seu navegador, e o Radar nunca pede que a instituição informe os sistemas que usa. A página é hospedada no GitHub Pages, que pode registrar acessos conforme a política de privacidade do GitHub.</p>
 
           <h3>Como contribuir</h3>
           <ul>
@@ -399,14 +511,6 @@ sha256sum -c --ignore-missing SHA256SUMS</pre>
     <p data-so-publico hidden>Projeto comunitário, sem garantia. <a href="#sobre">Sobre, privacidade e como contribuir</a> · <a data-repo-href="" target="_blank" rel="noopener">GitHub</a> · <span class="aviso-nvd">This product uses the NVD API but is not endorsed or certified by the NVD.</span></p>
   </footer>
 
-  <dialog class="ctx" id="ctx" aria-labelledby="ctx-titulo">
-    <div class="ctx-cab">
-      <div style="display:flex;justify-content:space-between;align-items:center;gap:8px"><h2 id="ctx-titulo" style="font-size:1.15rem">Meu contexto</h2><button type="button" class="btn" id="ctx-fechar">Fechar</button></div>
-      <p style="margin:0;color:var(--muted);font-size:.86rem">Diga o que você usa e quanto cada sistema importa para a sua instituição. A decisão e o prazo de cada item são recalculados aqui no navegador, e os scripts gerados seguem a sua escolha. Nada é enviado para fora.</p>
-      <div style="display:flex;gap:8px;flex-wrap:wrap"><button type="button" class="btn" id="ctx-padrao">Voltar ao padrão sugerido</button><button type="button" class="btn" id="ctx-zero">Marcar tudo como "Não uso"</button></div>
-    </div>
-    <div class="ctx-corpo"><table><tbody id="ctx-lista"></tbody></table></div>
-  </dialog>
 </div>
 
 <script>
@@ -511,7 +615,7 @@ sha256sum -c --ignore-missing SHA256SUMS</pre>
       CFG.publico ? Promise.resolve(null) : fetch("inventario.json", { cache: "no-store" }).then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; })
     ]).then(function (res) {
       D = res[0]; COLETAS = Array.isArray(res[1]) ? res[1] : []; INV = res[2] && Array.isArray(res[2].servidores) ? res[2] : null;
-      aplicarContexto(); montarFiltros(); render();
+      montarFiltros(); render();
     }).catch(function () {
       document.getElementById("lista").replaceChildren(el("div", { class: "vazio", text: "Não foi possível carregar os dados (vulns.json). Recarregue a página." }));
     });
@@ -547,7 +651,7 @@ sha256sum -c --ignore-missing SHA256SUMS</pre>
     var tec = document.getElementById("f-tec"); tec.replaceChildren();
     Object.keys(D.tecnologias).forEach(function (k) {
       var n = its.filter(function (i) { return i.tecnologia === k; }).length;
-      if (!n || (CFG.publico && CTX.tecs[k] === "nao")) return;
+      if (!n) return;
       var b = el("button", { type: "button", class: "chip", "aria-pressed": String(F.tecExcl.indexOf(k) < 0) }, [D.tecnologias[k], el("span", { class: "n", text: String(n) })]);
       b.addEventListener("click", function () {
         F.tecExcl = F.tecExcl.indexOf(k) >= 0 ? F.tecExcl.filter(function (x) { return x !== k; }) : F.tecExcl.concat(k);
@@ -586,7 +690,6 @@ sha256sum -c --ignore-missing SHA256SUMS</pre>
 
   function passaFiltro(it, ignorarNota) {
     if (F.tecExcl.indexOf(it.tecnologia) >= 0) return false;
-    if (CFG.publico && CTX.tecs[it.tecnologia] === "nao") return false;
     if (F.situacao.indexOf(it.situacao) < 0) return false;
     if (F.decisao.indexOf(decCod(it)) < 0) return false;
     if (INV && F.nossos && !afetados(it.id).total) return false;
@@ -649,7 +752,7 @@ sha256sum -c --ignore-missing SHA256SUMS</pre>
     var lista = document.getElementById("lista");
     if (!ord.length) { lista.replaceChildren(el("div", { class: "vazio", text: "Nenhum item com estes filtros. Use Limpar filtros." })); }
     else lista.replaceChildren.apply(lista, ord.map(cartao));
-    renderScripts(); renderColetas(); renderHistorico(); renderServidores();
+    renderScripts(); renderHoje(); renderExploradas(); renderHistorico(); renderServidores(); renderRelatorio();
   }
 
   function renderMeta() {
@@ -661,6 +764,8 @@ sha256sum -c --ignore-missing SHA256SUMS</pre>
       el("span", { text: D.itens.length + " itens monitorados" }),
       CFG.publico ? el("span", { text: "Atualiza todo dia por volta das " + (CFG.horario || "06:40") }) : null
     ].filter(Boolean));
+    var ri = document.getElementById("rot-itens");
+    if (ri) ri.textContent = c.marco ? "Novas desde " + dataBR(c.marco) : "Vulnerabilidades";
   }
   function renderResumo(vis) {
     var n = function (fn) { return vis.filter(fn).length; };
@@ -696,7 +801,7 @@ sha256sum -c --ignore-missing SHA256SUMS</pre>
     var tags = [el("span", { class: "pill " + dc[1], title: "Decisão SSVC: exploração " + (dz.exploracao || "?") + ", automatizável " + (dz.automatizavel ? "sim" : "não") + ", impacto " + (dz.impacto_total ? "total" : "parcial") + ", missão " + (dz.missao || "?"), text: dc[0] + (dz.vence_em ? (vencido ? " · prazo venceu " : " · até ") + dataBR(dz.vence_em) : "") })];
     tags.push(el("span", { class: "pill " + sit[1], text: sit[0] }));
     if (INV) { var af = afetados(it.id); if (af.total) tags.push(el("span", { class: "pill " + (af.expostos.length ? "p-crit" : "p-high"), text: "Afeta " + af.total + " servidor(es)" + (af.expostos.length ? ", " + af.expostos.length + " exposto(s)" : "") })); }
-    (it.alertas_nacionais || []).slice(0, 1).forEach(function (a) { tags.push(el("span", { class: "pill p-info", title: a.titulo, text: "Alerta CAIS " + dataBR(a.data) })); });
+    (it.alertas_nacionais || []).slice(0, 1).forEach(function (a) { tags.push(el("span", { class: "pill p-info", title: a.titulo, text: (a.fonte === "CTIR Gov" ? "Alerta CTIR Gov " : "Alerta CAIS ") + dataBR(a.data) })); });
     if (it.kev) tags.push(el("span", { class: "pill p-crit", text: "KEV " + dataBR(it.kev) + (it.kev_prazo ? " · prazo CISA " + dataBR(it.kev_prazo) : "") }));
     if (it.ransomware) tags.push(el("span", { class: "pill p-crit", text: "usada por ransomware" }));
     tags.push(el("span", { class: "pill p-info", text: D.tecnologias[it.tecnologia] || it.tecnologia }));
@@ -764,11 +869,13 @@ sha256sum -c --ignore-missing SHA256SUMS</pre>
           el("td", { text: EXPL[dz.exploracao] || dz.exploracao }),
           el("td", { text: dz.automatizavel ? "sim" : "não" }),
           el("td", { text: dz.impacto_total ? "total" : "parcial" }),
-          el("td", { text: dz.missao + " (criticidade.json)" }),
+          el("td", { text: ({ alta: "alta", media: "média", baixa: "baixa" }[dz.missao] || dz.missao) + " (padrão do projeto)" }),
           el("td", {}, [el("span", { class: "pill " + DECISOES[dz.codigo][1], text: DECISOES[dz.codigo][0] })]),
           el("td", { class: "m", text: dz.prazo_dias ? dz.prazo_dias + " dia(s), até " + dataBR(dz.vence_em) + " (contado de " + dataBR(dz.referencia) + ")" : "—" })
         ])])
-      ])]), el("p", { style: "margin-top:6px;color:var(--muted);font-size:.85rem", text: (dz.exposto ? "A decisão subiu um nível porque o item afeta servidor exposto à internet. " : "") + "Fontes dos pontos de decisão: " + (dz.fontes || []).join("; ") + ". Prazos: agir agora 1 dia, agir em breve 7, acompanhar de perto 30, acompanhar 90 (próxima janela de manutenção)." })]));
+      ])]), el("p", { style: "margin-top:6px;color:var(--muted);font-size:.85rem", text: (dz.exposto ? "A decisão subiu um nível porque o item afeta servidor exposto à internet. " : "") + "Fontes dos pontos de decisão: " + (dz.fontes || []).join("; ") + "." }),
+        el("p", { class: "ref", style: "margin-top:6px", text: "O prazo é uma sugestão do Radar (1, 7, 30 ou 90 dias, pelo método SSVC). Referências oficiais: PPSI, controle 7.7 (corrigir no ciclo mensal ou menor)" + ((it.alertas_nacionais || []).some(function (a) { return a.fonte === "CTIR Gov"; }) ? "; Decreto 10.748/2021, art. 12, IX (órgãos federais: sanar com urgência as falhas dos alertas do CTIR Gov)" : "") + (it.kev_prazo ? "; prazo do KEV " + dataBR(it.kev_prazo) + " (obrigação do governo dos EUA, só referência)" : "") + "." }),
+        it.situacao === "explorado" ? el("p", { class: "ref", style: "margin-top:4px", text: "LGPD: se a exploração afetar dados pessoais, a comunicação à ANPD é em até 3 dias úteis a partir do momento em que a instituição sabe disso (Resolução CD/ANPD 15/2024, art. 6). Acione o encarregado de dados." }) : null]));
     }
     if (INV) {
       var af2 = afetados(it.id);
@@ -1056,6 +1163,7 @@ sha256sum -c --ignore-missing SHA256SUMS</pre>
     }
     var rel = document.getElementById("h-rel").value, v = H.versoes[rel];
     if (!v) return;
+    renderSistemaExpl(rel);
     var q = document.getElementById("h-busca").value.trim().toLowerCase();
     var soKev = document.getElementById("h-so-kev").checked;
     var ordem = document.getElementById("h-ordem").value;
@@ -1116,10 +1224,7 @@ sha256sum -c --ignore-missing SHA256SUMS</pre>
     document.getElementById("h-mais").addEventListener("click", function () { hLimite += 100; renderHistorico(); });
   }
 
-  // ---------- modo público (F17) e Meu contexto (F18) ----------
-  var PRAZOS = { agir_agora: 1, agir_em_breve: 7, acompanhar_de_perto: 30, acompanhar: 90 };
-  var NIVEIS = [["alta", "Alta"], ["media", "Média"], ["baixa", "Baixa"], ["nao", "Não uso"]];
-  var CTX = (function () { var c = ler("contexto", null); return c && typeof c.tecs === "object" && c.tecs ? c : { tecs: {} }; })();
+  // ---------- modo público (F17) ----------
   function urlRepo(resto) { return /^[A-Za-z0-9_.-]+\/[A-Za-z0-9_.-]+$/.test(CFG.repo || "") ? "https://github.com/" + CFG.repo + (resto ? "/" + resto : "") : ""; }
   function iniciarPublico() {
     document.querySelectorAll(CFG.publico ? "[data-so-interno]" : "[data-so-publico]").forEach(function (n) { n.remove(); });
@@ -1131,48 +1236,220 @@ sha256sum -c --ignore-missing SHA256SUMS</pre>
     });
     var t = document.getElementById("forcar-titulo"); if (t) t.textContent = "Quando os dados são atualizados";
   }
-  function addDias(iso, n) { var d = new Date(iso + "T12:00:00Z"); if (isNaN(d)) return null; d.setUTCDate(d.getUTCDate() + n); return d.toISOString().slice(0, 10); }
-  function missaoPadrao(k) { var c = (D && D.criticidade) || {}; return (c.tecnologias || {})[k] || c.padrao || "media"; }
-  function aplicarContexto() {
-    if (!D || !CFG.publico) return;
-    D.itens.forEach(function (it) {
-      if (!it._dec0) it._dec0 = it.decisao;
-      var d0 = it._dec0, m = CTX.tecs[it.tecnologia];
-      if (!d0 || !d0.por_missao || !m || m === "nao" || m === d0.missao || !d0.por_missao[m]) { it.decisao = d0; return; }
-      var cod = d0.por_missao[m], pz = PRAZOS[cod] || null;
-      it.decisao = Object.assign({}, d0, { codigo: cod, rotulo: (DECISOES[cod] || [cod])[0], prazo_dias: pz, vence_em: pz && d0.referencia ? addDias(d0.referencia, pz) : null, missao: m, exposto: false, contexto: true });
-    });
-    var n = Object.keys(CTX.tecs).length, e = document.getElementById("ctx-estado");
-    if (e) e.textContent = n ? "· " + n + " ajuste" + (n > 1 ? "s" : "") : "· padrão";
+  function addDias(iso, n) { var d = new Date(String(iso).slice(0, 10) + "T12:00:00Z"); if (isNaN(d)) return null; d.setUTCDate(d.getUTCDate() + n); return d.toISOString().slice(0, 10); }
+
+  // ---------- F22: aba Exploradas (catálogo KEV inteiro) ----------
+  var X = null, xCarregando = false, xLimite = 50, XF = null;
+  var SO_EST = { c: ["corrigido", "p-ok"], p: ["só Ubuntu Pro", "p-info"], a: ["sem correção", "p-crit"], u: ["sem correção", "p-crit"], t: ["em triagem", "p-warn"], d: ["adiado pela distro", "p-warn"] };
+  function semCorrecao(e) { return e === "a" || e === "u" || e === "t" || e === "d"; }
+  function carregarExploradas() {
+    if (X || xCarregando) return;
+    xCarregando = true;
+    fetch("exploradas.json").then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); }).then(function (d) {
+      X = d; XF = XF || { cats: (d.padrao || []).slice(), periodo: 0, busca: "", rel: "", ordem: "data", ransom: false, sem: false };
+      document.getElementById("c-expl").textContent = String(d.itens.length);
+      var sel = document.getElementById("x-rel");
+      if (D) Object.keys(D.releases).forEach(function (r) { sel.appendChild(el("option", { value: r, text: "Situação no " + D.releases[r].rotulo })); });
+      render();
+    }).catch(function () { var i = document.getElementById("x-info"); if (i) i.textContent = "Não foi possível carregar exploradas.json."; });
   }
-  function gravarContexto() { gravar("contexto", CTX); aplicarContexto(); montarFiltros(); render(); renderContexto(); }
-  function renderContexto() {
-    if (!D) return;
-    var tb = document.getElementById("ctx-lista");
-    var usados = {}; D.itens.forEach(function (i) { usados[i.tecnologia] = (usados[i.tecnologia] || 0) + 1; });
-    var ks = Object.keys(D.tecnologias).filter(function (k) { return usados[k]; }).sort(function (a, b) { return String(D.tecnologias[a]).localeCompare(String(D.tecnologias[b]), "pt-BR"); });
-    tb.replaceChildren.apply(tb, ks.map(function (k) {
-      var pad = missaoPadrao(k), atual = CTX.tecs[k] || pad, id = "ctx-" + k;
-      var sel = el("select", { id: id }, NIVEIS.map(function (nv) { var o = el("option", { value: nv[0], text: nv[1] }); if (nv[0] === atual) o.selected = true; return o; }));
-      sel.addEventListener("change", function () {
-        if (sel.value === pad) delete CTX.tecs[k]; else CTX.tecs[k] = sel.value;
-        gravarContexto();
-      });
-      return el("tr", {}, [
-        el("td", {}, [el("label", { for: id, text: D.tecnologias[k] }), el("div", { class: "sug", text: usados[k] + " ite" + (usados[k] > 1 ? "ns" : "m") + " · sugerido: " + ((NIVEIS.filter(function (nv) { return nv[0] === pad; })[0] || ["", pad])[1]) })]),
-        el("td", { style: "text-align:right" }, [sel])]);
+  function xFiltrar(soCat) {
+    var lim = XF.periodo ? addDias((D && D.coleta && D.coleta.data) || HOJE, -XF.periodo) : "";
+    var q = XF.busca.trim().toLowerCase();
+    return X.itens.filter(function (e) {
+      if (!soCat && XF.cats.indexOf(e.cat) < 0) return false;
+      if (lim && e.d < lim) return false;
+      if (XF.ransom && !e.r) return false;
+      if (XF.rel && XF.sem && !(e.so[XF.rel] && semCorrecao(e.so[XF.rel].e))) return false;
+      if (q && (e.cve + " " + e.f + " " + e.p + " " + e.n).toLowerCase().indexOf(q) < 0) return false;
+      return true;
+    });
+  }
+  function xCartao(e) {
+    var pills = [el("span", { class: "pill", text: "KEV " + dataBR(e.d) })];
+    if (e.r) pills.push(el("span", { class: "pill p-crit", text: "ransomware" }));
+    if (typeof e.epss === "number") pills.push(el("span", { class: "pill " + epssClasse(e.epss), title: "Probabilidade de exploração em 30 dias (FIRST EPSS); percentil " + pct(e.pct), text: "EPSS " + pct(e.epss) }));
+    if (typeof e.nota === "number") pills.push(el("span", { class: "pill", text: "CVSS " + e.nota.toFixed(1) }));
+    pills.push(el("span", { class: "pill", text: (X.categorias || {})[e.cat] || e.cat }));
+    (e.nac || []).forEach(function (a) { pills.push(el("a", { class: "pill p-info", href: a.url, target: "_blank", rel: "noopener", title: a.titulo, text: a.fonte + " " + dataBR(a.data) })); });
+    var rels = XF.rel ? [XF.rel] : Object.keys(e.so || {});
+    var so = rels.filter(function (r) { return e.so && e.so[r]; }).map(function (r) {
+      var x = e.so[r], es = SO_EST[x.e] || [x.e, ""];
+      return el("span", { class: "pill " + es[1], title: "Pacote-fonte " + x.p + (x.v ? ", corrigido em " + x.v : ""), text: ((D && D.releases[r]) ? D.releases[r].rotulo.replace(/ \(.*\)$/, "") : r) + ": " + es[0] });
+    });
+    var corpo = [
+      el("p", {}, [el("b", { text: "Descrição da CISA (em inglês): " }), e.desc || "—"]),
+      el("p", {}, [el("b", { text: "Ação exigida pela CISA: " }), e.acao || "—"]),
+      e.links && e.links.length ? el("p", {}, [el("b", { text: "Avisos e correções: " })].concat(e.links.map(function (u, k) { return el("span", {}, [k ? " · " : "", link(u.replace(/^https:\/\//, "").slice(0, 70), u)]); }))) : null,
+      e.cwe && e.cwe.length ? el("p", { text: "Tipo de falha: " + e.cwe.join(", ") }) : null,
+      el("p", { class: "ref", text: "Prazo da CISA: " + dataBR(e.pz) + " (obrigação do governo dos EUA; aqui, só referência). No Brasil, o PPSI (controle 7.7) pede correção no ciclo mensal ou menor, e o Decreto 10.748 (art. 12, IX) pede que órgãos federais corrijam com urgência as falhas dos alertas do CTIR Gov." })
+    ];
+    return el("article", { class: "kev" + (e.r ? " r" : "") }, [
+      el("div", { class: "tit" }, [link(e.cve, "https://nvd.nist.gov/vuln/detail/" + e.cve), " · " + e.f + " " + e.p + ": " + e.n]),
+      el("div", { class: "lin" }, pills),
+      so.length ? el("div", { class: "lin" }, so) : null,
+      e.item ? el("div", { class: "lin" }, [el("a", { href: "#itens", text: "Ver o item do Radar (comandos e mitigação)", onclick: function (ev) { ev.preventDefault(); abertos.add(e.item); location.hash = "#itens"; setTimeout(function () { var n = document.getElementById("i-" + e.item); if (n) n.scrollIntoView({ block: "start" }); }, 50); } })]) : null,
+      el("details", {}, [el("summary", { text: "Detalhes" }), el("div", {}, corpo)])
+    ]);
+  }
+  function renderExploradas() {
+    var sec = document.getElementById("aba-exploradas");
+    if (!sec || sec.hidden) return;
+    if (!X) { document.getElementById("x-info").textContent = "Carregando o catálogo (cerca de 1 MB)…"; carregarExploradas(); return; }
+    document.getElementById("x-busca").value = XF.busca;
+    document.getElementById("x-periodo").value = String(XF.periodo);
+    document.getElementById("x-rel").value = XF.rel;
+    document.getElementById("x-ordem").value = XF.ordem;
+    document.getElementById("x-ransom").checked = XF.ransom;
+    var cSem = document.getElementById("x-sem"); cSem.checked = XF.sem; cSem.disabled = !XF.rel; cSem.parentNode.style.opacity = XF.rel ? "1" : ".5";
+    var base = xFiltrar(true), cont = {};
+    base.forEach(function (e) { cont[e.cat] = (cont[e.cat] || 0) + 1; });
+    var cats = document.getElementById("x-cats");
+    cats.replaceChildren.apply(cats, Object.keys(X.categorias).map(function (k) {
+      var b = el("button", { type: "button", class: "chip", "aria-pressed": String(XF.cats.indexOf(k) >= 0) }, [X.categorias[k], el("span", { class: "n", text: String(cont[k] || 0) })]);
+      b.addEventListener("click", function () { XF.cats = XF.cats.indexOf(k) >= 0 ? XF.cats.filter(function (x) { return x !== k; }) : XF.cats.concat(k); xLimite = 50; render(); });
+      return b;
     }));
-  }
-  function ligarContexto() {
-    if (!CFG.publico) return;
-    var dlg = document.getElementById("ctx");
-    document.getElementById("ctx-abrir").addEventListener("click", function () { renderContexto(); if (dlg.showModal) dlg.showModal(); else dlg.setAttribute("open", ""); });
-    document.getElementById("ctx-fechar").addEventListener("click", function () { if (dlg.close) dlg.close(); else dlg.removeAttribute("open"); });
-    document.getElementById("ctx-padrao").addEventListener("click", function () { CTX = { tecs: {} }; gravarContexto(); });
-    document.getElementById("ctx-zero").addEventListener("click", function () {
-      if (!D) return; CTX = { tecs: {} }; Object.keys(D.tecnologias).forEach(function (k) { CTX.tecs[k] = "nao"; }); gravarContexto();
-      toast("Agora escolha a importância só das tecnologias que você usa.");
+    var l = xFiltrar(false);
+    l.sort(function (a, b) {
+      if (XF.ordem === "epss") return (b.epss || 0) - (a.epss || 0);
+      if (XF.ordem === "nota") return (b.nota || 0) - (a.nota || 0);
+      return a.d < b.d ? 1 : a.d > b.d ? -1 : 0;
     });
+    var ocultas = base.length - l.length;
+    var info = document.getElementById("x-info");
+    info.replaceChildren.apply(info, [l.length + " de " + X.itens.length + " falhas exploradas" + (XF.rel ? " · situação no " + D.releases[XF.rel].rotulo : "") + ". ",
+      ocultas ? el("span", {}, [ocultas + " outra(s) com estes filtros estão em categorias escondidas (",
+        el("a", { href: "#exploradas", text: "mostrar tudo", onclick: function (ev) { ev.preventDefault(); XF.cats = Object.keys(X.categorias); render(); } }), "). "]) : null,
+      "Catálogo KEV " + (X.kev_versao || "?") + ". Descrições e ações em inglês, como a CISA publica."].filter(Boolean));
+    var lista = document.getElementById("x-lista");
+    lista.replaceChildren.apply(lista, l.slice(0, xLimite).map(xCartao));
+    document.getElementById("x-pag").textContent = l.length > xLimite ? "Mostrando " + xLimite + " de " + l.length : "";
+    document.getElementById("x-mais").hidden = l.length <= xLimite;
+  }
+  function ligarExploradas() {
+    var bt;
+    document.getElementById("x-busca").addEventListener("input", function (e) { clearTimeout(bt); bt = setTimeout(function () { if (!XF) return; XF.busca = e.target.value; xLimite = 50; render(); }, 150); });
+    [["x-periodo", "periodo", Number], ["x-rel", "rel", String], ["x-ordem", "ordem", String]].forEach(function (c) {
+      document.getElementById(c[0]).addEventListener("change", function (e) { if (!XF) return; XF[c[1]] = c[2](e.target.value); if (c[1] === "rel" && !XF.rel) XF.sem = false; xLimite = 50; render(); });
+    });
+    document.getElementById("x-ransom").addEventListener("change", function (e) { if (!XF) return; XF.ransom = e.target.checked; xLimite = 50; render(); });
+    document.getElementById("x-sem").addEventListener("change", function (e) { if (!XF) return; XF.sem = e.target.checked; xLimite = 50; render(); });
+    document.getElementById("x-servidor").addEventListener("click", function () { if (!X) return; XF.cats = (X.padrao || []).slice(); xLimite = 50; render(); });
+    document.getElementById("x-tudo").addEventListener("click", function () { if (!X) return; XF.cats = Object.keys(X.categorias); xLimite = 50; render(); });
+    document.getElementById("x-mais").addEventListener("click", function () { xLimite += 50; render(); });
+  }
+
+  // ---------- F22: Por sistema (falhas exploradas na versão escolhida) ----------
+  function renderSistemaExpl(rel) {
+    var alvo = document.getElementById("s-expl");
+    if (!alvo) return;
+    var r = (D && D.releases[rel]) || {};
+    var partes = [el("p", { class: "ref", text: (r.rotulo || rel) + ": " + (r.nota || "suportada") + "." })];
+    if (!X) { carregarExploradas(); alvo.replaceChildren.apply(alvo, partes.concat([el("p", { text: "Carregando as falhas exploradas…" })])); return; }
+    var nesta = X.itens.filter(function (e) { return e.so && e.so[rel]; });
+    var abertas = nesta.filter(function (e) { return semCorrecao(e.so[rel].e); });
+    var corr = nesta.filter(function (e) { return e.so[rel].e === "c"; });
+    var pro = nesta.filter(function (e) { return e.so[rel].e === "p"; });
+    partes.push(el("div", { class: "resumo" }, [
+      el("div", { class: "tile c" }, [el("b", { text: String(abertas.length) }), el("span", { text: "falhas exploradas (KEV) sem correção nesta versão" })]),
+      el("div", { class: "tile o" }, [el("b", { text: String(corr.length) }), el("span", { text: "falhas exploradas já corrigidas: confira se o servidor está atualizado" })]),
+      el("div", { class: "tile" }, [el("b", { text: String(pro.length) }), el("span", { text: "corrigidas só no Ubuntu Pro" })])
+    ]));
+    partes.push(el("div", { style: "display:flex;gap:8px;flex-wrap:wrap" }, [
+      el("button", { type: "button", class: "btn prim", text: "Gerar scripts para esta versão", onclick: function () { F.releases = [rel]; gravar("filtros", F); montarFiltros(); location.hash = "#scripts"; } }),
+      el("button", { type: "button", class: "btn", text: "Ver as exploradas sem correção nesta versão", onclick: function () { XF.rel = rel; XF.sem = true; XF.cats = Object.keys(X.categorias); location.hash = "#exploradas"; } })
+    ]));
+    if (abertas.length) partes.push(el("ul", { style: "margin:0;padding-left:20px" }, abertas.slice(0, 8).map(function (e) {
+      return el("li", {}, [link(e.cve, "https://nvd.nist.gov/vuln/detail/" + e.cve), " · " + e.f + " " + e.p + " (pacote " + e.so[rel].p + ", " + (SO_EST[e.so[rel].e] || [e.so[rel].e])[0] + ")"]);
+    })));
+    alvo.replaceChildren.apply(alvo, partes);
+  }
+
+  // ---------- F22: Hoje ----------
+  function renderHoje() {
+    var sec = document.getElementById("aba-hoje");
+    if (!sec || sec.hidden || !D) return;
+    if (!X) carregarExploradas();
+    var c = D.coleta || {}, ref = c.data || HOJE, sete = addDias(ref, -7);
+    var ant = COLETAS.length > 1 ? COLETAS[COLETAS.length - 2] : null;
+    document.getElementById("hoje-sub").textContent = "Coleta de " + dataBR(c.data) + (c.id ? " às " + String(c.id).slice(11, 16) : "") + (ant ? "; a anterior foi em " + dataBR(ant.data) + (ant.id ? " às " + String(ant.id).slice(11, 16) : "") : "") + ". Abaixo, o que mudou nas fontes oficiais.";
+    var kev7 = X ? X.itens.filter(function (e) { return e.d >= sete; }) : [];
+    var kev7s = X ? kev7.filter(function (e) { return (X.padrao || []).indexOf(e.cat) >= 0; }) : [];
+    var nac7 = (D.alertas_nacionais || []).filter(function (a) { return a.data >= sete; });
+    var agir = D.itens.filter(function (i) { return decCod(i) === "agir_agora"; });
+    var res = document.getElementById("hoje-resumo");
+    res.replaceChildren(
+      el("div", { class: "tile c" }, [el("b", { text: X ? String(kev7s.length) : "…" }), el("span", { text: "falhas exploradas novas em categorias de servidor (7 dias)" + (X ? "; " + kev7.length + " no catálogo todo" : "") })]),
+      el("div", { class: "tile h" }, [el("b", { text: String(nac7.length) }), el("span", { text: "alertas do CTIR Gov e do CAIS (7 dias)" })]),
+      el("div", { class: "tile c" }, [el("b", { text: String(agir.length) }), el("span", { text: "itens para agir agora" })]),
+      el("div", { class: "tile" }, [el("b", { text: String((c.novos || []).length + (c.alterados || []).length) }), el("span", { text: "itens novos ou atualizados nesta coleta" })])
+    );
+    var hk = document.getElementById("hoje-kev");
+    hk.replaceChildren.apply(hk, [el("h3", { style: "font-size:1rem;margin:0", text: "Entraram no catálogo de falhas exploradas nos últimos 7 dias" })].concat(
+      !X ? [el("p", { text: "Carregando…" })] : kev7.length ? kev7.slice(0, 12).map(xCartao).concat(kev7.length > 12 ? [el("a", { href: "#exploradas", text: "Ver todas na aba Exploradas", onclick: function () { XF.periodo = 30; XF.cats = Object.keys(X.categorias); } })] : [])
+        : [el("p", { style: "color:var(--muted)", text: "Nenhuma entrada nova nos últimos 7 dias." })]));
+    var ha = document.getElementById("hoje-alertas");
+    ha.replaceChildren.apply(ha, [el("h3", { style: "font-size:1rem;margin:0", text: "Alertas nacionais recentes (CTIR Gov e CAIS/RNP)" })].concat(
+      nac7.length ? [el("ul", { style: "margin:0;padding-left:20px" }, nac7.slice(0, 15).map(function (a) { return el("li", {}, [dataBR(a.data) + " · " + a.fonte + " · ", link(a.titulo, a.url), a.cves && a.cves.length ? " (" + a.cves.slice(0, 4).join(", ") + ")" : ""]); }))]
+        : [el("p", { style: "color:var(--muted)", text: "Nenhum alerta nos últimos 7 dias." })]));
+    var porId = {}; D.itens.forEach(function (i) { porId[i.id] = i; });
+    var mud = (c.novos || []).map(function (id) { return [id, "novo"]; }).concat((c.alterados || []).map(function (id) { return [id, "atualizado"]; })).filter(function (x) { return porId[x[0]]; });
+    var hm = document.getElementById("hoje-mudou");
+    hm.replaceChildren.apply(hm, [el("h3", { style: "font-size:1rem;margin:0", text: "Itens do Radar novos ou atualizados nesta coleta" })].concat(
+      mud.length ? [el("ul", { style: "margin:0;padding-left:20px" }, mud.slice(0, 20).map(function (x) { return el("li", {}, [x[1] + ": ", el("a", { href: "#itens", text: porId[x[0]].titulo, onclick: function (ev) { ev.preventDefault(); abertos.add(x[0]); location.hash = "#itens"; } })]); }))]
+        : [el("p", { style: "color:var(--muted)", text: "Nenhum item novo ou atualizado nesta coleta." })]));
+    var fe = c.fontes_estado || [], atras = fe.filter(function (f) { return f.estado !== "em dia"; });
+    document.getElementById("hoje-fontes-sum").textContent = fe.length ? (atras.length ? atras.length + " fonte(s) sem cópia nova nesta coleta: " + atras.map(function (f) { return f.fonte; }).join(", ") + "; o Radar usa a última cópia" : "todas em dia") : "";
+    var hf = document.getElementById("hoje-fontes");
+    hf.replaceChildren(el("p", { style: "margin:0 0 6px;color:var(--muted);font-size:.85rem", text: "Quando uma fonte não responde, a coleta segue com a última cópia baixada e avisa aqui." }),
+      el("div", { class: "scroll" }, [el("table", {}, [el("thead", {}, [el("tr", {}, ["Fonte", "Situação", "Cópia de"].map(function (h) { return el("th", { text: h }); }))]),
+        el("tbody", {}, fe.map(function (f) { return el("tr", {}, [el("td", { text: f.fonte }), el("td", {}, [el("span", { class: "pill " + (f.estado === "em dia" ? "p-ok" : "p-warn"), text: f.estado })]), el("td", { class: "m", text: f.copia ? dataBR(f.copia) + " " + String(f.copia).slice(11, 16) : "—" })]); }))])]));
+    renderColetas();
+  }
+
+  // ---------- F22: Relatório para a gestão ----------
+  function renderRelatorio() {
+    var sec = document.getElementById("aba-relatorio");
+    if (!sec || sec.hidden || !D) return;
+    if (!X) { carregarExploradas(); document.getElementById("r-resumo").textContent = "Carregando…"; return; }
+    var sel = document.getElementById("r-mes"), meses = [], ref = (D.coleta && D.coleta.data) || HOJE;
+    for (var k = 0; k < 12; k++) { var d = new Date(ref.slice(0, 7) + "-15T12:00:00Z"); d.setUTCMonth(d.getUTCMonth() - k); meses.push(d.toISOString().slice(0, 7)); }
+    if (!sel.options.length) meses.forEach(function (m) { sel.appendChild(el("option", { value: m, text: m.slice(5, 7) + "/" + m.slice(0, 4) })); });
+    var mes = sel.value || meses[0];
+    var doMes = X.itens.filter(function (e) { return (e.d || "").slice(0, 7) === mes; });
+    var serv = doMes.filter(function (e) { return (X.padrao || []).indexOf(e.cat) >= 0; });
+    var ctir = (D.alertas_ctir || []).filter(function (a) { return (a.data || "").slice(0, 7) === mes; });
+    var novos = 0; COLETAS.forEach(function (c) { if ((c.data || "").slice(0, 7) === mes) novos += (c.novos || []).length; });
+    var r = document.getElementById("r-resumo");
+    r.replaceChildren(
+      el("div", { class: "tile c" }, [el("b", { text: String(serv.length) }), el("span", { text: "falhas exploradas novas em categorias de servidor (" + doMes.length + " no catálogo todo)" })]),
+      el("div", { class: "tile h" }, [el("b", { text: String(doMes.filter(function (e) { return e.r; }).length) }), el("span", { text: "delas usadas por ransomware" })]),
+      el("div", { class: "tile" }, [el("b", { text: String(ctir.length) }), el("span", { text: "alertas do CTIR Gov no mês" })]),
+      el("div", { class: "tile" }, [el("b", { text: String(novos) }), el("span", { text: "itens novos no Radar no mês" })])
+    );
+    // Gráfico: falhas exploradas novas por mês em categorias de servidor (uma série; tabela logo abaixo).
+    var serie = meses.slice().reverse().map(function (m) { return [m, X.itens.filter(function (e) { return (e.d || "").slice(0, 7) === m && (X.padrao || []).indexOf(e.cat) >= 0; }).length, X.itens.filter(function (e) { return (e.d || "").slice(0, 7) === m; }).length]; });
+    var max = Math.max.apply(null, serie.map(function (x) { return x[1]; }).concat([1]));
+    var W = 720, Hh = 200, pad = 28, bw = (W - pad * 2) / serie.length;
+    var ns = "http://www.w3.org/2000/svg";
+    var svg = document.createElementNS(ns, "svg"); svg.setAttribute("viewBox", "0 0 " + W + " " + (Hh + 40)); svg.setAttribute("class", "barras"); svg.setAttribute("role", "img");
+    svg.setAttribute("aria-label", "Falhas exploradas novas por mês em categorias de servidor, nos últimos 12 meses");
+    serie.forEach(function (x, k) {
+      var h = Math.round((x[1] / max) * Hh), xx = pad + k * bw + 4, y = Hh - h + 10;
+      var rr = document.createElementNS(ns, "rect"); rr.setAttribute("class", "b"); rr.setAttribute("x", xx); rr.setAttribute("y", y); rr.setAttribute("width", Math.max(bw - 8, 2)); rr.setAttribute("height", Math.max(h, 1)); rr.setAttribute("rx", 3);
+      var t = document.createElementNS(ns, "title"); t.textContent = x[0].slice(5, 7) + "/" + x[0].slice(0, 4) + ": " + x[1] + " em categorias de servidor, " + x[2] + " no catálogo todo"; rr.appendChild(t); svg.appendChild(rr);
+      var v = document.createElementNS(ns, "text"); v.setAttribute("x", xx + (bw - 8) / 2); v.setAttribute("y", y - 4); v.setAttribute("text-anchor", "middle"); v.textContent = String(x[1]); svg.appendChild(v);
+      var lb = document.createElementNS(ns, "text"); lb.setAttribute("x", xx + (bw - 8) / 2); lb.setAttribute("y", Hh + 28); lb.setAttribute("text-anchor", "middle"); lb.textContent = x[0].slice(5, 7) + "/" + x[0].slice(2, 4); svg.appendChild(lb);
+    });
+    var g = document.getElementById("r-grafico");
+    g.replaceChildren(el("h3", { style: "font-size:1rem;margin:0 0 6px", text: "Falhas exploradas novas por mês, em categorias de servidor" }), svg,
+      el("details", {}, [el("summary", { text: "Ver os números em tabela" }), el("div", { class: "scroll" }, [el("table", {}, [el("thead", {}, [el("tr", {}, ["Mês", "Categorias de servidor", "Catálogo todo"].map(function (h) { return el("th", { text: h }); }))]),
+        el("tbody", {}, serie.map(function (x) { return el("tr", {}, [el("td", { text: x[0].slice(5, 7) + "/" + x[0].slice(0, 4) }), el("td", { class: "m", text: String(x[1]) }), el("td", { class: "m", text: String(x[2]) })]); }))])])]));
+  }
+  function ligarRelatorio() {
+    document.getElementById("r-mes").addEventListener("change", function () { render(); });
+    document.getElementById("r-imprimir").addEventListener("click", function () { window.print(); });
   }
 
   // ---------- botão Atualizar agora ----------
@@ -1259,7 +1536,7 @@ sha256sum -c --ignore-missing SHA256SUMS</pre>
   }
   // ---------- coletas ----------
   function renderColetas() {
-    if (document.getElementById("aba-coletas").hidden) return;
+    if (document.getElementById("aba-hoje").hidden) return;
     var tb = document.querySelector("#tab-coletas tbody");
     var l = COLETAS.slice().reverse();
     if (!l.length) { tb.replaceChildren(el("tr", {}, [el("td", { colspan: "6", text: "Sem histórico de coletas." })])); return; }
@@ -1292,8 +1569,13 @@ sha256sum -c --ignore-missing SHA256SUMS</pre>
 
   // ---------- abas ----------
   function aba() {
-    var h = (location.hash || "#itens").slice(1);
-    if ((CFG.publico ? ["itens", "scripts", "historico", "coletas", "sobre"] : ["itens", "scripts", "servidores", "historico", "coletas"]).indexOf(h) < 0) h = "itens";
+    var h = (location.hash || "#hoje").slice(1);
+    h = { coletas: "hoje", aprender: "sobre", sistema: "historico" }[h] || h;
+    if ((CFG.publico ? ["hoje", "exploradas", "itens", "historico", "scripts", "relatorio", "sobre"] : ["hoje", "exploradas", "itens", "historico", "scripts", "servidores", "relatorio"]).indexOf(h) < 0) h = "hoje";
+    // A barra de filtros e o resumo valem só para os itens e os scripts.
+    var comFiltros = h === "itens" || h === "scripts";
+    document.querySelector(".grade").classList.toggle("so-conteudo", !comFiltros);
+    document.getElementById("resumo").hidden = !comFiltros;
     document.querySelectorAll("[data-aba-sec]").forEach(function (s) { s.hidden = s.getAttribute("data-aba-sec") !== h; });
     document.querySelectorAll("nav.abas a").forEach(function (a) { if (a.getAttribute("data-aba") === h) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current"); });
     render();
@@ -1306,7 +1588,15 @@ sha256sum -c --ignore-missing SHA256SUMS</pre>
       texto: ["Uma vulnerabilidade é uma falha num software que um atacante pode usar para invadir, roubar dados ou derrubar um serviço. Toda semana surgem centenas. Ninguém corrige tudo ao mesmo tempo: o trabalho de quem cuida da segurança é **decidir o que corrigir primeiro**.",
               "Este painel junta os avisos oficiais (CISA, Debian, Ubuntu, NVD e fornecedores) e mostra o que afeta os sistemas comuns numa universidade, com comandos prontos para verificar e corrigir."],
       faca: "Siga o tour até o fim. Ele leva uns 5 minutos e você pode voltar a ele pelo botão no topo." },
-    { alvo: "#resumo", titulo: "O resumo: comece por aqui",
+    { alvo: "#aba-hoje", antes: function () { location.hash = "#hoje"; }, titulo: "Hoje: comece o dia por aqui",
+      texto: ["A aba Hoje mostra o que mudou desde a coleta anterior: falhas que acabaram de entrar no catálogo de exploradas, alertas do CTIR Gov e do CAIS, e itens novos ou atualizados.",
+              "Também mostra se alguma fonte oficial ficou fora do ar: nesse caso a coleta segue com a última cópia e avisa."],
+      faca: "Todo dia, leia o primeiro número. Se ele subiu, há falha nova sendo explorada em algo comum em servidores." },
+    { alvo: "#aba-exploradas", antes: function () { location.hash = "#exploradas"; }, titulo: "Exploradas: todas as falhas com ataque confirmado",
+      texto: ["Esta aba traz o catálogo KEV inteiro, da CISA, de qualquer ano. Falha antiga num firewall ou numa VPN que ninguém atualizou continua aqui.",
+              "Por padrão aparecem só categorias de servidor e rede. Escolha uma distro para ver se já existe correção nela."],
+      faca: "Busque pelos produtos da sua instituição (por exemplo, o fabricante do firewall) e confira se a versão de vocês já foi corrigida." },
+    { alvo: "#resumo", antes: function () { location.hash = "#itens"; }, titulo: "O resumo: comece por aqui",
       texto: ["Estes números mudam conforme os filtros. Leia da esquerda para a direita:"],
       lista: ["**Exploração ativa**: alguém já está usando a falha em ataques reais. É a prioridade máxima.",
               "**Nota crítica**: falhas de gravidade 9,0 ou mais.",
@@ -1330,14 +1620,10 @@ sha256sum -c --ignore-missing SHA256SUMS</pre>
       texto: ["O **KEV** (Known Exploited Vulnerabilities) é o catálogo da CISA, a agência de cibersegurança dos EUA, com falhas que **já estão sendo exploradas** em ataques reais. Estar no KEV vale mais do que qualquer nota: não é mais hipótese.",
               "A CISA dá prazos curtos para os órgãos do governo americano corrigirem (às vezes 3 dias). É uma boa referência de urgência também para nós."],
       faca: "Mantenha esta opção marcada. Item com etiqueta KEV: verifique no mesmo dia se você usa aquele software." },
-    CFG.publico ? { alvo: "#ctx-abrir", titulo: "Meu contexto: o painel do seu jeito",
-      texto: ["Cada instituição usa um conjunto diferente de sistemas, e o mesmo sistema pode ser essencial para uma e secundário para outra.",
-              "Em **Meu contexto** você marca as tecnologias que não usa (elas somem da lista) e a importância de cada uma (Alta, Média ou Baixa). A decisão e o prazo de cada item mudam conforme a sua escolha, e os scripts gerados também. Tudo fica só no seu navegador."],
-      faca: "Depois do tour, abra Meu contexto e ajuste pelo menos as tecnologias que você não usa." } : null,
     { alvo: "#f-decisao", titulo: "Decisão e prazo: por onde começar",
       texto: ["Cada item recebe uma **decisão** inspirada no SSVC, o método da CISA para decidir o que corrigir primeiro. Ela combina quatro perguntas: a falha está sendo explorada? O ataque pode ser automatizado? O impacto é total? O sistema é importante para a sua instituição?"],
       lista: ["**Agir agora**: corrigir ou mitigar em até 1 dia.", "**Agir em breve**: até 7 dias.", "**Acompanhar de perto**: até 30 dias.", "**Acompanhar**: na próxima janela de manutenção (até 90 dias)."],
-      extra: CFG.publico ? "Ajuste a importância de cada sistema em Meu contexto, no topo da página; combine os valores com a gestão. A lista já vem ordenada por decisão e prazo." : "A importância de cada sistema fica no arquivo criticidade.json e deve ser combinada com a gestão. A lista já vem ordenada por decisão e prazo.",
+      extra: "A importância de cada tecnologia é um padrão do projeto, igual para todos. O prazo é uma sugestão do Radar: o PPSI pede correção no ciclo mensal ou menor. A lista já vem ordenada por decisão e prazo.",
       faca: "Comece o dia pelos itens \"Agir agora\", principalmente os com prazo vencido." },
     { alvo: "#f-situacao", titulo: "Situação de cada item",
       lista: ["**Exploração ativa**: está no KEV ou o fornecedor confirmou ataques. Aja hoje.",
@@ -1375,13 +1661,13 @@ sha256sum -c --ignore-missing SHA256SUMS</pre>
               "**Correção passo a passo**: pergunta antes de cada ação, cria um ponto de restauração e nunca reinicia sozinho. Teste antes com --simular.",
               "**Rollback**: desfaz a correção usando o ponto de restauração."],
       faca: "Copie o script de verificação para um servidor de teste e rode com: bash radar-verificar.sh. Leia a saída com calma." },
-    { alvo: "#aba-historico", antes: function () { location.hash = "#historico"; }, titulo: "Histórico completo: além das notícias da semana",
+    { alvo: "#aba-historico", antes: function () { location.hash = "#historico"; }, titulo: "Por sistema: tudo o que se sabe de uma versão",
       texto: ["Os itens do Radar são as falhas recentes e importantes. Mas um servidor pode ter falhas antigas esquecidas. Esta aba mostra **todos** os CVEs conhecidos por pacote:"],
       lista: ["**Confirmados sem correção**: a distro reconhece e ainda não corrigiu.",
               "**Adiados**: a distro julgou de baixo risco e deixou para depois.",
               "**Em triagem**: ainda não avaliados; muitos acabam sem afetar a versão."],
       faca: "Num servidor, rode bash radar-verificar.sh --completo --epss-minimo 1. Primeiro atualize o que tem correção; depois avalie remover pacotes que não usa, porque pacote removido não pode ser atacado." },
-    { alvo: "#aba-coletas", antes: function () { location.hash = "#coletas"; }, titulo: "De onde vêm os dados e quando",
+    { alvo: "#aba-hoje", antes: function () { location.hash = "#hoje"; }, titulo: "De onde vêm os dados e quando",
       texto: [(CFG.publico ? "O painel consulta fontes oficiais uma vez por dia." : "O painel consulta fontes oficiais duas vezes por dia.") + " Informação de segurança envelhece rápido: um script gerado há semanas não conhece as falhas novas.",
               "Desconfie de \"alertas\" que chegam por e-mail ou redes sociais sem fonte oficial. Confira sempre no aviso do fornecedor ou da distro."],
       faca: "Gere os scripts de novo a cada uso e confira a data da última coleta no topo da página." },
@@ -1511,7 +1797,7 @@ sha256sum -c --ignore-missing SHA256SUMS</pre>
   window.addEventListener("scroll", tourPosicionar, { passive: true });
   if (!ler("tour", null)) document.getElementById("tour-convite").hidden = false;
 
-  iniciarPublico(); ligarContexto();
+  iniciarPublico(); ligarExploradas(); ligarRelatorio();
   ligarFiltros(); ligarScripts(); ligarHistorico();
   carregar(); iniciarAtualizar();
   aba();

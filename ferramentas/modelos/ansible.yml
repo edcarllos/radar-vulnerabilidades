@@ -38,6 +38,18 @@
         fail_msg: "O Radar cobre Debian e Ubuntu; {{ inventory_hostname }} é {{ ansible_facts['distribution'] }}."
         quiet: true
 
+    - name: Proxmox VE e TrueNAS ficam de fora (atualização própria)
+      ansible.builtin.stat:
+        path: "{{ item }}"
+      loop: [/usr/bin/pveversion, /usr/bin/midclt]
+      register: radar_appliance
+
+    - name: Recusar Proxmox VE e TrueNAS
+      ansible.builtin.assert:
+        that: radar_appliance.results | selectattr('stat.exists') | list | length == 0
+        fail_msg: "{{ inventory_hostname }} é Proxmox VE ou TrueNAS: atualize pelo caminho do próprio sistema."
+        quiet: true
+
     - name: Radar
       block:
         - name: Arquivo temporário para o script de verificação

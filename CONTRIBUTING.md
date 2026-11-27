@@ -5,6 +5,10 @@ Obrigado por ajudar. Os scripts do Radar rodam como root em servidores de outras
 - todo pull request precisa da revisão de um mantenedor;
 - só entram fontes oficiais.
 
+## Antes de tudo: não exponha a sua instituição
+
+Issues e pull requests são públicos. Não publique servidores, versões instaladas, IPs, nomes de máquinas ou resultados de verificação da sua instituição: são informações restritas (Decreto 10.748/2021, art. 15). Descreva o produto e a falha de forma geral.
+
 ## Reportar sem programar
 
 - **Falso positivo:** no painel, use **Reportar falso positivo** na tabela de CVEs do item. Ou abra uma issue com o modelo "Falso positivo".
@@ -34,6 +38,8 @@ Obrigado por ajudar. Os scripts do Radar rodam como root em servidores de outras
    for f in scripts/*.sh; do bash -n "$f"; done
    ```
    A construção não pode imprimir `ERRO:` nem linhas descartadas. O workflow **Verificar** repete essa conferência no pull request.
+
+Marco de 01/11/2026: um item com `publicado_em` anterior ao marco só aparece no site se a falha for explorada (KEV, fornecedor ou alerta do CTIR Gov/CAIS). Nos itens `nvd-*`, a regra vale CVE por CVE. Falhas exploradas de qualquer ano aparecem sempre na aba Exploradas, direto do catálogo KEV. As categorias dessa aba ficam em `categorias-kev.json`.
 
 A decisão (Agir agora, Agir em breve…) é calculada sozinha a partir do KEV, do EPSS, do CVSS e da importância: não a escreva à mão.
 

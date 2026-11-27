@@ -37,7 +37,7 @@ mkdir -p "$PUB"
 novo="$PUB/.novo.$$"
 mkdir -p "$novo/indices" "$novo/scripts"
 { printf '<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Radar de Vulnerabilidades</title></head><body>'; cat "$PROJ/site/painel.html"; printf '</body></html>\n'; } > "$novo/index.html"
-cp "$PROJ/site/vulns.json" "$PROJ/site/coletas.json" "$PROJ/site/historico.json" "$novo/"
+cp "$PROJ/site/vulns.json" "$PROJ/site/coletas.json" "$PROJ/site/historico.json" "$PROJ/site/exploradas.json" "$novo/"
 cp "$PROJ"/site/indices/*.txt "$novo/indices/"
 cp "$PROJ"/scripts/radar-*.sh "$PROJ"/scripts/radar-*.yml "$PROJ/scripts/SHA256SUMS" "$novo/scripts/"
 [ -f "$PROJ/scripts/SHA256SUMS.asc" ] && cp "$PROJ/scripts/SHA256SUMS.asc" "$novo/scripts/"
@@ -46,7 +46,7 @@ if [ -n "$RADAR_GPG_CHAVE" ] && command -v gpg >/dev/null 2>&1; then
   gpg --batch --armor --export "$RADAR_GPG_CHAVE" > "$novo/chave-radar.asc" 2>/dev/null || true
 fi
 chmod -R a+rX "$novo"
-for x in vulns.json coletas.json historico.json indices scripts servidores chave-radar.asc index.html; do
+for x in vulns.json coletas.json historico.json exploradas.json indices scripts servidores chave-radar.asc index.html; do
   [ -e "$novo/$x" ] || continue
   [ -e "$PUB/$x.antigo" ] && rm -r -- "$PUB/$x.antigo"
   [ -e "$PUB/$x" ] && mv -T "$PUB/$x" "$PUB/$x.antigo"

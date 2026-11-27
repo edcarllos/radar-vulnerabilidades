@@ -14,7 +14,7 @@ case "$URL" in ""|https://*) ;; *) echo "URL do site precisa começar com https:
 falha() { echo "FALHA: $*" >&2; exit 1; }
 [ -s "$PROJ/site/painel.html" ] || falha "site/painel.html ausente; rode o build antes."
 grep -q '"publico":true' "$PROJ/site/painel.html" || falha "site/painel.html não foi construído em modo público (RADAR_PUBLICO=1)."
-for f in vulns.json coletas.json historico.json; do [ -s "$PROJ/site/$f" ] || falha "site/$f ausente."; done
+for f in vulns.json coletas.json historico.json exploradas.json; do [ -s "$PROJ/site/$f" ] || falha "site/$f ausente."; done
 ls "$PROJ"/site/indices/*.txt >/dev/null 2>&1 || falha "site/indices/ vazio."
 
 # Mesmas conferências da coleta institucional: nada é publicado se algo falhar.
@@ -42,7 +42,7 @@ mkdir -p "$SAIDA/indices" "$SAIDA/scripts"
   printf '%s\n' '</body>' '</html>'
 } > "$SAIDA/index.html"
 
-cp "$PROJ/site/vulns.json" "$PROJ/site/coletas.json" "$PROJ/site/historico.json" "$SAIDA/"
+cp "$PROJ/site/vulns.json" "$PROJ/site/coletas.json" "$PROJ/site/historico.json" "$PROJ/site/exploradas.json" "$SAIDA/"
 # Alertas do CAIS/RNP: o site deles reserva os direitos do texto. No site público ficam só título, data, CVEs e link.
 python3 -I - "$SAIDA/vulns.json" "$SAIDA/coletas.json" <<'PY'
 import json, sys

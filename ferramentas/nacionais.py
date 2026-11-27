@@ -4,12 +4,15 @@
 CAIS/RNP: a página https://www.rnp.br/servicos/cais/ lista os alertas como arquivos .txt
 assinados com PGP em plataforma.rnp.br. Este módulo extrai os links da página e lê cada alerta.
 
-CTIR Gov: portal em manutenção na data da implementação (26/11/2026); leitor pendente.
+CTIR Gov: os alertas ficam em https://www.gov.br/gsi/pt-br/assuntos/ctir/alertas/<ano> (páginas HTML, sem feed).
+Daqui sai só o que identifica o alerta: número, assunto, data, CVEs e link (o site do GSI não permite obras derivadas).
 CERT.br: o RSS publica notícias institucionais, não alertas de vulnerabilidade; fora do escopo.
 
 Uso:
   nacionais.py links ARQ.html          imprime as URLs de alertas do CAIS (uma por linha)
   nacionais.py ler ARQ.txt             imprime o alerta lido como JSON
+  nacionais.py links-ctir ARQ.html     imprime as URLs de alertas do CTIR Gov (uma por linha)
+  nacionais.py ler-ctir ARQ.html URL   imprime o alerta do CTIR Gov lido como JSON
 """
 import datetime, html, json, re, sys
 from urllib.parse import unquote, urlparse
@@ -77,10 +80,53 @@ def ler_cais(texto, url=""):
             "cves": cves, "resumo": limpar(resumo, 600), "url": url}
 
 
+RE_CTIR = re.compile(r"https://www\.gov\.br/gsi/pt-br/assuntos/ctir/alertas/(\d{4})/alerta-(\d{1,4})-(\d{4})")
+
+
+def links_ctir(pagina_html):
+    vistos, out = set(), []
+    for m in RE_CTIR.finditer(pagina_html):
+        u = m.group(0)
+        if u not in vistos:
+            vistos.add(u)
+            out.append(u)
+    return out
+
+
+def ler_ctir(pagina_html, url=""):
+    """Alerta do CTIR Gov: número, assunto, data (última atualização), CVEs e link. Nada do texto do alerta."""
+    m = re.search(r'class="documentFirstHeading"[^>]*>([^<]{1,80})<', pagina_html)
+    numero = html.unescape(m.group(1)).strip() if m else ""
+    m = re.search(r'class="documentDescription"[^>]*>([^<]{1,200})<', pagina_html)
+    assunto = re.sub(r"\s+", " ", html.unescape(m.group(1))).strip() if m else ""
+    data = None
+    for chave in ("dateModified", "datePublished"):
+        m = re.search(r'"%s":\s*"(\d{4}-\d{2}-\d{2})' % chave, pagina_html)
+        if m:
+            data = m.group(1)
+            break
+    corpo = pagina_html
+    i, j = pagina_html.find('id="content"'), pagina_html.find('id="viewlet-below-content')
+    if i >= 0 and j > i:
+        corpo = pagina_html[i:j]
+    cves = sorted(set(RE_CVE.findall(corpo)))
+    if not RE_CTIR.fullmatch(url or ""):
+        url = ""
+    titulo = (numero + (": " + assunto if assunto else "")) or "Alerta do CTIR Gov"
+    return {"fonte": "CTIR Gov", "data": data, "titulo": titulo[:200], "cves": cves, "url": url,
+            "assinatura": "n/a", "resumo": ""}
+
+
 def main():
     if len(sys.argv) >= 3 and sys.argv[1] == "links":
         for u in links_cais(open(sys.argv[2], encoding="utf-8", errors="replace").read()):
             print(u)
+    elif len(sys.argv) >= 3 and sys.argv[1] == "links-ctir":
+        for u in links_ctir(open(sys.argv[2], encoding="utf-8", errors="replace").read()):
+            print(u)
+    elif len(sys.argv) >= 3 and sys.argv[1] == "ler-ctir":
+        print(json.dumps(ler_ctir(open(sys.argv[2], encoding="utf-8", errors="replace").read(),
+                                  sys.argv[3] if len(sys.argv) > 3 else ""), ensure_ascii=False))
     elif len(sys.argv) >= 3 and sys.argv[1] == "ler":
         print(json.dumps(ler_cais(open(sys.argv[2], encoding="utf-8", errors="replace").read(),
                                   sys.argv[3] if len(sys.argv) > 3 else ""), ensure_ascii=False))
