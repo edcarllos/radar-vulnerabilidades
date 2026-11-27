@@ -21,6 +21,7 @@ if [ "$SIMULAR" = 0 ] && [ "$(id -u)" != 0 ]; then
 fi
 
 radar_checar_release
+radar_bloquear_appliance
 radar_carregar_dpkg
 
 CARIMBO=$(date +%Y%m%d-%H%M%S)

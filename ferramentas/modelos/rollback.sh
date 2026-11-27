@@ -47,6 +47,7 @@ deb_salvo() {
 }
 
 radar_checar_release
+radar_bloquear_appliance
 radar_carregar_dpkg
 echo "${C_NEG}Radar de Vulnerabilidades: rollback${C_FIM}"
 [ "$SIMULAR" = 1 ] && echo "${C_AMAR}MODO SIMULAÇÃO: nada será alterado.${C_FIM}"

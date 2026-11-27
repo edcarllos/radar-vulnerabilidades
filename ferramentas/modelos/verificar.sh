@@ -4,6 +4,8 @@
 # Uso: bash radar-verificar.sh [--todos] [--csv] [--completo [--dados ARQ] [--nota-minima N]]
 #   --todos        mostra também itens OK e não instalados
 #   --csv          saída em CSV (separador ;) para planilha ou inventário
+#   --registro     CSV com os campos do modelo de norma de gestão de vulnerabilidades do PPSI (identificação, ativo,
+#                  severidade, fonte, situação, responsável, prazo sugerido); fica neste servidor, nada é enviado
 #   --json         um objeto JSON com resumo e itens (para Zabbix, scripts e a coleta institucional)
 #   --json-linhas  um objeto JSON por item em cada linha (para Wazuh e coletores de log)
 #   --completo     avalia TODOS os CVEs conhecidos da distro contra os pacotes instalados (precisa de python3).
@@ -20,11 +22,12 @@
 set -u
 @@COMUM@@
 
-TODOS=0; CSV=0; JSON=0; JSONL=0; COMPLETO=0; DADOS=""; NOTA_MIN=0; EPSS_MIN=0; RADAR_IMAGEM=""
+REGISTRO=0; TODOS=0; CSV=0; JSON=0; JSONL=0; COMPLETO=0; DADOS=""; NOTA_MIN=0; EPSS_MIN=0; RADAR_IMAGEM=""
 while [ $# -gt 0 ]; do
   case "$1" in
     --todos) TODOS=1 ;;
     --csv) CSV=1 ;;
+    --registro) REGISTRO=1 ;;
     --json) JSON=1 ;;
     --json-linhas) JSONL=1 ;;
     --completo) COMPLETO=1 ;;
@@ -32,7 +35,7 @@ while [ $# -gt 0 ]; do
     --nota-minima) NOTA_MIN="${2:-0}"; shift ;;
     --epss-minimo) EPSS_MIN="${2:-0}"; shift ;;
     --imagem) RADAR_IMAGEM="${2:-}"; shift ;;
-    -h|--help) sed -n '2,19p' "$0"; exit 0 ;;
+    -h|--help) sed -n '2,21p' "$0"; exit 0 ;;
   esac
   shift
 done
@@ -47,13 +50,17 @@ if [ -n "$RADAR_IMAGEM" ]; then
   radar_extrair_imagem "$RADAR_IMAGEM" "$RADAR_TMPI" || exit 2
   RADAR_OS_RELEASE="$RADAR_TMPI/os-release"; RADAR_DPKG_STATUS="$RADAR_TMPI/status"
 fi
-QUIETO=0; { [ "$CSV" = 1 ] || [ "$JSON" = 1 ] || [ "$JSONL" = 1 ]; } && QUIETO=1
+QUIETO=0; { [ "$CSV" = 1 ] || [ "$JSON" = 1 ] || [ "$JSONL" = 1 ] || [ "$REGISTRO" = 1 ]; } && QUIETO=1
 radar_checar_release
 radar_carregar_dpkg
 [ "$QUIETO" = 1 ] || {
   echo "${C_NEG}Radar de Vulnerabilidades: verificação${C_FIM}"
   if [ -n "$RADAR_IMAGEM" ]; then echo "Imagem: $RADAR_IMAGEM · $(radar_rotulo "$REL") (kernel, aplicações web e processos não se aplicam)"
   else echo "Host: $(hostname) · $(radar_rotulo "$REL") · kernel $(uname -r)"; fi
+  case "$(radar_appliance)" in
+    proxmox) echo "${C_AMAR}Proxmox VE: os pacotes Debian são conferidos; o kernel e os pacotes próprios do Proxmox não. Veja os avisos de segurança do Proxmox.${C_FIM}" ;;
+    truenas) echo "${C_AMAR}TrueNAS: resultado só informativo. Não corrija com apt; use o atualizador do TrueNAS.${C_FIM}" ;;
+  esac
   echo "Dados coletados em $RADAR_COLETA · script gerado em $RADAR_GERADO"
   radar_idade_dados
   echo
@@ -209,6 +216,24 @@ elif [ "$JSON" = 1 ]; then
     json_item "$st" "$cvss" "$id" "$alvo" "$inst" "$minimo" "$aviso" "$cves" "$titulo" "$nota" "$decisao" "$bins"
   done <<< "$RESULTADOS"
   printf ']}\n'
+elif [ "$REGISTRO" = 1 ]; then
+  # Campos do modelo de norma de gestão de vulnerabilidades do PPSI. O prazo é a sugestão do Radar (SSVC), a partir de hoje;
+  # ajuste ao prazo definido pelo processo de remediação da instituição (PPSI 7.2 e 7.7).
+  hoje=$(date +%F); ativo=$(radar_nome)
+  echo "identificacao;ativo;severidade;fonte;situacao;responsavel;prazo_sugerido;data_verificacao;descricao"
+  printf '%s' "$RESULTADOS" | while IFS='|' read -r st cvss id alvo inst minimo aviso cves titulo nota decisao bins; do
+    [ -z "$st" ] && continue
+    [ "$TODOS" = 0 ] && case "$st" in OK|AUSENTE|NAO_AFETADO) continue ;; esac
+    case "$st" in
+      VULNERAVEL) sit="aberta: correção disponível" ;; SEM_CORRECAO) sit="aberta: sem correção, aplicar mitigação" ;;
+      REINICIAR) sit="corrigida: falta reiniciar" ;; VERIFICAR) sit="verificar manualmente" ;; ATENCAO) sit="atenção: correção parcial" ;;
+      OK) sit="corrigida" ;; NAO_AFETADO) sit="não afetada" ;; *) sit="$st" ;;
+    esac
+    case "$decisao" in agir_agora) d=1 ;; agir_em_breve) d=7 ;; acompanhar_de_perto) d=30 ;; acompanhar) d=90 ;; *) d="" ;; esac
+    prazo=""; case "$st" in VULNERAVEL|SEM_CORRECAO|REINICIAR|ATENCAO) [ -n "$d" ] && prazo=$(date -d "+$d days" +%F 2>/dev/null || true) ;; esac
+    printf '%s;%s;"CVSS %s; %s";%s;%s;;%s;%s;"%s"\n' "$id${cves:+ ($cves)}" "$ativo" "$cvss" "$(radar_rot_decisao "$decisao")" \
+      "${aviso:-Radar de Vulnerabilidades, coleta $RADAR_COLETA}" "$sit" "$prazo" "$hoje" "${titulo//\"/\'}: $alvo instalado ${inst:--}, mínimo ${minimo:--}"
+  done
 elif [ "$CSV" = 1 ]; then
   echo "status;decisao;cvss;item;alvo;instalado;minimo;aviso;cves;titulo;nota"
   printf '%s' "$RESULTADOS" | while IFS='|' read -r st cvss id alvo inst minimo aviso cves titulo nota decisao bins; do

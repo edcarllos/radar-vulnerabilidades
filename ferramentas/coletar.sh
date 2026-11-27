@@ -40,6 +40,8 @@ baixar_nvd() {
 }
 
 if [ "${1:-}" != "--sem-rede" ]; then
+  # Fontes que falharam nesta coleta (a página mostra "falhou nesta coleta; usando a cópia de ...").
+  : > "$CACHE/falhas.txt"
   echo "== CISA KEV"
   baixar "$CACHE/kev.json" https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json
   echo "== Debian"
@@ -71,7 +73,7 @@ if [ "${1:-}" != "--sem-rede" ]; then
   fi
   echo "== CAIS/RNP (alertas assinados com PGP)"
   mkdir -p "$CACHE/cais"
-  baixar "$CACHE/cais/pagina1.html" https://www.rnp.br/servicos/cais/ || echo "falhou página do CAIS"
+  baixar "$CACHE/cais/pagina1.html" https://www.rnp.br/servicos/cais/ || { echo "falhou página do CAIS"; echo "CAIS/RNP" >> "$CACHE/falhas.txt"; }
   baixar "$CACHE/cais/pagina2.html" https://www.rnp.br/servicos/cais/page/2/ || true
   cat "$CACHE"/cais/pagina*.html 2>/dev/null | python3 -I "$PROJ/ferramentas/nacionais.py" links /dev/stdin > "$CACHE/cais/links.txt" || : > "$CACHE/cais/links.txt"
   GPG_CAIS=""
@@ -95,12 +97,49 @@ if [ "${1:-}" != "--sem-rede" ]; then
       fi
     fi
   done < "$CACHE/cais/links.txt"
+  echo "== CTIR Gov (alertas; páginas do GSI, sem feed)"
+  # Lista do ano corrente (20 por página) e cada alerta novo; os da primeira página são relidos uma vez por dia
+  # (o CTIR atualiza alertas). Pausa de 1 s entre pedidos; na primeira falha segue com o cache.
+  mkdir -p "$CACHE/ctir"
+  ano=$(date +%Y)
+  : > "$CACHE/ctir/links.tmp"
+  for off in 0 20 40 60 80 100 120 140 160 180; do
+    pag="$CACHE/ctir/lista-$ano-$off.html"
+    if ! curl -fsSL --compressed -m 30 -A "radar-vulnerabilidades (+https://github.com/edcarllos/radar-vulnerabilidades)" \
+         -o "$pag.tmp" "https://www.gov.br/gsi/pt-br/assuntos/ctir/alertas/$ano?b_start:int=$off" 2>/dev/null; then
+      rm -f "$pag.tmp"; echo "AVISO: lista de alertas do CTIR Gov indisponível agora (página $off); seguindo com o cache."; echo "CTIR Gov" >> "$CACHE/falhas.txt"; break
+    fi
+    mv "$pag.tmp" "$pag"
+    novos=$(python3 -I "$PROJ/ferramentas/nacionais.py" links-ctir "$pag" | grep -vxF -f "$CACHE/ctir/links.tmp" || true)
+    [ -n "$novos" ] || break
+    printf '%s\n' "$novos" >> "$CACHE/ctir/links.tmp"
+    sleep 1
+  done
+  [ -s "$CACHE/ctir/links.tmp" ] && mv "$CACHE/ctir/links.tmp" "$CACHE/ctir/links.txt" || rm -f "$CACHE/ctir/links.tmp"
+  n=0; falhas=0
+  while read -r u; do
+    [[ "$u" =~ ^https://www\.gov\.br/gsi/pt-br/assuntos/ctir/alertas/[0-9]{4}/alerta-[0-9]{1,4}-[0-9]{4}$ ]] || continue
+    n=$((n + 1))
+    f="$CACHE/ctir/$(basename "$u").html"
+    # Link quebrado na lista do GSI (404): tenta de novo só no dia seguinte.
+    [ -e "$f.falhou" ] && [ -z "$(find "$f.falhou" -mmin +1380 2>/dev/null)" ] && continue
+    if [ ! -s "$f" ] || { [ "$n" -le 20 ] && [ -n "$(find "$f" -mmin +1380 2>/dev/null)" ]; }; then
+      if curl -fsSL --compressed -m 30 -A "radar-vulnerabilidades (+https://github.com/edcarllos/radar-vulnerabilidades)" -o "$f.tmp" "$u" 2>/dev/null; then
+        mv "$f.tmp" "$f"; printf '%s\n' "$u" > "$f.url"; rm -f "$f.falhou"; falhas=0
+      else
+        rm -f "$f.tmp"; touch "$f.falhou"; falhas=$((falhas + 1))
+        echo "AVISO: alerta do CTIR Gov indisponível: $u"
+        if [ "$falhas" -ge 3 ]; then echo "AVISO: o site do CTIR Gov parece fora do ar; seguindo com o cache."; echo "CTIR Gov" >> "$CACHE/falhas.txt"; break; fi
+      fi
+      sleep 1
+    fi
+  done < <(cat "$CACHE/ctir/links.txt" 2>/dev/null)
   echo "== Ubuntu (USNs recentes)"
   # Se o site da Ubuntu falhar (504, lentidão), para na primeira falha e segue com o cache: não trava a coleta.
   for off in $(seq 0 20 300); do
     if ! curl -fsSL --compressed -m 30 -o "$CACHE/usn/p$off.json.tmp" "https://ubuntu.com/security/notices.json?limit=20&offset=$off&order=newest" 2>/dev/null; then
       rm -f "$CACHE/usn/p$off.json.tmp"
-      echo "AVISO: avisos USN da Ubuntu indisponíveis agora (página $off); seguindo com o cache."
+      echo "AVISO: avisos USN da Ubuntu indisponíveis agora (página $off); seguindo com o cache."; echo "Avisos USN" >> "$CACHE/falhas.txt"
       break
     fi
     mv "$CACHE/usn/p$off.json.tmp" "$CACHE/usn/p$off.json"
@@ -134,7 +173,7 @@ if [ "${1:-}" != "--sem-rede" ]; then
       printf '%s\n' "$pend_u" | timeout 600 xargs -r -P8 -I{} sh -c 'curl -fsSL --compressed -m 30 -o "$0/ubuntu/{}.json.tmp" "https://ubuntu.com/security/cves/{}.json" 2>/dev/null && mv "$0/ubuntu/{}.json.tmp" "$0/ubuntu/{}.json"; rm -f "$0/ubuntu/{}.json.tmp"' "$CACHE" \
         || echo "AVISO: a Ubuntu demorou demais; os CVEs que faltaram seguem com a cópia do cache."
     else
-      echo "AVISO: o site da Ubuntu não respondeu; $n_u CVEs seguem com a cópia do cache (ou sem dados da Ubuntu)."
+      echo "AVISO: o site da Ubuntu não respondeu; $n_u CVEs seguem com a cópia do cache (ou sem dados da Ubuntu)."; echo "Ubuntu (páginas de CVE)" >> "$CACHE/falhas.txt"
     fi
   fi
   # NVD: só CVEs ainda sem arquivo ou com mais de 3 dias; limite de 5 req/30 s sem chave. Mostra o progresso.
@@ -181,6 +220,34 @@ PY
     i=$((i + 1))
     if [ $((i % 100)) = 0 ]; then echo "NVD por CVE: $i de ${#pend_n[@]}"; fi
   done
+  # Aba Exploradas: a nota CVSS dos CVEs do KEV vem da NVD. Baixa aos poucos (até 200 por coleta com chave, 20 sem),
+  # dos mais recentes para os mais antigos; em poucos dias o catálogo inteiro está no cache.
+  lote=$([ -n "$NVD_CHAVE" ] && echo 200 || echo 20)
+  mapfile -t pend_k < <(python3 -I - "$CACHE" "$lote" <<'PY'
+import json, os, re, sys
+cache, lote = sys.argv[1], int(sys.argv[2])
+try:
+    k = json.load(open(os.path.join(cache, "kev.json")))["vulnerabilities"]
+except Exception:
+    k = []
+k.sort(key=lambda v: v.get("dateAdded", ""), reverse=True)
+n = 0
+for v in k:
+    c = v.get("cveID", "")
+    if re.fullmatch(r"CVE-\d{4}-\d{4,7}", c) and not os.path.exists(os.path.join(cache, "nvd", c + ".json")):
+        print(c)
+        n += 1
+        if n >= lote:
+            break
+PY
+)
+  if [ "${#pend_k[@]}" -gt 0 ]; then
+    echo "== NVD para o catálogo KEV: ${#pend_k[@]} nesta coleta"
+    for c in "${pend_k[@]}"; do
+      baixar_nvd "$CACHE/nvd/$c.json" "https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=$c" || true
+      sleep "$NVD_PAUSA"
+    done
+  fi
 fi
 
 if [ "${1:-}" = "--so-baixar" ]; then echo "== Download concluído (sem construir)"; exit 0; fi
