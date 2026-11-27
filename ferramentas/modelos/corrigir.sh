@@ -2,7 +2,7 @@
 # Radar de Vulnerabilidades: CORREÇÃO PASSO A PASSO
 # Pergunta antes de cada ação. Não reinicia o servidor nem serviços sem confirmação.
 # Uso: sudo bash radar-corrigir.sh [--simular]
-#   --simular  não altera nada: usa apt-get -s e só mostra os comandos (não precisa de root)
+#   --simular  não altera nada: usa apt-get -s ou dnf --assumeno e só mostra os comandos (não precisa de root)
 # Ao final grava um ponto de restauração em /var/backups/radar-vuln/<data>/ para o radar-rollback.sh.
 set -u
 @@COMUM@@
@@ -176,7 +176,13 @@ passo "Passo 2 de 7: ponto de restauração"
 echo "Antes de alterar pacotes, recomenda-se um snapshot da VM ou do volume (LVM/ZFS/Btrfs)."
 perguntar "Já fez (ou não precisa de) snapshot e quer continuar?" s || { echo "Encerrado sem alterações."; exit 0; }
 printf '%s\n' "$RADAR_DPKG" | awk -F'\t' '{print $1"\t"$2}' > "$BACKUP/versoes-antes.tsv"
-apt-mark showhold > "$BACKUP/hold-antes.txt" 2>/dev/null || true
+if [ "${RADAR_FAMILIA:-deb}" = rpm ]; then
+  # RHEL e compatíveis: o rollback usa o histórico do dnf (dnf history undo).
+  dnf -q history list 2>/dev/null | awk '$1 ~ /^[0-9]+$/ {print $1; exit}' > "$BACKUP/dnf-antes.txt" || true
+  : > "$BACKUP/dnf-transacoes.tsv"
+else
+  apt-mark showhold > "$BACKUP/hold-antes.txt" 2>/dev/null || true
+fi
 : > "$BACKUP/aplicados.tsv"
 : > "$BACKUP/mitigacoes.tsv"
 echo "$REL" > "$BACKUP/release"
@@ -184,24 +190,37 @@ echo "Versões atuais salvas em $BACKUP/versoes-antes.tsv"
 if perguntar "Salvar cópia de /etc (configurações) em $BACKUP/etc.tar.gz?" s; then
   executar tar -czf "$BACKUP/etc.tar.gz" -C / etc 2>/dev/null || echo "Aviso: cópia de /etc incompleta."
 fi
-mkdir -p "$BACKUP/debs"
+[ "${RADAR_FAMILIA:-deb}" = rpm ] || mkdir -p "$BACKUP/debs"
 
 # ---------- Passo 3: atualizar índices ----------
 passo "Passo 3 de 7: atualizar a lista de pacotes"
-if perguntar "Executar apt-get update?" s; then
-  executar apt-get update
-fi
-if command -v dpkg-repack >/dev/null 2>&1; then
-  REPACK=1
-  echo "dpkg-repack encontrado: os pacotes atuais serão reempacotados antes de cada atualização (rollback sem rede)."
-else
+if [ "${RADAR_FAMILIA:-deb}" = rpm ]; then
+  perguntar "Atualizar a lista de pacotes (dnf makecache)?" s && executar dnf -q makecache
   REPACK=0
-  if perguntar "Instalar dpkg-repack para guardar os .deb atuais (rollback mesmo sem a versão antiga no repositório)?" s; then
-    executar apt-get install -y dpkg-repack && REPACK=1
+  echo "O rollback usará o histórico do dnf (dnf history undo), que precisa das versões anteriores no repositório."
+else
+  if perguntar "Executar apt-get update?" s; then
+    executar apt-get update
+  fi
+  if command -v dpkg-repack >/dev/null 2>&1; then
+    REPACK=1
+    echo "dpkg-repack encontrado: os pacotes atuais serão reempacotados antes de cada atualização (rollback sem rede)."
+  else
+    REPACK=0
+    if perguntar "Instalar dpkg-repack para guardar os .deb atuais (rollback mesmo sem a versão antiga no repositório)?" s; then
+      executar apt-get install -y dpkg-repack && REPACK=1
+    fi
   fi
 fi
 
-candidato() { apt-cache policy "$1" 2>/dev/null | awk '/Candidate:|Candidato:/ {print $2; exit}'; }
+candidato() {
+  if [ "${RADAR_FAMILIA:-deb}" = rpm ]; then
+    dnf -q repoquery --latest-limit 1 --qf '%{epoch}:%{version}-%{release}' "$1" 2>/dev/null | tail -n1
+  else
+    apt-cache policy "$1" 2>/dev/null | awk '/Candidate:|Candidato:/ {print $2; exit}'
+  fi
+}
+ultima_transacao() { dnf -q history list 2>/dev/null | awk '$1 ~ /^[0-9]+$/ {print $1; exit}'; }
 
 # ---------- Passo 4: aplicar correções ----------
 passo "Passo 4 de 7: aplicar correções, uma por vez"
@@ -218,12 +237,22 @@ while IFS='|' read -r -u 3 id tipo alvo versao cvss titulo extra; do
       for b in "${bins[@]}"; do c=$(candidato "$b"); [ -n "$c" ] && [ "$c" != "(none)" ] && fonte_cand="$c" && break; done
       echo "  Pacotes instalados da fonte $alvo: ${bins[*]}"
       echo "  Versão mínima corrigida: $versao · candidata no repositório: ${fonte_cand:-desconhecida}"
-      if [ -n "$fonte_cand" ] && dpkg --compare-versions "$fonte_cand" lt "$versao"; then
-        echo "  ${C_AMAR}O repositório configurado ainda não oferece a versão corrigida. Confira se o repositório $(radar_codinome "$REL")-security está habilitado (ou Ubuntu Pro, se for ESM).${C_FIM}"
+      if [ -n "$fonte_cand" ] && radar_vcmp "$fonte_cand" lt "$versao"; then
+        if [ "${RADAR_FAMILIA:-deb}" = rpm ]; then
+          echo "  ${C_AMAR}O repositório configurado ainda não oferece a versão corrigida. No Rocky e na Alma a correção chega horas ou dias depois do RHEL; confira os repositórios BaseOS e AppStream.${C_FIM}"
+        else
+          echo "  ${C_AMAR}O repositório configurado ainda não oferece a versão corrigida. Confira se o repositório $(radar_codinome "$REL")-security está habilitado (ou Ubuntu Pro, se for ESM).${C_FIM}"
+        fi
       fi
       echo "  Simulação:"
-      sim=$(apt-get -s install --only-upgrade "${bins[@]}" 2>&1)
-      printf '%s\n' "$sim" | grep -E '^(Inst|Remv|Conf) ' | sed 's/^/    /' | head -n 40
+      if [ "${RADAR_FAMILIA:-deb}" = rpm ]; then
+        sim=$(dnf upgrade --assumeno "${bins[@]}" 2>&1)
+        printf '%s\n' "$sim" | grep -E '^(Upgrading|Installing|Removing|Downgrading|Atualizando|Instalando|Removendo)|^ [A-Za-z0-9]' | sed 's/^/    /' | head -n 40
+        printf '%s\n' "$sim" | grep -qE '^(Removing|Removendo)' && sim="Remv $sim"
+      else
+        sim=$(apt-get -s install --only-upgrade "${bins[@]}" 2>&1)
+        printf '%s\n' "$sim" | grep -E '^(Inst|Remv|Conf) ' | sed 's/^/    /' | head -n 40
+      fi
       if printf '%s\n' "$sim" | grep -q '^Remv '; then
         echo "  ${C_VERM}A simulação REMOVE pacotes. Revise antes de continuar.${C_FIM}"
         perguntar "  Tem certeza? Digite s apenas se revisou a lista acima" n || continue
@@ -238,7 +267,9 @@ while IFS='|' read -r -u 3 id tipo alvo versao cvss titulo extra; do
       fi
       antes=()
       for b in "${bins[@]}"; do antes+=("$b=$(radar_versao_instalada "$b")"); done
-      if executar apt-get install -y --only-upgrade -o Dpkg::Options::=--force-confold "${bins[@]}"; then
+      if [ "${RADAR_FAMILIA:-deb}" = rpm ]; then cmd_up=(dnf -y upgrade "${bins[@]}"); else cmd_up=(apt-get install -y --only-upgrade -o Dpkg::Options::=--force-confold "${bins[@]}"); fi
+      if executar "${cmd_up[@]}"; then
+        [ "${RADAR_FAMILIA:-deb}" = rpm ] && [ "$SIMULAR" = 0 ] && printf '%s\t%s\n' "$id" "$(ultima_transacao)" >> "$BACKUP/dnf-transacoes.tsv"
         radar_carregar_dpkg
         for par in "${antes[@]}"; do
           b="${par%%=*}"; va="${par#*=}"; vd=$(radar_versao_instalada "$b")
@@ -247,14 +278,27 @@ while IFS='|' read -r -u 3 id tipo alvo versao cvss titulo extra; do
         done
         echo "  ${C_VERD}Aplicado.${C_FIM}"
         case "$alvo" in
-          php*) SERVICOS="$SERVICOS $(systemctl list-units --type=service --no-legend 'php*-fpm*' 2>/dev/null | awk '{print $1}' | tr '\n' ' ') apache2" ;;
+          php*) SERVICOS="$SERVICOS $(systemctl list-units --type=service --no-legend 'php*-fpm*' 2>/dev/null | awk '{print $1}' | tr '\n' ' ') apache2 httpd" ;;
+          httpd|postgresql|tomcat) SERVICOS="$SERVICOS $alvo" ;;
           nginx|apache2|haproxy|squid|exim4|postgresql-*|tomcat9|tomcat10) SERVICOS="$SERVICOS ${alvo/postgresql-*/postgresql}" ;;
-          openssl|glibc|brotli|libzstd|expat|pcre2|curl|krb5|libgd2|libssh) SERVICOS="$SERVICOS needrestart" ;;
+          openssl|glibc|brotli|libzstd|zstd|expat|pcre2|curl|krb5|libgd2|gd|libssh|libxml2|zlib) SERVICOS="$SERVICOS needrestart" ;;
         esac
       else
         echo "  ${C_VERM}Falhou. Veja o registro em $LOG.${C_FIM}"
       fi ;;
     kernel)
+      if [ "${RADAR_FAMILIA:-deb}" = rpm ]; then
+        echo "  Kernel corrigido: $versao (o atual continua instalado e no menu de boot para rollback)"
+        dnf upgrade --assumeno kernel 2>&1 | grep -E '^ (kernel|Installing|Instalando)' | sed 's/^/    /' | head -n 10
+        perguntar "  Instalar o kernel novo?" n || { echo "  Pulado."; continue; }
+        if executar dnf -y upgrade kernel; then
+          [ "$SIMULAR" = 0 ] && printf '%s\t%s\n' "$id" "$(ultima_transacao)" >> "$BACKUP/dnf-transacoes.tsv"
+          printf '%s\t%s\t%s\t%s\n' "$id" "kernel" "$(uname -r)" "(novo kernel)" >> "$BACKUP/aplicados.tsv"
+          REINICIO=1
+          echo "  ${C_VERD}Kernel instalado. A correção só vale após reiniciar.${C_FIM}"
+        fi
+        continue
+      fi
       metas=$(printf '%s\n' "$RADAR_DPKG" | awk -F'\t' '{print $1}' | grep -E '^linux-(image-|headers-)?(generic|virtual|lowlatency|aws|azure|gcp|oracle|kvm|amd64|arm64|cloud-amd64|cloud-arm64|rt-amd64)(-hwe-[0-9.]+)?$' | tr '\n' ' ')
       if [ -z "$metas" ]; then
         echo "  ${C_AMAR}Nenhum metapacote de kernel encontrado. Instale o kernel corrigido ($versao) manualmente.${C_FIM}"
@@ -310,7 +354,11 @@ fi
 
 # ---------- Passo 6: serviços ----------
 passo "Passo 6 de 7: reiniciar serviços"
-if printf '%s' "$SERVICOS" | grep -q needrestart && command -v needrestart >/dev/null 2>&1; then
+if printf '%s' "$SERVICOS" | grep -q needrestart && [ "${RADAR_FAMILIA:-deb}" = rpm ] && dnf needs-restarting --help >/dev/null 2>&1; then
+  echo "Serviços que ainda usam bibliotecas antigas:"
+  dnf -q needs-restarting -s 2>/dev/null | sed 's/^/  /'
+  SERVICOS="$SERVICOS $(dnf -q needs-restarting -s 2>/dev/null | tr '\n' ' ')"
+elif printf '%s' "$SERVICOS" | grep -q needrestart && command -v needrestart >/dev/null 2>&1; then
   echo "Serviços que ainda usam bibliotecas antigas:"
   needrestart -r l -b 2>/dev/null | awk -F': ' '/^NEEDRESTART-SVC/ {print "  "$2}'
   SERVICOS="$SERVICOS $(needrestart -r l -b 2>/dev/null | awk -F': ' '/^NEEDRESTART-SVC/ {print $2}' | tr '\n' ' ')"
@@ -334,7 +382,7 @@ while IFS='|' read -r id tipo alvo versao cvss titulo extra; do
     echo "  $(radar_cor "$st")$(radar_rot_status "$st")${C_FIM}  $titulo ($alvo $inst)"
   fi
 done <<< "$PENDENTES"
-if [ "$REINICIO" = 1 ] || [ -f /var/run/reboot-required ]; then
+if [ "$REINICIO" = 1 ] || [ -f /var/run/reboot-required ] || { [ "${RADAR_FAMILIA:-deb}" = rpm ] && ! dnf -q needs-restarting -r >/dev/null 2>&1 && dnf needs-restarting --help >/dev/null 2>&1; }; then
   echo "${C_AMAR}É preciso reiniciar o servidor para concluir (kernel ou bibliotecas do sistema). Agende a janela; este script não reinicia.${C_FIM}"
 fi
 echo

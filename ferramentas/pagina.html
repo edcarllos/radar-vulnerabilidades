@@ -366,7 +366,7 @@ footer { color: var(--muted); font-size: .82rem; display: grid; gap: 6px; }
             <label class="chk"><input type="checkbox" id="h-so-kev"> Só pacotes com CVE no KEV</label>
           </div>
           <div id="s-expl" style="display:grid;gap:10px"></div>
-          <details id="s-outros-d"><summary><b>Outros sistemas: Debian 11, Proxmox VE e TrueNAS</b></summary><div id="s-outros" style="display:grid;gap:12px;margin-top:8px"></div></details>
+          <details id="s-outros-d"><summary><b>Outros sistemas: sem suporte, Proxmox VE e TrueNAS</b></summary><div id="s-outros" style="display:grid;gap:12px;margin-top:8px"></div></details>
           <h3 style="font-size:1rem;margin:6px 0 0">Histórico completo da distro</h3>
           <div class="resumo" id="h-resumo"></div>
           <div id="h-baixar" class="aviso"></div>
@@ -448,6 +448,7 @@ footer { color: var(--muted); font-size: .82rem; display: grid; gap: 6px; }
             <li><a href="https://www.first.org/epss/" target="_blank" rel="noopener">EPSS</a> (FIRST): probabilidade de exploração nos próximos 30 dias.</li>
             <li><a href="https://security-tracker.debian.org/" target="_blank" rel="noopener">Debian Security Tracker</a> e avisos DSA/DLA.</li>
             <li><a href="https://ubuntu.com/security" target="_blank" rel="noopener">Ubuntu Security</a>: CVE Tracker, OVAL e avisos USN.</li>
+            <li><a href="https://access.redhat.com/security/data" target="_blank" rel="noopener">Red Hat Security Data</a>: situação de cada CVE no RHEL 8, 9 e 10 e avisos RHSA, usados também para Rocky, Alma e CentOS Stream. Dados © Red Hat, sob licença <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY 4.0</a>.</li>
             <li><a href="https://www.rnp.br/servicos/cais/" target="_blank" rel="noopener">CAIS/RNP</a>: alertas da rede acadêmica brasileira (título, data e link; o painel indica se a assinatura PGP do CAIS foi conferida).</li>
             <li>Avisos dos fornecedores, citados em cada item.</li>
           </ul>
@@ -459,7 +460,7 @@ footer { color: var(--muted); font-size: .82rem; display: grid; gap: 6px; }
           <h3>Limites</h3>
           <ul>
             <li>O Radar é um projeto comunitário oferecido sem garantia: pode haver atraso, erro ou falha que ele não conhece. Ele ajuda a priorizar; não substitui os avisos oficiais nem o julgamento da sua equipe.</li>
-            <li>Os scripts cobrem Debian 12 e 13 e Ubuntu 20.04, 22.04, 24.04 e 26.04, e o Proxmox VE (atualização completa guiada). No Debian 11 (sem suporte) e no TrueNAS só há verificação. Equipamentos e sistemas fora dessas distros aparecem como verificação manual.</li>
+            <li>Os scripts cobrem Debian 12 e 13, Ubuntu 20.04, 22.04, 24.04 e 26.04, RHEL, Rocky, Alma e CentOS Stream 8, 9 e 10 (com dnf; PHP e outros pacotes de módulo do RHEL 8 ainda não são acompanhados) e o Proxmox VE (atualização completa guiada). No Debian 11 (sem suporte) e no TrueNAS só há verificação. Equipamentos e sistemas fora dessas distros aparecem como verificação manual.</li>
             <li>A versão mínima das aplicações web vem da descrição da NVD; confira o aviso do projeto antes de agir.</li>
             <li>Os scripts de correção rodam como root no seu servidor. Leia antes, rode a verificação e o <code>--simular</code> primeiro e tenha backup.</li>
           </ul>
@@ -596,11 +597,11 @@ sha256sum -c --ignore-missing SHA256SUMS</pre>
   var D = null, COLETAS = [], INV = null;
   var F = ler("filtros", null) || {};
   function padraoFiltros() {
-    return { v: 6, ordem: "decisao", decisao: ["agir_agora", "agir_em_breve", "acompanhar_de_perto", "acompanhar", "nao_se_aplica"], epss: 0, busca: "", releases: ["deb12", "deb13", "u2004", "u2204", "u2404", "u2604"], nota: 0, sev: ["c", "h", "m", "l", "n"], kevSempre: true,
+    return { v: 7, ordem: "decisao", decisao: ["agir_agora", "agir_em_breve", "acompanhar_de_perto", "acompanhar", "nao_se_aplica"], epss: 0, busca: "", releases: ["deb12", "deb13", "u2004", "u2204", "u2404", "u2604", "el8", "el9", "el10"], nota: 0, sev: ["c", "h", "m", "l", "n"], kevSempre: true,
       situacao: ["explorado", "urgente", "atencao", "nao_afetado"], tipo: ["pacote", "kernel", "app", "manual"], tecExcl: [],
       dataCampo: "coletado_em", de: "", ate: "" };
   }
-  if (F.v !== 6) F = {};
+  if (F.v !== 7) F = {};
   F = Object.assign(padraoFiltros(), F);
   delete F.tec;
   if (!Array.isArray(F.tecExcl)) F.tecExcl = [];
@@ -834,7 +835,30 @@ sha256sum -c --ignore-missing SHA256SUMS</pre>
   }
 
   // ---------- detalhe ----------
+  function comandosRpm(it, ln) {
+    // RHEL e compatíveis: binários instalados a partir do pacote-fonte (SRPM) do item.
+    var P = ln.pacote, out = {};
+    var listar = "rpm -qa --qf '%{NAME} %{EPOCHNUM}:%{VERSION}-%{RELEASE} %{SOURCERPM}\\n' | awk '$3 ~ /^" + P.replace(/[.+]/g, "\\$&") + "-[0-9]/'";
+    var bins = "$(rpm -qa --qf '%{NAME} %{SOURCERPM}\\n' | awk '$2 ~ /^" + P.replace(/[.+]/g, "\\$&") + "-[0-9]/ {print $1}')";
+    if (it.tipo === "kernel") {
+      out.verificar = "uname -r   # compare com " + (ln.versao || "?").replace(/^0:/, "") + "\nrpm -q kernel-core";
+      out.corrigir = "sudo dnf upgrade kernel\n# a correção só vale depois de reiniciar (o kernel anterior continua instalado)";
+      out.rollback = "sudo grubby --info=ALL | grep ^kernel   # kernels instalados\nsudo grubby --set-default /boot/vmlinuz-<versão anterior>\n# ou escolha o kernel anterior no menu de boot";
+      return out;
+    }
+    out.verificar = listar + "\n# vulnerável se a versão (2ª coluna) for menor que " + (ln.versao || "a corrigida");
+    if (ln.estado === "sem_correcao" || ln.estado === "em_triagem") {
+      out.corrigir = "# Ainda não há pacote corrigido nesta versão (" + ESTADOS[ln.estado][0] + ").\n# Aplique a mitigação abaixo e acompanhe o aviso da Red Hat.";
+    } else if (ln.estado === "nao_afetado" || ln.estado === "nao_empacotado" || ln.estado === "nao_verificado") {
+      out.corrigir = "# Nada a atualizar pela distro (" + ESTADOS[ln.estado][0] + ").";
+    } else {
+      out.corrigir = "sudo dnf upgrade --assumeno " + bins + "   # simula\nsudo dnf upgrade " + bins + "\n# Rocky e Alma recebem a correção horas ou dias depois do RHEL";
+    }
+    out.rollback = "sudo dnf history list " + P + "   # número da transação da atualização\nsudo dnf history undo <número>   # volta a versão anterior, se ainda estiver no repositório (reexpõe a falha)";
+    return out;
+  }
   function comandos(it, rel, ln) {
+    if (/^el\d+$/.test(rel)) return comandosRpm(it, ln);
     var deb = rel.indexOf("deb") === 0, P = ln.pacote, out = {};
     var listar = "dpkg-query -W -f='${binary:Package}\\t${Version}\\t${source:Package}\\n' | awk -F'\\t' '$3==\"" + P + "\"'";
     var bins = "$(dpkg-query -W -f='${binary:Package}\\t${source:Package}\\n' | awk -F'\\t' '$2==\"" + P + "\" {print $1}')";
@@ -909,7 +933,10 @@ sha256sum -c --ignore-missing SHA256SUMS</pre>
           if (ln.ubuntu_pro) obs.push("Ubuntu Pro");
           if (ln.nota) obs.push(ln.nota);
           if (ln.cves_avaliados) obs.push(ln.cves_avaliados + " CVE(s) avaliados");
-          var av = ln.aviso ? (ln.aviso.indexOf("USN") === 0 ? link(ln.aviso, "https://ubuntu.com/security/notices/" + ln.aviso) : link(ln.aviso, "https://security-tracker.debian.org/tracker/" + ln.aviso)) : el("span", { text: "—" });
+          var av = !ln.aviso ? el("span", { text: "—" })
+            : ln.aviso.indexOf("USN") === 0 ? link(ln.aviso, "https://ubuntu.com/security/notices/" + ln.aviso)
+            : ln.aviso.indexOf("RHSA") === 0 ? link(ln.aviso, "https://access.redhat.com/errata/" + ln.aviso)
+            : link(ln.aviso, "https://security-tracker.debian.org/tracker/" + ln.aviso);
           linhas.push(el("tr", {}, [el("td", { style: "min-width:130px", text: D.releases[r].rotulo }), el("td", { class: "m", text: ln.pacote }), el("td", {}, [el("span", { class: "pill " + e[1], text: e[0] })]), el("td", { class: "m", text: ln.versao || "—" }), el("td", { class: "m" }, [av]), el("td", { text: obs.join(" · ") })]));
         });
       });
@@ -1158,15 +1185,23 @@ sha256sum -c --ignore-missing SHA256SUMS</pre>
       document.getElementById("h-info").textContent = "Carregando o histórico (cerca de 1 MB)…";
       fetch("historico.json").then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); }).then(function (d) {
         H = d; var sel = document.getElementById("h-rel");
-        Object.keys(H.versoes || {}).forEach(function (r) { sel.appendChild(el("option", { value: r, text: (D.releases[r] || {}).rotulo || r })); });
-        var pref = ler("hrel", null); if (pref && H.versoes[pref]) sel.value = pref;
+        // Todas as versões do painel; as sem histórico completo (RHEL e compatíveis) mostram só as falhas exploradas.
+        Object.keys(D.releases).forEach(function (r) { sel.appendChild(el("option", { value: r, text: (D.releases[r] || {}).rotulo || r })); });
+        var pref = ler("hrel", null); if (pref && D.releases[pref]) sel.value = pref;
         renderHistorico();
       }).catch(function () { document.getElementById("h-info").textContent = "Não foi possível carregar historico.json."; });
       return;
     }
     var rel = document.getElementById("h-rel").value, v = H.versoes[rel];
-    if (!v) return;
     renderSistemaExpl(rel);
+    var semHist = !v;
+    ["h-busca", "h-ordem", "h-so-kev", "h-tab", "h-mais"].forEach(function (id) { var n = document.getElementById(id); if (n) (n.closest("label") || n.closest(".scroll") || n).style.display = semHist ? "none" : ""; });
+    if (semHist) {
+      document.getElementById("h-resumo").replaceChildren();
+      document.getElementById("h-baixar").replaceChildren(el("p", { style: "margin:0", text: "O histórico completo de CVEs por pacote ainda não está disponível para esta versão. As falhas exploradas aparecem acima; para a lista completa no servidor, use: dnf updateinfo list --security" }));
+      document.getElementById("h-info").textContent = "";
+      return;
+    }
     var q = document.getElementById("h-busca").value.trim().toLowerCase();
     var soKev = document.getElementById("h-so-kev").checked;
     var ordem = document.getElementById("h-ordem").value;
@@ -1381,6 +1416,9 @@ sha256sum -c --ignore-missing SHA256SUMS</pre>
       cartao("Debian 11 (bullseye)", el("span", { class: "pill p-crit", text: "sem suporte desde 31/08/2026" }), [
         p("Não recebe mais correções gratuitas. Toda falha descoberta depois dessa data fica aberta. O Radar não tem dados por pacote dele: o script de verificação avisa e confere só as aplicações web."),
         p("O que fazer: migre para o Debian 12 ou 13. O suporte estendido (ELTS, da Freexian) é pago. Pelo PPSI (controle 2.2), sistema sem suporte precisa de exceção documentada enquanto não for migrado.")]),
+      cartao("RHEL ou CentOS 7 e CentOS 8", el("span", { class: "pill p-crit", text: "sem suporte" }), [
+        p("RHEL 7 e CentOS 7 estão sem suporte desde 30/06/2024; CentOS Linux 8 desde 31/12/2021 e CentOS Stream 8 desde 31/05/2024. Falhas novas ficam abertas. O script de verificação avisa e confere só as aplicações web."),
+        p("O que fazer: migre para Rocky, Alma ou RHEL 9 ou 10 (escolha a versão acima para ver a situação). Pelo PPSI (controle 2.2), sistema sem suporte precisa de exceção documentada.")]),
       cartao("Ubuntu 20.04 LTS (focal)", el("span", { class: "pill p-warn", text: "suporte padrão encerrado em 31/05/2025" }), [
         p("O Radar tem os dados dele (escolha a versão acima). Correções novas saem só no Ubuntu Pro (ESM): sem ele, as falhas novas ficam abertas. Planeje a migração para o 22.04 ou 24.04.")]),
       cartao("Proxmox VE 8 e 9", el("span", { class: "pill p-info", text: "base Debian 12 e 13" }), [

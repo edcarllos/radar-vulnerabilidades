@@ -26,6 +26,13 @@ RELEASES = {
     "u2204": {"familia": "ubuntu", "codinome": "jammy", "rotulo": "Ubuntu 22.04 LTS (jammy)", "nota": "Suporte padrão da Canonical"},
     "u2404": {"familia": "ubuntu", "codinome": "noble", "rotulo": "Ubuntu 24.04 LTS (noble)", "nota": "Suporte padrão da Canonical"},
     "u2604": {"familia": "ubuntu", "codinome": "resolute", "rotulo": "Ubuntu 26.04 LTS (resolute)", "nota": "Suporte padrão da Canonical"},
+    # F24: família Red Hat. Dados da Red Hat (CC BY 4.0); Rocky, Alma e CentOS Stream usam as mesmas correções.
+    "el8": {"familia": "rhel", "codinome": "el8", "major": "8", "rotulo": "RHEL 8 e compatíveis (Rocky, Alma)",
+            "nota": "Dados da Red Hat; Rocky e Alma publicam as mesmas correções horas ou dias depois. PHP e outros pacotes de módulo ainda não são acompanhados"},
+    "el9": {"familia": "rhel", "codinome": "el9", "major": "9", "rotulo": "RHEL 9 e compatíveis (Rocky, Alma, CentOS Stream 9)",
+            "nota": "Dados da Red Hat; Rocky e Alma publicam as mesmas correções horas ou dias depois; no CentOS Stream a comparação é aproximada"},
+    "el10": {"familia": "rhel", "codinome": "el10", "major": "10", "rotulo": "RHEL 10 e compatíveis (Rocky, Alma, CentOS Stream 10)",
+             "nota": "Dados da Red Hat; Rocky e Alma publicam as mesmas correções horas ou dias depois; no CentOS Stream a comparação é aproximada"},
 }
 POR_AVISO = {}  # (aviso, codinome, pacote) -> versão publicada pelo aviso
 ESTADOS = {"corrigido", "parcial", "pro", "sem_correcao", "em_triagem", "nao_afetado", "nao_empacotado", "nao_verificado"}
@@ -34,7 +41,9 @@ RE_ID = re.compile(r"^[a-z0-9][a-z0-9-]{2,60}$")
 RE_PKG = re.compile(r"^[a-z0-9][a-z0-9+.-]{0,62}$")
 RE_VER = re.compile(r"^[0-9][0-9A-Za-z.+~:-]{0,80}$")
 RE_CVE = re.compile(r"^CVE-\d{4}-\d{4,7}$")
-RE_AVISO = re.compile(r"^((DSA|DLA|USN)-\d{3,5}-\d{1,2}|SA-CORE-\d{4}-\d{3})$")
+RE_AVISO = re.compile(r"^((DSA|DLA|USN)-\d{3,5}-\d{1,2}|SA-CORE-\d{4}-\d{3}|RHSA-\d{4}:\d{3,6})$")
+RE_PKG_RPM = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._+-]{0,99}$")
+RE_VER_RPM = re.compile(r"^[0-9]{1,6}:[0-9A-Za-z._+~^]{1,80}-[0-9A-Za-z._+~^]{1,100}$")
 RE_APPVER = re.compile(r"^\d+(\.\d+){1,3}$")
 RE_DATA = re.compile(r"^\d{4}-\d{2}-\d{2}$")
 RE_CVE_TXT = re.compile(r"CVE-\d{4}-\d{4,7}")
@@ -254,8 +263,10 @@ def linha_pacote(rel_id, pkg, cves, deb, cache, avisos_deb, avisos_usn):
     triagem = []
     if r["familia"] == "debian":
         fixos, abertos, sem_impacto, na, dne, sem_dado = estado_debian(deb, pkg, r["codinome"], cves)
-    else:
+    elif r["familia"] == "ubuntu":
         fixos, abertos, sem_impacto, na, dne, sem_dado = estado_ubuntu(cache, pkg, r["codinome"], cves, triagem)
+    else:
+        raise ValueError("família de distro sem leitor por pacote-fonte: %s" % r["familia"])
     avaliados = len(cves) - len(sem_dado)
     if avaliados == 0:
         return None
@@ -300,9 +311,9 @@ def aplicar_piso_avisos(linha, avisos, codinome, item_id):
                 linha["ubuntu_pro"] = True
 
 
-def validar_linha(linha, item_id):
-    ok = RE_PKG.match(linha.get("pacote", "")) and linha.get("estado") in ESTADOS
-    if linha.get("versao") and not RE_VER.match(linha["versao"]):
+def validar_linha(linha, item_id, rpm=False):
+    ok = (RE_PKG_RPM if rpm else RE_PKG).match(linha.get("pacote", "")) and linha.get("estado") in ESTADOS
+    if linha.get("versao") and not (RE_VER_RPM if rpm else RE_VER).match(linha["versao"]):
         ok = False
     if linha.get("aviso") and not RE_AVISO.match(linha["aviso"]):
         linha["aviso"] = ""
@@ -566,7 +577,7 @@ FONTES_CACHE = [
     ("CISA KEV", ["kev.json"]), ("Debian Security Tracker", ["deb.json"]), ("Avisos DSA/DLA", ["dsa-list.txt", "dla-list.txt"]),
     ("Ubuntu OVAL", ["oval/com.ubuntu.noble.cve.oval.xml.bz2"]), ("Ubuntu CVE Tracker", ["uct.tsv"]), ("Avisos USN", ["usn/p0.json"]),
     ("FIRST EPSS", ["epss.csv.gz"]), ("CAIS/RNP", ["cais/pagina1.html"]), ("CTIR Gov", ["ctir/links.txt"]),
-    ("TrueNAS (avisos)", ["truenas.xml"]),
+    ("TrueNAS (avisos)", ["truenas.xml"]), ("Red Hat (dados de segurança)", ["rh"]),
     ("NVD (produtos)", ["nvd-produtos"]),
 ]
 
@@ -651,6 +662,11 @@ def gerar_exploradas(kev, cfg, saida_dir, itens, ctir_todos, alertas_cais, cache
         nota = nn["valor"] if nn else notas_idx.get(c)
         e = epss.get(c)
         so = {}
+        for rel, r in RELEASES.items():
+            if r["familia"] == "rhel":
+                x = so_rhel(cache, c, r["major"])
+                if x:
+                    so[rel] = x
         for rel, linhas in (por_cve.get(c) or {}).items():
             # Pior caso por distro: sem correção > só Pro > corrigido.
             ordem = {"a": 0, "u": 1, "t": 2, "d": 3, "p": 4, "c": 5}
@@ -671,6 +687,98 @@ def gerar_exploradas(kev, cfg, saida_dir, itens, ctir_todos, alertas_cais, cache
     with open(os.path.join(saida_dir, "exploradas.json"), "w", encoding="utf-8") as fh:
         json.dump(out, fh, ensure_ascii=False, separators=(",", ":"))
     return len(lista)
+
+
+# ---------- F24: dados de segurança da Red Hat (RHEL 8, 9 e 10 e compatíveis) ----------
+_RH = {}
+_RH_MOD = None
+
+
+def _redhat():
+    global _RH_MOD
+    if _RH_MOD is None:
+        import importlib.util
+        spec = importlib.util.spec_from_file_location("redhat", os.path.join(os.path.dirname(os.path.abspath(__file__)), "redhat.py"))
+        _RH_MOD = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(_RH_MOD)
+    return _RH_MOD
+
+
+def rh_dados(cache, cve):
+    if cve not in _RH:
+        d = ler_json(os.path.join(cache, "rh", cve + ".json"), None)
+        _RH[cve] = d if isinstance(d, dict) and not d.get("ausente") else None
+    return _RH[cve]
+
+
+def _rh_ignorar(nome):
+    return nome.startswith("mingw") or nome.endswith("-doc")
+
+
+def linhas_rhel(cache, cves, major):
+    """Uma linha por pacote-fonte do RHEL, juntando os CVEs do item (mesmo formato das linhas do Debian e da Ubuntu)."""
+    import functools
+    rh = _redhat()
+    pk = {}
+    for c in cves[:300]:
+        e = ((rh_dados(cache, c) or {}).get("el") or {}).get(major)
+        if not e:
+            continue
+        for nome, evr, adv in e.get("fix") or []:
+            if _rh_ignorar(nome) or not RE_VER_RPM.match(evr or ""):
+                continue
+            p = pk.setdefault(nome, {"fix": [], "abertos": set(), "nao_corrige": set(), "na": set(), "cves": set()})
+            p["fix"].append((evr, adv, c))
+            p["cves"].add(c)
+        for nome, st in (e.get("est") or {}).items():
+            if _rh_ignorar(nome):
+                continue
+            p = pk.setdefault(nome, {"fix": [], "abertos": set(), "nao_corrige": set(), "na": set(), "cves": set()})
+            p["cves"].add(c)
+            {"afetado": p["abertos"], "nao_corrige": p["nao_corrige"], "fora_suporte": p["nao_corrige"],
+             "nao_afetado": p["na"]}.get(st, set()).add(c)
+    linhas = []
+    for nome, p in sorted(pk.items()):
+        corrigidos = {c for _, _, c in p["fix"]}
+        abertos = (p["abertos"] | p["nao_corrige"]) - corrigidos
+        base = {"pacote": nome, "cves_avaliados": len(p["cves"]), "abertos": sorted(abertos)[:50],
+                "sem_impacto": sorted(p["na"] - corrigidos)[:50], "em_triagem": 0, "ubuntu_pro": False}
+        if p["fix"]:
+            melhor = max(p["fix"], key=functools.cmp_to_key(lambda a, b: rh.cmp_evr(a[0], b[0])))
+            base.update({"estado": "parcial" if abertos else "corrigido", "versao": melhor[0], "aviso": melhor[1]})
+        elif abertos:
+            base.update({"estado": "sem_correcao",
+                         "nota": "a Red Hat não vai corrigir nesta versão (fora do escopo de suporte)" if not (p["abertos"] - corrigidos) else ""})
+        elif p["na"]:
+            base["estado"] = "nao_afetado"
+        else:
+            continue
+        linhas.append(base)
+    # "Não afetado" só aparece quando é tudo o que há: com outra situação real, essas linhas viram ruído.
+    if any(l["estado"] != "nao_afetado" for l in linhas):
+        linhas = [l for l in linhas if l["estado"] != "nao_afetado"]
+    return linhas
+
+
+def so_rhel(cache, cve, major):
+    """Situação de um CVE do KEV num RHEL: pior caso entre os pacotes (a = sem correção, d = não será corrigido, c = corrigido)."""
+    e = ((rh_dados(cache, cve) or {}).get("el") or {}).get(major)
+    if not e:
+        return None
+    est = e.get("est") or {}
+    abertos = [n for n, st in est.items() if st == "afetado" and not _rh_ignorar(n)]
+    nao_corrige = [n for n, st in est.items() if st in ("nao_corrige", "fora_suporte") and not _rh_ignorar(n)]
+    fix = [f for f in (e.get("fix") or []) if not _rh_ignorar(f[0])]
+    if abertos:
+        return {"e": "a", "v": None, "p": abertos[0]}
+    if nao_corrige:
+        return {"e": "d", "v": None, "p": nao_corrige[0]}
+    if fix:
+        import functools
+        rh = _redhat()
+        m = max(fix, key=functools.cmp_to_key(lambda a, b: rh.cmp_evr(a[1], b[1])))
+        return {"e": "c", "v": m[1], "p": m[0]}
+    return None
 
 
 # ---------- F23: avisos de segurança do TrueNAS (RSS) ----------
@@ -884,6 +992,13 @@ def main():
             cves = [d["cve"] for d in detalhes] + [c for c in cves if c not in NVD_IDX]
         linhas = {}
         for rel_id in RELEASES:
+            if RELEASES[rel_id]["familia"] == "rhel":
+                # F24: linhas do RHEL vêm dos dados da Red Hat pelos CVEs do item (sem lista de pacotes curada).
+                if it["tipo"] in ("pacote", "kernel"):
+                    rl = [l for l in linhas_rhel(args.cache, cves, RELEASES[rel_id]["major"]) if validar_linha(l, it["id"], rpm=True)]
+                    if rl:
+                        linhas[rel_id] = rl
+                continue
             rel_linhas = []
             manual = (it.get("linhas_manuais") or {}).get(rel_id)
             for pkg in (it.get("fontes") or {}).get(rel_id, []):
@@ -1126,7 +1241,7 @@ def main():
         "fora_do_marco": fora_marco,
         "cves_fora_do_marco": fora_marco_cves,
         "fontes_estado": frescor_fontes(args.cache),
-        "fontes": ["CISA KEV", "Debian Security Tracker", "Ubuntu Security (CVE e USN)", "NVD", "FIRST EPSS", "CTIR Gov", "CAIS/RNP", "avisos dos fornecedores"],
+        "fontes": ["CISA KEV", "Debian Security Tracker", "Ubuntu Security (CVE e USN)", "Red Hat Security Data", "NVD", "FIRST EPSS", "CTIR Gov", "CAIS/RNP", "avisos dos fornecedores"],
     }
     coletas.append(coleta)
     coletas = coletas[-200:]

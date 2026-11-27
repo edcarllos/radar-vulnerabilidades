@@ -9,22 +9,29 @@
 })(typeof self !== "undefined" ? self : this, function () {
   "use strict";
 
-  var RELEASES = ["deb12", "deb13", "u2004", "u2204", "u2404", "u2604"];
+  var RELEASES = ["deb12", "deb13", "u2004", "u2204", "u2404", "u2604", "el8", "el9", "el10"];
   var ROTULOS = {
     deb12: "Debian 12 (bookworm)",
     deb13: "Debian 13 (trixie)",
     u2004: "Ubuntu 20.04 LTS (focal)",
     u2204: "Ubuntu 22.04 LTS (jammy)",
     u2404: "Ubuntu 24.04 LTS (noble)",
-    u2604: "Ubuntu 26.04 LTS (resolute)"
+    u2604: "Ubuntu 26.04 LTS (resolute)",
+    el8: "RHEL 8 e compatíveis",
+    el9: "RHEL 9 e compatíveis",
+    el10: "RHEL 10 e compatíveis"
   };
   var RE = {
     id: /^[a-z0-9][a-z0-9-]{2,60}$/,
     pkg: /^[a-z0-9][a-z0-9+.-]{0,62}$/,
     ver: /^[0-9][0-9A-Za-z.+~:-]{0,80}$/,
+    // RHEL e compatíveis: nomes de pacote com maiúsculas e _ (NetworkManager), versões época:versão-release com ^ e _.
+    // Nada de aspas, %, chaves ou barras: os valores entram em comparações feitas pelo rpm no servidor.
+    pkgRpm: /^[A-Za-z0-9][A-Za-z0-9._+-]{0,99}$/,
+    verRpm: /^[0-9]{1,6}:[0-9A-Za-z._+~^]{1,80}-[0-9A-Za-z._+~^]{1,100}$/,
     appver: /^\d+(\.\d+){1,3}$/,
     cve: /^CVE-\d{4}-\d{4,7}$/,
-    aviso: /^((DSA|DLA|USN)-\d{3,5}-\d{1,2}|SA-CORE-\d{4}-\d{3})$/,
+    aviso: /^((DSA|DLA|USN)-\d{3,5}-\d{1,2}|SA-CORE-\d{4}-\d{3}|RHSA-\d{4}:\d{3,6})$/,
     estado: /^(corrigido|parcial|pro|sem_correcao|em_triagem|nao_afetado|nao_empacotado|nao_verificado)$/,
     decisao: /^(agir_agora|agir_em_breve|acompanhar_de_perto|acompanhar|nao_se_aplica)$/,
     app: /^(drupal|wordpress|gitlab|freeswitch|moodle|glpi|ojs|nextcloud|keycloak|dspace)$/,
@@ -92,16 +99,18 @@
           });
         }
         if (it.tipo !== "manual") rels.forEach(function (r) {
+          var rpm = /^el\d+$/.test(r);
           ((it.linhas || {})[r] || []).forEach(function (ln) {
-            var ok = RE.pkg.test(ln.pacote || "") && RE.estado.test(ln.estado || "");
+            var ok = (rpm ? RE.pkgRpm : RE.pkg).test(ln.pacote || "") && RE.estado.test(ln.estado || "");
             var versao = ln.versao || "-";
-            if (versao !== "-" && !RE.ver.test(versao)) ok = false;
+            if (versao !== "-" && !(rpm ? RE.verRpm : RE.ver).test(versao)) ok = false;
             if (/^(corrigido|parcial|pro)$/.test(ln.estado) && versao === "-") ok = false;
             var aviso = RE.aviso.test(ln.aviso || "") ? ln.aviso : "";
             var ups = (it.upstream_minimos || []).filter(function (v) { return RE.appver.test(v); }).join(",") || "-";
             if (!ok) { descartes++; return; }
             var tipo = it.tipo === "kernel" ? "kernel" : "src";
             if (tipo === "kernel" && !/^(corrigido|parcial|pro)$/.test(ln.estado)) return;
+            if (tipo === "kernel" && rpm && ln.pacote !== "kernel") return; // kernel-rt e afins: só o kernel padrão
             add([r, it.id, tipo, ln.pacote, ln.estado, versao, ups, aviso, cv, cs, dec, titulo]);
           });
         });

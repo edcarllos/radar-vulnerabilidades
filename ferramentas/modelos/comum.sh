@@ -30,6 +30,12 @@ radar_release() {
     ubuntu:22.04) echo u2204 ;;
     ubuntu:24.04) echo u2404 ;;
     ubuntu:26.04) echo u2604 ;;
+    # F24: família Red Hat. Rocky, Alma e CentOS Stream usam as correções do RHEL da mesma versão.
+    rhel:8|rhel:8.*|rocky:8|rocky:8.*|almalinux:8|almalinux:8.*) echo el8 ;;
+    rhel:9|rhel:9.*|rocky:9|rocky:9.*|almalinux:9|almalinux:9.*|centos:9) echo el9 ;;
+    rhel:10|rhel:10.*|rocky:10|rocky:10.*|almalinux:10|almalinux:10.*|centos:10) echo el10 ;;
+    rhel:7|rhel:7.*|centos:7|centos:7.*) echo el7 ;;
+    centos:8|centos:8.*) echo centos8 ;;
     *) echo "" ;;
   esac
 }
@@ -69,23 +75,38 @@ radar_rotulo() {
     u2204) echo "Ubuntu 22.04 LTS (jammy)" ;;
     u2404) echo "Ubuntu 24.04 LTS (noble)" ;;
     u2604) echo "Ubuntu 26.04 LTS (resolute)" ;;
+    el7) echo "RHEL ou CentOS 7" ;;
+    centos8) echo "CentOS 8" ;;
+    el8) echo "RHEL 8 e compatíveis (Rocky, Alma)" ;;
+    el9) echo "RHEL 9 e compatíveis (Rocky, Alma, CentOS Stream 9)" ;;
+    el10) echo "RHEL 10 e compatíveis (Rocky, Alma, CentOS Stream 10)" ;;
     *) echo "$1" ;;
   esac
 }
 
 radar_codinome() {
-  case "$1" in deb11) echo bullseye ;; deb12) echo bookworm ;; deb13) echo trixie ;; u2004) echo focal ;; u2204) echo jammy ;; u2404) echo noble ;; u2604) echo resolute ;; esac
+  case "$1" in el*) echo "$1" ;; deb11) echo bullseye ;; deb12) echo bookworm ;; deb13) echo trixie ;; u2004) echo focal ;; u2204) echo jammy ;; u2404) echo noble ;; u2604) echo resolute ;; esac
 }
 
 # Versões sem suporte de segurança gratuito e sem dados por pacote no Radar.
 radar_fim_suporte() {
   case "$1" in
     deb11) echo "O Debian 11 (bullseye) está sem suporte desde 31/08/2026: não recebe mais correções gratuitas, e o Radar não tem dados por pacote dele. Migre para o Debian 12 ou 13 (ou contrate o suporte estendido pago, ELTS)." ;;
+    el7) echo "O RHEL 7 e o CentOS 7 estão sem suporte desde 30/06/2024: não recebem mais correções gratuitas. Migre para o RHEL, Rocky ou Alma 9 ou 10 (o RHEL 7 tem suporte estendido pago, ELS)." ;;
+    centos8) echo "O CentOS Linux 8 está sem suporte desde 31/12/2021 e o CentOS Stream 8 desde 31/05/2024. Migre para o Rocky, Alma ou RHEL 9 ou 10." ;;
   esac
 }
 
+# Família de pacotes: deb (Debian, Ubuntu) ou rpm (RHEL e compatíveis).
+radar_familia() { case "$1" in el*|centos8) echo rpm ;; *) echo deb ;; esac; }
+
 radar_checar_release() {
   REL=$(radar_release)
+  RADAR_FAMILIA=$(radar_familia "$REL")
+  RADAR_STREAM=0
+  if [ "$RADAR_FAMILIA" = rpm ] && [ "$(awk -F= '$1=="ID" {gsub(/"/, "", $2); print $2; exit}' "${RADAR_OS_RELEASE:-/etc/os-release}" 2>/dev/null)" = centos ]; then
+    RADAR_STREAM=1
+  fi
   RADAR_EOL=""
   if [ -z "$REL" ]; then
     echo "${C_VERM}Distribuição não suportada.${C_FIM} Este script cobre Debian 12/13 e Ubuntu 20.04/22.04/24.04/26.04."
@@ -121,7 +142,18 @@ radar_em_conteiner() {
 }
 
 # Lista de pacotes instalados: pacote<TAB>versão<TAB>fonte<TAB>versão-da-fonte
+# No RPM: nome<TAB>época:versão-release<TAB>pacote-fonte (do SRPM)<TAB>época:versão-release do SRPM.
 radar_carregar_dpkg() {
+  if [ "${RADAR_FAMILIA:-deb}" = rpm ]; then
+    RADAR_DPKG=$(rpm -qa --qf '%{NAME}\t%{EPOCHNUM}:%{VERSION}-%{RELEASE}\t%{SOURCERPM}\n' 2>/dev/null | awk -F'\t' '
+      $3 ~ /\.src\.rpm$/ {
+        s = $3; sub(/\.src\.rpm$/, "", s)
+        r = s; sub(/-[^-]*$/, "", r); n = r; sub(/-[^-]*$/, "", n)
+        vr = substr(s, length(n) + 2); e = $2; sub(/:.*/, "", e)
+        print $1 "\t" $2 "\t" n "\t" e ":" vr
+      }')
+    return
+  fi
   if [ -n "${RADAR_DPKG_STATUS:-}" ]; then RADAR_DPKG=$(radar_dpkg_de_status "$RADAR_DPKG_STATUS"); return; fi
   # shellcheck disable=SC2016
   RADAR_DPKG=$(dpkg-query -W -f='${db:Status-Abbrev}\t${binary:Package}\t${Version}\t${source:Package}\t${source:Version}\n' 2>/dev/null \
@@ -182,6 +214,7 @@ radar_externo() {
   case "$1" in
     *sury*|*+debian1[0-9]~*|*~bpo*|*ppa*) return 0 ;;
     *~bookworm|*~trixie|*~jammy|*~noble|*~resolute) return 0 ;;
+    *.remi|*.remi.*|*remi*) return 0 ;;
   esac
   return 1
 }
@@ -193,6 +226,40 @@ radar_upstream() {
 
 radar_ramo() { printf '%s' "$1" | cut -d. -f1,2; }
 
+# F24: comparação de versões RPM pelo próprio rpm (rpm.vercmp em Lua; existe do EL 8 ao 10). Compara época, versão e
+# release separadamente. Normaliza o que difere entre o RHEL e os compatíveis sem mudar a correção:
+# o sufixo de build de módulo (.module+el8...+NNNN+hash no RHEL, .module_el8...+MMMM+hash na Alma) e, no CentOS Stream,
+# o sufixo da versão menor (el9_4 -> el9). Saída: -1, 0 ou 1; "x" se a versão tiver caracteres inesperados.
+radar_rpm_norm_rel() {
+  local r="${1%%.module*}"
+  [ "${RADAR_STREAM:-0}" = 1 ] && r=$(printf '%s' "$r" | sed -E 's/(el[0-9]+)_[0-9]+/\1/g')
+  printf '%s' "$r"
+}
+radar_rpmcmp() {
+  local a="$1" b="$2" ea=0 eb=0 va vb ra="" rb=""
+  case "$a" in *:*) ea="${a%%:*}"; a="${a#*:}" ;; esac
+  case "$b" in *:*) eb="${b%%:*}"; b="${b#*:}" ;; esac
+  case "$a" in *-*) va="${a%-*}"; ra=$(radar_rpm_norm_rel "${a##*-}") ;; *) va="$a" ;; esac
+  case "$b" in *-*) vb="${b%-*}"; rb=$(radar_rpm_norm_rel "${b##*-}") ;; *) vb="$b" ;; esac
+  local re='^[0-9A-Za-z._+~^]*$'
+  if ! [[ "$ea" =~ ^[0-9]{1,6}$ && "$eb" =~ ^[0-9]{1,6}$ && "$va" =~ $re && "$vb" =~ $re && "$ra" =~ $re && "$rb" =~ $re ]]; then
+    echo x; return
+  fi
+  if [ "$ea" -lt "$eb" ]; then echo -1; return; fi
+  if [ "$ea" -gt "$eb" ]; then echo 1; return; fi
+  rpm --eval "%{lua: local c = rpm.vercmp('$va', '$vb'); if c == 0 then c = rpm.vercmp('$ra', '$rb') end; print(c)}" 2>/dev/null || echo x
+}
+
+# Comparação de versões da família do host. Versão inválida conta contra o host (lt/le verdadeiro; gt/ge/eq falso).
+radar_vcmp() { # a op b   (op: lt le gt ge eq)
+  if [ "${RADAR_FAMILIA:-deb}" != rpm ]; then dpkg --compare-versions "$1" "$2" "$3"; return; fi
+  local c; c=$(radar_rpmcmp "$1" "$3")
+  case "$c" in -1|0|1) ;; *) case "$2" in lt|le) return 0 ;; *) return 1 ;; esac ;; esac
+  case "$2" in
+    lt) [ "$c" -lt 0 ] ;; le) [ "$c" -le 0 ] ;; gt) [ "$c" -gt 0 ] ;; ge) [ "$c" -ge 0 ] ;; eq) [ "$c" -eq 0 ] ;; *) return 1 ;;
+  esac
+}
+
 # Compara versão de aplicação com mínimos por ramo. Saída: OK | VULNERAVEL | VERIFICAR
 radar_cmp_ramo() {
   local v="$1" lista="$2" estrito="$3" m menor="" maior="" ramo_v
@@ -201,22 +268,22 @@ radar_cmp_ramo() {
   IFS=',' read -r -a mins <<< "$lista"
   for m in "${mins[@]}"; do
     if [ "$(radar_ramo "$m")" = "$ramo_v" ]; then
-      if dpkg --compare-versions "$v" lt "$m"; then echo VULNERAVEL; else echo OK; fi
+      if radar_vcmp "$v" lt "$m"; then echo VULNERAVEL; else echo OK; fi
       return
     fi
-    if [ -z "$menor" ] || dpkg --compare-versions "$m" lt "$menor"; then menor="$m"; fi
-    if [ -z "$maior" ] || dpkg --compare-versions "$m" gt "$maior"; then maior="$m"; fi
+    if [ -z "$menor" ] || radar_vcmp "$m" lt "$menor"; then menor="$m"; fi
+    if [ -z "$maior" ] || radar_vcmp "$m" gt "$maior"; then maior="$m"; fi
   done
-  if [ -n "$maior" ] && dpkg --compare-versions "$v" gt "$maior"; then echo OK; return; fi
+  if [ -n "$maior" ] && radar_vcmp "$v" gt "$maior"; then echo OK; return; fi
   if [ "$estrito" = "derivado" ]; then
     # Projetos que numeram correções no segundo dígito (DSpace 8.1 -> 8.4): compara pela mesma versão major.
     local major="${v%%.*}" alvo=""
     for m in "${mins[@]}"; do
       [ "${m%%.*}" = "$major" ] || continue
-      if [ -z "$alvo" ] || dpkg --compare-versions "$m" lt "$alvo"; then alvo="$m"; fi
+      if [ -z "$alvo" ] || radar_vcmp "$m" lt "$alvo"; then alvo="$m"; fi
     done
     if [ -n "$alvo" ]; then
-      if dpkg --compare-versions "$v" lt "$alvo"; then echo VULNERAVEL; else echo OK; fi
+      if radar_vcmp "$v" lt "$alvo"; then echo VULNERAVEL; else echo OK; fi
       return
     fi
   fi
@@ -257,6 +324,19 @@ radar_checar_kernel() {
     printf 'VERIFICAR%s%s%s%s\n' "$RS" "$run" "$RS" "kernel do Proxmox: confira os avisos de segurança do Proxmox; a correção é a atualização completa (radar-corrigir.sh)"
     return
   fi
+  if [ "${RADAR_FAMILIA:-deb}" = rpm ]; then
+    # RHEL e compatíveis: uname -r = versão-release.arquitetura do pacote kernel(-core) em execução.
+    local rvr="$run"
+    case "$rvr" in *.x86_64|*.aarch64|*.ppc64le|*.s390x) rvr="${rvr%.*}" ;; esac
+    if radar_vcmp "0:$rvr" ge "$fixo"; then printf 'OK%s%s%s\n' "$RS" "$rvr" "$RS"; return; fi
+    novo=$(printf '%s\n' "$RADAR_DPKG" | awk -F'\t' '$1=="kernel-core" || $1=="kernel" {print $2}' | sort -V | tail -n1)
+    if [ -n "$novo" ] && radar_vcmp "$novo" ge "$fixo"; then
+      printf 'REINICIAR%s%s%s%s\n' "$RS" "$rvr" "$RS" "kernel ${novo#0:} já instalado: falta reiniciar"
+    else
+      printf 'VULNERAVEL%s%s%s\n' "$RS" "$rvr" "$RS"
+    fi
+    return
+  fi
   pv=$(radar_versao_instalada "linux-image-$run")
   if [ -z "$pv" ]; then
     printf 'VERIFICAR%s%s%s%s\n' "$RS" "$run" "$RS" "kernel em execução não veio de pacote da distro"
@@ -266,12 +346,12 @@ radar_checar_kernel() {
     printf 'VERIFICAR%s%s%s%s\n' "$RS" "$pv" "$RS" "série de kernel diferente (HWE/backport): consulte o aviso"
     return
   fi
-  if dpkg --compare-versions "$pv" ge "$fixo"; then
+  if radar_vcmp "$pv" ge "$fixo"; then
     printf 'OK%s%s%s\n' "$RS" "$pv" "$RS"
     return
   fi
   novo=$(printf '%s\n' "$RADAR_DPKG" | awk -F'\t' '$1 ~ /^linux-image-[0-9]/ {print $2}' | sort -V | tail -n1)
-  if [ -n "$novo" ] && dpkg --compare-versions "$novo" ge "$fixo"; then
+  if [ -n "$novo" ] && radar_vcmp "$novo" ge "$fixo"; then
     printf 'REINICIAR%s%s%s%s\n' "$RS" "$pv" "$RS" "kernel $novo já instalado: falta reiniciar"
   else
     printf 'VULNERAVEL%s%s%s\n' "$RS" "$pv" "$RS"
@@ -303,10 +383,10 @@ radar_checar_fonte() {
     else
       case "$estado" in
         corrigido|pro)
-          if dpkg --compare-versions "$sv" lt "$fixo"; then st=VULNERAVEL; fi
+          if radar_vcmp "$sv" lt "$fixo"; then st=VULNERAVEL; fi
           [ "$estado" = pro ] && [ "$st" = VULNERAVEL ] && nota="correção só no Ubuntu Pro (ESM)" ;;
         parcial)
-          if dpkg --compare-versions "$sv" lt "$fixo"; then st=VULNERAVEL; else st=ATENCAO; nota="atualizado, mas há CVEs ainda sem correção na distro"; fi ;;
+          if radar_vcmp "$sv" lt "$fixo"; then st=VULNERAVEL; else st=ATENCAO; nota="atualizado, mas há CVEs ainda sem correção na distro"; fi ;;
         sem_correcao) st=SEM_CORRECAO; nota="distro ainda sem correção: aplique a mitigação" ;;
         em_triagem) st=VERIFICAR; nota="a distro ainda está avaliando estes CVEs (sem correção publicada)" ;;
         nao_afetado) st=NAO_AFETADO ;;
@@ -334,7 +414,7 @@ radar_php_extras() {
     refv=$(radar_dados | awk -F'|' -v i="$id" -v f="$fonte" '$2==i && $3=="ref" && $4==f {print $6; exit}')
     refaviso=$(radar_dados | awk -F'|' -v i="$id" -v f="$fonte" '$2==i && $3=="ref" && $4==f {print $8; exit}')
     if [ -n "$refv" ] && ! radar_externo "$v"; then
-      if dpkg --compare-versions "$sv" lt "$refv"; then st=VULNERAVEL; else st=OK; fi
+      if radar_vcmp "$sv" lt "$refv"; then st=VULNERAVEL; else st=OK; fi
       nota="$fonte veio de outra versão da distro; comparado com ${refaviso:-a correção} daquela versão"
     else
       st=$(radar_cmp_ramo "$(radar_upstream "$sv")" "$ups" estrito)
@@ -489,7 +569,11 @@ radar_plugin_moodle() { # raiz componente
 radar_processos_lib() {
   local bin="$1" arqs pid nome
   nome=$(printf '%s\n' "$RADAR_DPKG" | awk -F'\t' -v p="$bin" '$1==p || index($1, p":")==1 {print $1; exit}')
-  arqs=$(dpkg -L "${nome:-$bin}" 2>/dev/null | grep -E '\.so(\.|$)' | grep -v '/usr/share/' || true)
+  if [ "${RADAR_FAMILIA:-deb}" = rpm ]; then
+    arqs=$(rpm -ql "${nome:-$bin}" 2>/dev/null | grep -E '\.so(\.|$)' | grep -v '/usr/share/' || true)
+  else
+    arqs=$(dpkg -L "${nome:-$bin}" 2>/dev/null | grep -E '\.so(\.|$)' | grep -v '/usr/share/' || true)
+  fi
   [ -z "$arqs" ] && return
   for pid in /proc/[0-9]*; do
     [ -r "$pid/maps" ] || continue

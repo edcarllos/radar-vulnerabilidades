@@ -96,10 +96,32 @@ for item in $(awk -F'\t' '$2!="kernel" {print $1}' "$BACKUP/aplicados.tsv" | awk
     atual=$(radar_versao_instalada "$pkg")
     echo "  $pkg: antes $antes · depois $depois · agora ${atual:-não instalado}"
     alvos+=("$pkg=$antes")
+    if [ "${RADAR_FAMILIA:-deb}" = rpm ]; then continue; fi
     [ -n "$(deb_salvo "$pkg")" ] || faltam_debs=1
     apt-cache madison "$pkg" 2>/dev/null | awk -F'|' '{gsub(/ /,"",$2); print $2}' | grep -qxF "$antes" || no_repo=0
   done < "$BACKUP/aplicados.tsv"
   [ "${#alvos[@]}" = 0 ] && continue
+  if [ "${RADAR_FAMILIA:-deb}" = rpm ]; then
+    # RHEL e compatíveis: desfaz a transação do dnf registrada pela correção.
+    tx=$(awk -F'\t' -v i="$item" '$1==i {print $2}' "$BACKUP/dnf-transacoes.tsv" 2>/dev/null | tail -n1)
+    if ! [[ "$tx" =~ ^[0-9]+$ ]]; then echo "  Sem transação do dnf registrada para este item."; continue; fi
+    echo "  Opções:"
+    echo "    u) desfazer a transação $tx do dnf (dnf history undo): volta as versões anteriores, se ainda estiverem no repositório"
+    echo "    p) pular"
+    op="p"
+    if [ -r /dev/tty ] && { true </dev/tty; } 2>/dev/null; then read -r -p "  Escolha [p]: " op </dev/tty || op="p"; fi
+    [ "$SIMULAR" = 1 ] && [ -n "${RADAR_RESPOSTA:-}" ] && op="${RADAR_OPCAO:-p}"
+    [ "$op" = u ] || { echo "  Pulado."; continue; }
+    dnf history undo "$tx" --assumeno 2>&1 | grep -E '^(Downgrading|Rebaixando|Removing|Installing)|^ [A-Za-z0-9]|No package|Nenhum pacote|[Cc]annot|não está disponível' | sed 's/^/    /' | head -n 20
+    if perguntar "  Confirmar o rollback desta transação?" n; then
+      executar dnf -y history undo "$tx" || echo "  ${C_VERM}O dnf não conseguiu desfazer (a versão anterior pode ter saído do repositório). Use o snapshot da VM ou do volume.${C_FIM}"
+    fi
+    if dnf versionlock --help >/dev/null 2>&1 && perguntar "  Travar (dnf versionlock) estes pacotes para não serem atualizados de novo? Isso mantém a vulnerabilidade." n; then
+      executar dnf versionlock add "${alvos[@]%%=*}"
+      echo "  Lembre de liberar depois: dnf versionlock delete ${alvos[*]%%=*}"
+    fi
+    continue
+  fi
   echo "  Opções:"
   [ "$faltam_debs" = 0 ] && echo "    d) reinstalar os .deb salvos no ponto de restauração (não precisa de rede)"
   [ "$no_repo" = 1 ] && echo "    a) instalar as versões anteriores pelo repositório (apt-get --allow-downgrades)"
@@ -132,10 +154,25 @@ if awk -F'\t' '$2=="kernel"' "$BACKUP/aplicados.tsv" | grep -q .; then
   echo "${C_NEG}Kernel${C_FIM}"
   anterior=$(awk -F'\t' '$2=="kernel" {print $3; exit}' "$BACKUP/aplicados.tsv")
   echo "  Kernel anterior: $anterior (continua instalado). Em execução agora: $(uname -r)"
+  if [ "${RADAR_FAMILIA:-deb}" = rpm ]; then
+    ant="${anterior}"
+    if [ -e "/boot/vmlinuz-$ant" ] && command -v grubby >/dev/null 2>&1; then
+      echo "  Kernel padrão hoje: $(grubby --default-kernel 2>/dev/null)"
+      if perguntar "  Tornar o kernel anterior ($ant) o padrão de boot (grubby)?" n; then
+        executar grubby --set-default "/boot/vmlinuz-$ant"
+        echo "  Pronto. Reinicie quando for conveniente. Para voltar ao kernel novo depois: grubby --set-default /boot/vmlinuz-<versão nova>"
+      fi
+    else
+      echo "  No boot, escolha no menu o kernel $ant (ele continua instalado)."
+    fi
+    anterior=""
+  fi
   cfg=/boot/grub/grub.cfg
   sub=$(grep -oE "submenu '[^']*' [^{]*\\\$menuentry_id_option '[^']+'" "$cfg" 2>/dev/null | grep -oE "'gnulinux-advanced-[^']+'" | tr -d "'" | head -n1)
   ent=$(grep -oE "\\\$menuentry_id_option '[^']+'" "$cfg" 2>/dev/null | tr -d "'" | awk '{print $2}' | grep -F -- "-$anterior-advanced-" | head -n1)
-  if [ -n "$sub" ] && [ -n "$ent" ]; then
+  if [ -z "$anterior" ]; then
+    :  # RHEL e compatíveis: tratado acima com o grubby
+  elif [ -n "$sub" ] && [ -n "$ent" ]; then
     echo "  Entrada do GRUB encontrada: $sub>$ent"
     if perguntar "  Inicializar UMA VEZ com o kernel anterior no próximo boot (grub-reboot)?" n; then
       executar grub-reboot "$sub>$ent"
