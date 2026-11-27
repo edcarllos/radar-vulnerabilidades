@@ -29,7 +29,7 @@ concurrency:
 jobs:
   coletar:
     runs-on: ubuntu-24.04
-    timeout-minutes: 60
+    timeout-minutes: 120   # a primeira coleta, com o cache vazio, baixa cerca de 1.000 CVEs da NVD
     permissions:
       contents: write   # grava o estado da coleta no branch "dados"
       issues: write     # mantém a issue de candidatos a item novo
@@ -44,10 +44,11 @@ jobs:
         uses: actions/cache/restore@v6
         with:
           path: ~/.cache/radar-vulnerabilidades
-          key: radar-fontes-${{ github.run_id }}
+          key: radar-fontes-${{ github.run_id }}-${{ github.run_attempt }}
           restore-keys: radar-fontes-
 
       - name: Coletar, construir e montar o site
+        timeout-minutes: 100   # deixa tempo para guardar o cache mesmo se a coleta estourar
         env:
           NVD_API_KEY: ${{ secrets.NVD_API_KEY }}
           RADAR_GPG_PRIVADA: ${{ secrets.RADAR_GPG_PRIVADA }}
@@ -58,10 +59,12 @@ jobs:
         run: bash ferramentas/ci-coleta.sh publico
 
       - name: Guardar o cache das fontes
+        if: always()   # guarda o que foi baixado mesmo se a coleta falhar: a próxima continua de onde parou
+        continue-on-error: true
         uses: actions/cache/save@v6
         with:
           path: ~/.cache/radar-vulnerabilidades
-          key: radar-fontes-${{ github.run_id }}
+          key: radar-fontes-${{ github.run_id }}-${{ github.run_attempt }}
 
       - uses: actions/upload-pages-artifact@v5
         with:
