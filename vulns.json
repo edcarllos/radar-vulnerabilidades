@@ -1,22 +1,12 @@
 {
- "gerado_em": "2026-11-27T08:29-03:00",
+ "gerado_em": "2026-11-27T12:37-03:00",
  "coleta": {
-  "id": "2026-11-27T08:29-03:00",
+  "id": "2026-11-27T12:37-03:00",
   "data": "2026-11-27",
   "kev_versao": "2026.11.25",
   "itens_total": 98,
-  "novos": [
-   "kernel-nfsd-oob-99362"
-  ],
-  "alterados": [
-   "nginx-2026-11",
-   "exim4-dsa-6659",
-   "exim4-dla-4940",
-   "expat-2026-11",
-   "krb5-2026-11",
-   "sistema-base-2026-11",
-   "nvd-keycloak"
-  ],
+  "novos": [],
+  "alterados": [],
   "janela_nvd_dias": 90,
   "produtos_sem_cve": [
    "nvd-shibboleth",
@@ -25,62 +15,37 @@
    "nvd-sigaa-sei",
    "nvd-sei"
   ],
-  "cves_novos": [
-   {
-    "item": "exim4-dsa-6659",
-    "cve": "CVE-2026-137702",
-    "nota": null,
-    "kev": null
-   },
-   {
-    "item": "sistema-base-2026-11",
-    "cve": "CVE-2024-22365",
-    "nota": null,
-    "kev": null
-   },
-   {
-    "item": "sistema-base-2026-11",
-    "cve": "CVE-2025-6020",
-    "nota": null,
-    "kev": null
-   },
-   {
-    "item": "nvd-keycloak",
-    "cve": "CVE-2026-137602",
-    "nota": 5.3,
-    "kev": null
-   }
-  ],
+  "cves_novos": [],
   "historico": {
    "deb12": {
     "rel": "deb12",
     "codinome": "bookworm",
     "data": "2026-11-27",
-    "pacotes_com_cve": 3359,
-    "confirmados": 4165,
+    "pacotes_com_cve": 3360,
+    "confirmados": 4161,
     "sem_distincao": 0,
-    "adiados": 5079,
+    "adiados": 5092,
     "em_triagem": 118,
-    "cves_abertos": 9259,
+    "cves_abertos": 9267,
     "cves_kev_abertos": 26,
     "kernels": [],
     "arquivo": "indices/idx-deb12.txt",
-    "bytes": 3533154
+    "bytes": 3533622
    },
    "deb13": {
     "rel": "deb13",
     "codinome": "trixie",
     "data": "2026-11-27",
-    "pacotes_com_cve": 3374,
+    "pacotes_com_cve": 3375,
     "confirmados": 2310,
     "sem_distincao": 0,
-    "adiados": 4530,
+    "adiados": 4538,
     "em_triagem": 123,
-    "cves_abertos": 6950,
+    "cves_abertos": 6958,
     "cves_kev_abertos": 9,
     "kernels": [],
     "arquivo": "indices/idx-deb13.txt",
-    "bytes": 3690577
+    "bytes": 3691061
    },
    "u2204": {
     "rel": "u2204",
@@ -154,7 +119,7 @@
      "linux-xilinx-zynqmp"
     ],
     "arquivo": "indices/idx-u2204.txt",
-    "bytes": 6872210
+    "bytes": 6872131
    },
    "u2404": {
     "rel": "u2404",
@@ -222,7 +187,7 @@
      "linux-xilinx"
     ],
     "arquivo": "indices/idx-u2404.txt",
-    "bytes": 6302006
+    "bytes": 6301978
    },
    "u2604": {
     "rel": "u2604",
@@ -253,7 +218,7 @@
      "linux-vmware"
     ],
     "arquivo": "indices/idx-u2604.txt",
-    "bytes": 3099789
+    "bytes": 3099828
    }
   },
   "candidatos": [
@@ -463,6 +428,76 @@
   "backup": "Backup (Veeam)",
   "microsoft": "Microsoft Exchange e SharePoint",
   "sistemas-gov": "Sistemas acadêmicos e de governo (SIGAA, SEI)"
+ },
+ "criticidade": {
+  "padrao": "media",
+  "tecnologias": {
+   "php": "alta",
+   "kernel": "alta",
+   "apt": "media",
+   "nginx": "alta",
+   "apache2": "alta",
+   "haproxy": "alta",
+   "brotli": "media",
+   "zstd": "media",
+   "expat": "media",
+   "pcre2": "media",
+   "libssh": "media",
+   "glibc": "alta",
+   "openssl": "alta",
+   "curl": "media",
+   "libgd": "media",
+   "krb5": "alta",
+   "openssh": "alta",
+   "exim": "alta",
+   "roundcube": "alta",
+   "squid": "media",
+   "postgresql": "alta",
+   "tomcat": "alta",
+   "axis": "media",
+   "django": "alta",
+   "mediawiki": "baixa",
+   "conteineres": "media",
+   "puppet": "media",
+   "chromium": "baixa",
+   "drupal": "alta",
+   "wordpress": "media",
+   "gitlab": "media",
+   "webconferencia": "alta",
+   "pesquisa": "media",
+   "virtualizacao": "alta",
+   "vpn-firewall": "alta",
+   "email-gateway": "alta",
+   "nas": "media",
+   "estacoes": "baixa",
+   "outros": "baixa",
+   "java": "alta",
+   "banco-dados": "alta",
+   "navegadores-email": "baixa",
+   "escritorio": "baixa",
+   "imagens-pdf": "media",
+   "dns": "alta",
+   "email": "alta",
+   "eduroam-vpn": "alta",
+   "ruby": "media",
+   "cache": "media",
+   "nodejs": "media",
+   "python": "media",
+   "sistema-base": "alta",
+   "monitoramento": "media",
+   "moodle": "alta",
+   "gestao-ti": "media",
+   "publicacao": "media",
+   "bibliotecas-acervo": "media",
+   "nuvem-arquivos": "media",
+   "identidade": "alta",
+   "ci-devops": "media",
+   "rede": "alta",
+   "cftv": "media",
+   "backup": "alta",
+   "microsoft": "media",
+   "sistemas-gov": "alta"
+  }
  },
  "alertas_nacionais": [
   {
@@ -743,8 +778,8 @@
     "total_cves": 2,
     "prioridade_ubuntu": null,
     "rotulo": "Highly critical 21/25",
-    "epss": 0.11053,
-    "epss_percentil": 0.96627,
+    "epss": 0.08381,
+    "epss_percentil": 0.95738,
     "epss_cve": "CVE-2026-132165"
    },
    "resumo": "Bypass de acesso no instalador (install.php) permite reinstalar ou assumir o site. Substitui as versões corrigidas do SA-CORE-2026-017 (CVE-2026-132165, RCE explorada desde 19/11).",
@@ -763,7 +798,12 @@
     "missao": "alta",
     "fontes": [
      "derivado do KEV e EPSS (sem vetor CVSS)"
-    ]
+    ],
+    "por_missao": {
+     "alta": "agir_agora",
+     "media": "agir_em_breve",
+     "baixa": "agir_em_breve"
+    }
    },
    "inventario": null,
    "alertas_nacionais": [],
@@ -858,7 +898,12 @@
     "missao": "alta",
     "fontes": [
      "CISA (SSVC na NVD)"
-    ]
+    ],
+    "por_missao": {
+     "alta": "agir_agora",
+     "media": "agir_em_breve",
+     "baixa": "agir_em_breve"
+    }
    },
    "inventario": null,
    "alertas_nacionais": [
@@ -1016,7 +1061,7 @@
     "prioridade_ubuntu": "high",
     "rotulo": null,
     "epss": 0.02959,
-    "epss_percentil": 0.8794,
+    "epss_percentil": 0.87954,
     "epss_cve": "CVE-2026-46300"
    },
    "resumo": "Falha lógica no caminho XFRM ESP-in-TCP (skb_try_coalesce) permite que usuário local vire root ou escape de contêiner.",
@@ -1035,7 +1080,12 @@
     "missao": "alta",
     "fontes": [
      "CISA (SSVC na NVD)"
-    ]
+    ],
+    "por_missao": {
+     "alta": "agir_agora",
+     "media": "agir_em_breve",
+     "baixa": "agir_em_breve"
+    }
    },
    "inventario": null,
    "alertas_nacionais": [],
@@ -1166,7 +1216,7 @@
     "prioridade_ubuntu": "medium",
     "rotulo": null,
     "epss": 0.74315,
-    "epss_percentil": 0.99641,
+    "epss_percentil": 0.9964,
     "epss_cve": "CVE-2026-97229"
    },
    "resumo": "Expressão regular maliciosa na configuração de CI/CD executa código no servidor GitLab. O Debian Security Tracker também lista este CVE nos pacotes ruby3.x; isso não corrige um GitLab instalado pelo Omnibus.",
@@ -1185,7 +1235,12 @@
     "missao": "media",
     "fontes": [
      "CISA (SSVC na NVD)"
-    ]
+    ],
+    "por_missao": {
+     "alta": "agir_agora",
+     "media": "agir_agora",
+     "baixa": "agir_agora"
+    }
    },
    "inventario": null,
    "alertas_nacionais": [],
@@ -1258,7 +1313,7 @@
     "prioridade_ubuntu": null,
     "rotulo": null,
     "epss": 0.02147,
-    "epss_percentil": 0.82782,
+    "epss_percentil": 0.82802,
     "epss_cve": "CVE-2026-119977"
    },
    "resumo": "Caminhos de staging previsíveis e acessíveis pela web durante a atualização completa do core permitem que um atacante sem login execute código nessa janela.",
@@ -1277,7 +1332,12 @@
     "missao": "media",
     "fontes": [
      "CISA (SSVC na NVD)"
-    ]
+    ],
+    "por_missao": {
+     "alta": "agir_agora",
+     "media": "agir_em_breve",
+     "baixa": "agir_em_breve"
+    }
    },
    "inventario": null,
    "alertas_nacionais": [],
@@ -1373,8 +1433,8 @@
     "total_cves": 1,
     "prioridade_ubuntu": "high",
     "rotulo": null,
-    "epss": 0.32976,
-    "epss_percentil": 0.98749,
+    "epss": 0.99987,
+    "epss_percentil": 0.99991,
     "epss_cve": "CVE-2026-111497"
    },
    "resumo": "Falha na biblioteca Brotli (Ubuntu: prioridade alta, CVSS 9.8). Afeta todo programa que descomprime dados Brotli com a biblioteca do sistema.",
@@ -1393,7 +1453,12 @@
     "missao": "media",
     "fontes": [
      "CISA (SSVC na NVD)"
-    ]
+    ],
+    "por_missao": {
+     "alta": "agir_agora",
+     "media": "agir_em_breve",
+     "baixa": "agir_em_breve"
+    }
    },
    "inventario": null,
    "alertas_nacionais": [],
@@ -1526,7 +1591,7 @@
     "prioridade_ubuntu": "high",
     "rotulo": null,
     "epss": 0.12579,
-    "epss_percentil": 0.9693,
+    "epss_percentil": 0.96934,
     "epss_cve": "CVE-2026-115731"
    },
    "resumo": "Desserialização de dados não confiáveis no Puppet. O KEV cita o Puppet Enterprise; Debian corrigiu o puppet-agent.",
@@ -1545,7 +1610,12 @@
     "missao": "media",
     "fontes": [
      "CISA (SSVC na NVD)"
-    ]
+    ],
+    "por_missao": {
+     "alta": "agir_agora",
+     "media": "agir_em_breve",
+     "baixa": "agir_em_breve"
+    }
    },
    "inventario": null,
    "alertas_nacionais": [],
@@ -1664,7 +1734,7 @@
     "prioridade_ubuntu": "high",
     "rotulo": null,
     "epss": 0.02695,
-    "epss_percentil": 0.86645,
+    "epss_percentil": 0.86662,
     "epss_cve": "CVE-2026-90436"
    },
    "resumo": "Reflexão insegura no Apache Axis 1.x. Debian e Ubuntu ainda não têm pacote corrigido.",
@@ -1683,7 +1753,12 @@
     "missao": "media",
     "fontes": [
      "CISA (SSVC na NVD)"
-    ]
+    ],
+    "por_missao": {
+     "alta": "agir_agora",
+     "media": "agir_agora",
+     "baixa": "agir_agora"
+    }
    },
    "inventario": null,
    "alertas_nacionais": [
@@ -1814,7 +1889,7 @@
     "prioridade_ubuntu": null,
     "rotulo": null,
     "epss": 0.068,
-    "epss_percentil": 0.94767,
+    "epss_percentil": 0.94774,
     "epss_cve": "CVE-2026-125350"
    },
    "resumo": "Página web maliciosa executa código dentro do sandbox do navegador. Chrome e Edge também afetados.",
@@ -1833,7 +1908,12 @@
     "missao": "baixa",
     "fontes": [
      "CISA (SSVC na NVD)"
-    ]
+    ],
+    "por_missao": {
+     "alta": "agir_agora",
+     "media": "agir_em_breve",
+     "baixa": "agir_em_breve"
+    }
    },
    "inventario": null,
    "alertas_nacionais": [],
@@ -1974,7 +2054,12 @@
     "missao": "alta",
     "fontes": [
      "CISA (SSVC na NVD)"
-    ]
+    ],
+    "por_missao": {
+     "alta": "agir_agora",
+     "media": "agir_agora",
+     "baixa": "agir_agora"
+    }
    },
    "inventario": null,
    "alertas_nacionais": [],
@@ -2041,7 +2126,7 @@
     "prioridade_ubuntu": null,
     "rotulo": null,
     "epss": 0.18881,
-    "epss_percentil": 0.97863,
+    "epss_percentil": 0.97865,
     "epss_cve": "CVE-2026-90817"
    },
    "resumo": "Manipulação de rotas a partir de um questionário público e da importação de dados executa código no servidor REDCap.",
@@ -2060,7 +2145,12 @@
     "missao": "media",
     "fontes": [
      "CISA (SSVC na NVD)"
-    ]
+    ],
+    "por_missao": {
+     "alta": "agir_agora",
+     "media": "agir_agora",
+     "baixa": "agir_agora"
+    }
    },
    "inventario": null,
    "alertas_nacionais": [],
@@ -2118,7 +2208,7 @@
     "prioridade_ubuntu": null,
     "rotulo": null,
     "epss": 0.05009,
-    "epss_percentil": 0.93017,
+    "epss_percentil": 0.93025,
     "epss_cve": "CVE-2026-123890"
    },
    "resumo": "Bypass de autenticação no VMware Directory Service do vCenter, que controla toda a virtualização.",
@@ -2137,7 +2227,12 @@
     "missao": "alta",
     "fontes": [
      "CISA (SSVC na NVD)"
-    ]
+    ],
+    "por_missao": {
+     "alta": "agir_agora",
+     "media": "agir_agora",
+     "baixa": "agir_agora"
+    }
    },
    "inventario": null,
    "alertas_nacionais": [],
@@ -2193,7 +2288,7 @@
     "prioridade_ubuntu": null,
     "rotulo": null,
     "epss": 0.00467,
-    "epss_percentil": 0.32492,
+    "epss_percentil": 0.32505,
     "epss_cve": "CVE-2026-41709"
    },
    "resumo": "Registro insuficiente: um administrador malicioso realiza operações sem deixar log. Nota baixa, mas explorada em conjunto com outras falhas.",
@@ -2212,7 +2307,12 @@
     "missao": "alta",
     "fontes": [
      "CISA (SSVC na NVD)"
-    ]
+    ],
+    "por_missao": {
+     "alta": "agir_agora",
+     "media": "agir_em_breve",
+     "baixa": "agir_em_breve"
+    }
    },
    "inventario": null,
    "alertas_nacionais": [
@@ -2276,7 +2376,7 @@
     "prioridade_ubuntu": null,
     "rotulo": null,
     "epss": 0.31768,
-    "epss_percentil": 0.987,
+    "epss_percentil": 0.98701,
     "epss_cve": "CVE-2026-133469"
    },
    "resumo": "Cookie authenticationToken forjado faz a API REST autenticar como o dono do primeiro token válido.",
@@ -2295,7 +2395,12 @@
     "missao": "alta",
     "fontes": [
      "CISA (SSVC na NVD)"
-    ]
+    ],
+    "por_missao": {
+     "alta": "agir_agora",
+     "media": "agir_agora",
+     "baixa": "agir_agora"
+    }
    },
    "inventario": null,
    "alertas_nacionais": [],
@@ -2351,7 +2456,7 @@
     "prioridade_ubuntu": null,
     "rotulo": null,
     "epss": 0.0276,
-    "epss_percentil": 0.86996,
+    "epss_percentil": 0.87012,
     "epss_cve": "CVE-2024-10441"
    },
    "resumo": "Falha no daemon de plugins do sistema permite execução remota de código.",
@@ -2370,7 +2475,12 @@
     "missao": "media",
     "fontes": [
      "CISA (SSVC na NVD)"
-    ]
+    ],
+    "por_missao": {
+     "alta": "agir_agora",
+     "media": "agir_agora",
+     "baixa": "agir_agora"
+    }
    },
    "inventario": null,
    "alertas_nacionais": [],
@@ -2430,7 +2540,7 @@
     "prioridade_ubuntu": null,
     "rotulo": null,
     "epss": 0.00835,
-    "epss_percentil": 0.54966,
+    "epss_percentil": 0.55003,
     "epss_cve": "CVE-2026-118527"
    },
    "resumo": "Nomes de arquivo previsíveis permitem upload controlado pelo atacante; outra falha leva a root (explorada em outubro).",
@@ -2449,7 +2559,12 @@
     "missao": "alta",
     "fontes": [
      "CISA (SSVC na NVD)"
-    ]
+    ],
+    "por_missao": {
+     "alta": "agir_agora",
+     "media": "agir_em_breve",
+     "baixa": "agir_em_breve"
+    }
    },
    "inventario": null,
    "alertas_nacionais": [],
@@ -2506,7 +2621,7 @@
     "prioridade_ubuntu": null,
     "rotulo": null,
     "epss": 0.00992,
-    "epss_percentil": 0.61443,
+    "epss_percentil": 0.61476,
     "epss_cve": "CVE-2026-76418"
    },
    "resumo": "Requisição forjada na VPN SSL de acesso remoto reinicia o equipamento quando há autenticação secundária configurada.",
@@ -2525,7 +2640,12 @@
     "missao": "alta",
     "fontes": [
      "CISA (SSVC na NVD)"
-    ]
+    ],
+    "por_missao": {
+     "alta": "agir_agora",
+     "media": "agir_em_breve",
+     "baixa": "agir_em_breve"
+    }
    },
    "inventario": null,
    "alertas_nacionais": [
@@ -2590,7 +2710,7 @@
     "prioridade_ubuntu": null,
     "rotulo": null,
     "epss": 0.0054,
-    "epss_percentil": 0.38931,
+    "epss_percentil": 0.38965,
     "epss_cve": "CVE-2026-19868"
    },
    "resumo": "Usuário com credencial de outro método de autenticação contorna o SAML e o MFA imposto por ele.",
@@ -2609,7 +2729,12 @@
     "missao": "alta",
     "fontes": [
      "CISA (SSVC na NVD)"
-    ]
+    ],
+    "por_missao": {
+     "alta": "agir_agora",
+     "media": "agir_em_breve",
+     "baixa": "agir_em_breve"
+    }
    },
    "inventario": null,
    "alertas_nacionais": [],
@@ -2668,7 +2793,7 @@
     "prioridade_ubuntu": null,
     "rotulo": null,
     "epss": 0.13801,
-    "epss_percentil": 0.97181,
+    "epss_percentil": 0.97184,
     "epss_cve": "CVE-2026-116606"
    },
    "resumo": "Sem login, o atacante importa uma configuração forjada; outra falha injeta comandos pelo campo de fuso horário.",
@@ -2687,7 +2812,12 @@
     "missao": "alta",
     "fontes": [
      "CISA (SSVC na NVD)"
-    ]
+    ],
+    "por_missao": {
+     "alta": "agir_agora",
+     "media": "agir_agora",
+     "baixa": "agir_agora"
+    }
    },
    "inventario": null,
    "alertas_nacionais": [],
@@ -2744,7 +2874,7 @@
     "prioridade_ubuntu": null,
     "rotulo": null,
     "epss": 0.00232,
-    "epss_percentil": 0.0841,
+    "epss_percentil": 0.08425,
     "epss_cve": "CVE-2026-123039"
    },
    "resumo": "O daemon DynamicCLI roda como root e aceita conexões em socket gravável por todos.",
@@ -2763,7 +2893,12 @@
     "missao": "alta",
     "fontes": [
      "CISA (SSVC na NVD)"
-    ]
+    ],
+    "por_missao": {
+     "alta": "agir_agora",
+     "media": "agir_em_breve",
+     "baixa": "agir_em_breve"
+    }
    },
    "inventario": null,
    "alertas_nacionais": [],
@@ -2819,7 +2954,7 @@
     "prioridade_ubuntu": null,
     "rotulo": null,
     "epss": 0.01042,
-    "epss_percentil": 0.63348,
+    "epss_percentil": 0.6338,
     "epss_cve": "CVE-2026-124194"
    },
    "resumo": "A interface não avisa sobre ações inseguras, permitindo falsificação pela rede.",
@@ -2838,7 +2973,12 @@
     "missao": "baixa",
     "fontes": [
      "CISA (SSVC na NVD)"
-    ]
+    ],
+    "por_missao": {
+     "alta": "agir_agora",
+     "media": "agir_em_breve",
+     "baixa": "agir_em_breve"
+    }
    },
    "inventario": null,
    "alertas_nacionais": [],
@@ -2902,7 +3042,7 @@
     "prioridade_ubuntu": null,
     "rotulo": null,
     "epss": 0.05628,
-    "epss_percentil": 0.93713,
+    "epss_percentil": 0.9372,
     "epss_cve": "CVE-2026-133323"
    },
    "resumo": "Upload irrestrito, injeção de comando, injeção XML e autenticação fraca no MiCollab.",
@@ -2921,7 +3061,12 @@
     "missao": "alta",
     "fontes": [
      "CISA (SSVC na NVD)"
-    ]
+    ],
+    "por_missao": {
+     "alta": "agir_agora",
+     "media": "agir_agora",
+     "baixa": "agir_agora"
+    }
    },
    "inventario": null,
    "alertas_nacionais": [],
@@ -2979,7 +3124,7 @@
     "prioridade_ubuntu": null,
     "rotulo": null,
     "epss": 0.01116,
-    "epss_percentil": 0.6571,
+    "epss_percentil": 0.65743,
     "epss_cve": "CVE-2026-76466"
    },
    "resumo": "Cookies persistentes e validação insuficiente de certificados de cluster permitem executar comandos como root.",
@@ -2998,7 +3143,12 @@
     "missao": "alta",
     "fontes": [
      "CISA (SSVC na NVD)"
-    ]
+    ],
+    "por_missao": {
+     "alta": "agir_agora",
+     "media": "agir_agora",
+     "baixa": "agir_agora"
+    }
    },
    "inventario": null,
    "alertas_nacionais": [],
@@ -3055,7 +3205,7 @@
     "prioridade_ubuntu": null,
     "rotulo": null,
     "epss": 0.0078,
-    "epss_percentil": 0.52425,
+    "epss_percentil": 0.52461,
     "epss_cve": "CVE-2026-123218"
    },
    "resumo": "Usuário autenticado forja mensagem e obtém privilégio de administrador.",
@@ -3074,7 +3224,12 @@
     "missao": "media",
     "fontes": [
      "CISA (SSVC na NVD)"
-    ]
+    ],
+    "por_missao": {
+     "alta": "agir_agora",
+     "media": "agir_agora",
+     "baixa": "agir_agora"
+    }
    },
    "inventario": null,
    "alertas_nacionais": [],
@@ -3130,7 +3285,7 @@
     "prioridade_ubuntu": null,
     "rotulo": null,
     "epss": 0.08546,
-    "epss_percentil": 0.95811,
+    "epss_percentil": 0.95816,
     "epss_cve": "CVE-2026-102895"
    },
    "resumo": "Requisições que parecem vir de 127.0.0.1 são tratadas como administrador.",
@@ -3149,7 +3304,12 @@
     "missao": "media",
     "fontes": [
      "CISA (SSVC na NVD)"
-    ]
+    ],
+    "por_missao": {
+     "alta": "agir_agora",
+     "media": "agir_agora",
+     "baixa": "agir_agora"
+    }
    },
    "inventario": null,
    "alertas_nacionais": [],
@@ -3206,7 +3366,7 @@
     "prioridade_ubuntu": null,
     "rotulo": null,
     "epss": 0.27157,
-    "epss_percentil": 0.98498,
+    "epss_percentil": 0.98499,
     "epss_cve": "CVE-2026-133968"
    },
    "resumo": "Parâmetro image do endpoint PUT /datastore/image permite gravar fora do diretório e executar código.",
@@ -3225,7 +3385,12 @@
     "missao": "media",
     "fontes": [
      "CISA (SSVC na NVD)"
-    ]
+    ],
+    "por_missao": {
+     "alta": "agir_agora",
+     "media": "agir_agora",
+     "baixa": "agir_agora"
+    }
    },
    "inventario": null,
    "alertas_nacionais": [],
@@ -3282,8 +3447,8 @@
     "total_cves": 1,
     "prioridade_ubuntu": null,
     "rotulo": null,
-    "epss": 0.20215,
-    "epss_percentil": 0.98012,
+    "epss": 0.2063,
+    "epss_percentil": 0.9806,
     "epss_cve": "CVE-2026-40217"
    },
    "resumo": "O endpoint /guardrails/test_custom_code permite executar código arbitrário.",
@@ -3302,7 +3467,12 @@
     "missao": "media",
     "fontes": [
      "CISA (SSVC na NVD)"
-    ]
+    ],
+    "por_missao": {
+     "alta": "agir_agora",
+     "media": "agir_em_breve",
+     "baixa": "agir_em_breve"
+    }
    },
    "inventario": null,
    "alertas_nacionais": [],
@@ -3359,7 +3529,7 @@
     "prioridade_ubuntu": null,
     "rotulo": null,
     "epss": 0.24159,
-    "epss_percentil": 0.98332,
+    "epss_percentil": 0.98333,
     "epss_cve": "CVE-2026-129448"
    },
    "resumo": "O endpoint XML-RPC desserializa dados antes de autenticar.",
@@ -3378,7 +3548,12 @@
     "missao": "baixa",
     "fontes": [
      "CISA (SSVC na NVD)"
-    ]
+    ],
+    "por_missao": {
+     "alta": "agir_agora",
+     "media": "agir_agora",
+     "baixa": "agir_agora"
+    }
    },
    "inventario": null,
    "alertas_nacionais": [],
@@ -3435,7 +3610,7 @@
     "prioridade_ubuntu": null,
     "rotulo": null,
     "epss": 0.01102,
-    "epss_percentil": 0.65308,
+    "epss_percentil": 0.6534,
     "epss_cve": "CVE-2025-42884"
    },
    "resumo": "Atacante sem login injeta propriedades JNDI ou URL de lookup.",
@@ -3454,7 +3629,12 @@
     "missao": "baixa",
     "fontes": [
      "CISA (SSVC na NVD)"
-    ]
+    ],
+    "por_missao": {
+     "alta": "agir_agora",
+     "media": "agir_em_breve",
+     "baixa": "agir_em_breve"
+    }
    },
    "inventario": null,
    "alertas_nacionais": [],
@@ -3509,8 +3689,8 @@
     "total_cves": 1,
     "prioridade_ubuntu": "high",
     "rotulo": null,
-    "epss": 0.14205,
-    "epss_percentil": 0.97242,
+    "epss": 0.89631,
+    "epss_percentil": 0.99861,
     "epss_cve": "CVE-2026-123158"
    },
    "resumo": "sshd compilado com musl e sem PAM aceita qualquer senha de 256 a 1024 caracteres em certas contas.",
@@ -3529,7 +3709,12 @@
     "missao": "alta",
     "fontes": [
      "CISA (SSVC na NVD)"
-    ]
+    ],
+    "por_missao": {
+     "alta": "nao_se_aplica",
+     "media": "nao_se_aplica",
+     "baixa": "nao_se_aplica"
+    }
    },
    "inventario": null,
    "alertas_nacionais": [],
@@ -3660,7 +3845,7 @@
     "prioridade_ubuntu": "medium",
     "rotulo": null,
     "epss": 0.86584,
-    "epss_percentil": 0.99826,
+    "epss_percentil": 0.99825,
     "epss_cve": "CVE-2026-115560"
    },
    "resumo": "17 correções, várias com RCE: sessão (CVE-2026-115560 e CVE-2026-126714), request smuggling no FPM (CVE-2026-129289), escalada local no FPM (CVE-2026-129291), CGI (CVE-2026-129538).",
@@ -3679,7 +3864,12 @@
     "missao": "alta",
     "fontes": [
      "CISA (SSVC na NVD)"
-    ]
+    ],
+    "por_missao": {
+     "alta": "acompanhar_de_perto",
+     "media": "acompanhar",
+     "baixa": "acompanhar"
+    }
    },
    "inventario": null,
    "alertas_nacionais": [],
@@ -3840,7 +4030,12 @@
     "missao": "alta",
     "fontes": [
      "derivado do CVSS, KEV e EPSS"
-    ]
+    ],
+    "por_missao": {
+     "alta": "agir_agora",
+     "media": "agir_em_breve",
+     "baixa": "acompanhar_de_perto"
+    }
    },
    "inventario": null,
    "alertas_nacionais": [
@@ -3972,7 +4167,7 @@
     "prioridade_ubuntu": "critical",
     "rotulo": null,
     "epss": 0.00755,
-    "epss_percentil": 0.51366,
+    "epss_percentil": 0.51398,
     "epss_cve": "CVE-2026-99362"
    },
    "resumo": "No servidor NFS do kernel (nfsd), um cliente NFSv4.1 que negocia um limite mínimo de resposta em cache faz a resposta de SEQUENCE ser copiada para além do slot da sessão: escrita fora dos limites no heap do kernel com bytes em boa parte escolhidos pelo cliente (Ubuntu: Critical, CVSS 9.3). Só afeta máquinas que exportam NFS; clientes NFS e servidores sem nfsd não são atingidos.",
@@ -3991,7 +4186,12 @@
     "missao": "alta",
     "fontes": [
      "derivado do CVSS, KEV e EPSS"
-    ]
+    ],
+    "por_missao": {
+     "alta": "acompanhar_de_perto",
+     "media": "acompanhar",
+     "baixa": "acompanhar"
+    }
    },
    "inventario": null,
    "alertas_nacionais": [],
@@ -4120,7 +4320,7 @@
     "prioridade_ubuntu": "high",
     "rotulo": null,
     "epss": 0.00697,
-    "epss_percentil": 0.48515,
+    "epss_percentil": 0.48556,
     "epss_cve": "CVE-2026-109518"
    },
    "resumo": "Atacante no caminho de rede (espelho ou proxy malicioso) explora o mecanismo de novas tentativas do APT.",
@@ -4139,7 +4339,12 @@
     "missao": "media",
     "fontes": [
      "CISA (SSVC na NVD)"
-    ]
+    ],
+    "por_missao": {
+     "alta": "acompanhar",
+     "media": "acompanhar",
+     "baixa": "acompanhar"
+    }
    },
    "inventario": null,
    "alertas_nacionais": [],
@@ -4276,7 +4481,7 @@
     "prioridade_ubuntu": "high",
     "rotulo": null,
     "epss": 0.93995,
-    "epss_percentil": 0.99902,
+    "epss_percentil": 0.99901,
     "epss_cve": "CVE-2023-44487"
    },
    "resumo": "Várias falhas de prioridade alta no nginx (CVSS até 8.1).",
@@ -4295,7 +4500,12 @@
     "missao": "alta",
     "fontes": [
      "CISA (SSVC na NVD)"
-    ]
+    ],
+    "por_missao": {
+     "alta": "agir_agora",
+     "media": "agir_agora",
+     "baixa": "agir_agora"
+    }
    },
    "inventario": null,
    "alertas_nacionais": [
@@ -4446,7 +4656,7 @@
     "prioridade_ubuntu": "high",
     "rotulo": null,
     "epss": 0.24851,
-    "epss_percentil": 0.98378,
+    "epss_percentil": 0.98379,
     "epss_cve": "CVE-2026-119618"
    },
    "resumo": "Falhas no Apache httpd, uma de prioridade alta (CVSS 8.1).",
@@ -4465,7 +4675,12 @@
     "missao": "alta",
     "fontes": [
      "CISA (SSVC na NVD)"
-    ]
+    ],
+    "por_missao": {
+     "alta": "acompanhar_de_perto",
+     "media": "acompanhar",
+     "baixa": "acompanhar"
+    }
    },
    "inventario": null,
    "alertas_nacionais": [
@@ -4609,9 +4824,9 @@
     "total_cves": 5,
     "prioridade_ubuntu": "medium",
     "rotulo": null,
-    "epss": 0.01093,
-    "epss_percentil": 0.65039,
-    "epss_cve": "CVE-2026-110354"
+    "epss": 0.00763,
+    "epss_percentil": 0.51734,
+    "epss_cve": "CVE-2026-55204"
    },
    "resumo": "Três falhas no HAProxy (CVSS até 7.5).",
    "afetadas": "Pacotes sem as correções listadas. Debian 12 ainda sem correção.",
@@ -4629,7 +4844,12 @@
     "missao": "alta",
     "fontes": [
      "CISA (SSVC na NVD)"
-    ]
+    ],
+    "por_missao": {
+     "alta": "agir_em_breve",
+     "media": "agir_em_breve",
+     "baixa": "acompanhar_de_perto"
+    }
    },
    "inventario": null,
    "alertas_nacionais": [],
@@ -4752,9 +4972,9 @@
     "total_cves": 1,
     "prioridade_ubuntu": null,
     "rotulo": null,
-    "epss": null,
-    "epss_percentil": null,
-    "epss_cve": null
+    "epss": 0.00481,
+    "epss_percentil": 0.33946,
+    "epss_cve": "CVE-2026-137702"
    },
    "resumo": "Tráfego SMTP malicioso dispara escrita fora dos limites no heap em código de expansão que roda como root (CVE-2026-137702, CVSS 8.1; ataque de alta complexidade); o Debian indica possível execução de código. É a falha do aviso upstream EXIM-Security-2026-11-19.1, corrigida no Exim 4.100.2.",
    "afetadas": "Exim upstream < 4.100.2. Debian 13 corrigido no DSA-6659-1 (4.98.2-1+deb13u6); Debian 12 no DLA-4940-1 (4.96-15+deb12u11). Ubuntu: ver estado por versão na tabela.",
@@ -4772,7 +4992,12 @@
     "missao": "alta",
     "fontes": [
      "derivado do CVSS, KEV e EPSS"
-    ]
+    ],
+    "por_missao": {
+     "alta": "acompanhar",
+     "media": "acompanhar",
+     "baixa": "acompanhar"
+    }
    },
    "inventario": null,
    "alertas_nacionais": [],
@@ -4894,7 +5119,7 @@
     "prioridade_ubuntu": "medium",
     "rotulo": null,
     "epss": 0.00543,
-    "epss_percentil": 0.39172,
+    "epss_percentil": 0.3921,
     "epss_cve": "CVE-2026-94056"
    },
    "resumo": "Travessia de diretório pelo nome de fila (CVE-2026-66140, CVSS 8.4) e .forward com pipe (CVE-2026-66141) permitem escalada local de privilégio; com Proxy-Protocol e proxy controlado pelo atacante há escrita fora dos limites (CVE-2026-94054) e leitura de memória não inicializada (CVE-2026-94056); SMTP smuggling após rejeição no DATA (CVE-2026-94057).",
@@ -4913,7 +5138,12 @@
     "missao": "alta",
     "fontes": [
      "CISA (SSVC na NVD)"
-    ]
+    ],
+    "por_missao": {
+     "alta": "acompanhar",
+     "media": "acompanhar",
+     "baixa": "acompanhar"
+    }
    },
    "inventario": null,
    "alertas_nacionais": [],
@@ -5063,7 +5293,12 @@
     "missao": "alta",
     "fontes": [
      "sem CVE associado"
-    ]
+    ],
+    "por_missao": {
+     "alta": "acompanhar",
+     "media": "acompanhar",
+     "baixa": "acompanhar"
+    }
    },
    "inventario": null,
    "alertas_nacionais": [],
@@ -5184,7 +5419,7 @@
     "prioridade_ubuntu": "high",
     "rotulo": null,
     "epss": 0.01274,
-    "epss_percentil": 0.69941,
+    "epss_percentil": 0.69976,
     "epss_cve": "CVE-2025-31133"
    },
    "resumo": "Falhas no runc permitem que um contêiner malicioso escape para o host.",
@@ -5203,7 +5438,12 @@
     "missao": "media",
     "fontes": [
      "CISA (SSVC na NVD)"
-    ]
+    ],
+    "por_missao": {
+     "alta": "acompanhar",
+     "media": "acompanhar",
+     "baixa": "acompanhar"
+    }
    },
    "inventario": null,
    "alertas_nacionais": [],
@@ -5376,7 +5616,7 @@
     "prioridade_ubuntu": "medium",
     "rotulo": null,
     "epss": 0.00342,
-    "epss_percentil": 0.2022,
+    "epss_percentil": 0.20237,
     "epss_cve": "CVE-2026-124851"
    },
    "resumo": "Falha na biblioteca zstd (Ubuntu: prioridade média).",
@@ -5395,7 +5635,12 @@
     "missao": "media",
     "fontes": [
      "derivado do KEV e EPSS (sem vetor CVSS)"
-    ]
+    ],
+    "por_missao": {
+     "alta": "acompanhar",
+     "media": "acompanhar",
+     "baixa": "acompanhar"
+    }
    },
    "inventario": null,
    "alertas_nacionais": [],
@@ -5533,7 +5778,7 @@
     "prioridade_ubuntu": "medium",
     "rotulo": null,
     "epss": 0.01219,
-    "epss_percentil": 0.68576,
+    "epss_percentil": 0.68607,
     "epss_cve": "CVE-2025-59375"
    },
    "resumo": "Falhas no Expat (CVSS até 8.2) afetam todo programa que lê XML com a biblioteca do sistema.",
@@ -5552,7 +5797,12 @@
     "missao": "media",
     "fontes": [
      "CISA (SSVC na NVD)"
-    ]
+    ],
+    "por_missao": {
+     "alta": "agir_agora",
+     "media": "agir_em_breve",
+     "baixa": "acompanhar_de_perto"
+    }
    },
    "inventario": null,
    "alertas_nacionais": [],
@@ -5704,7 +5954,7 @@
     "prioridade_ubuntu": "medium",
     "rotulo": null,
     "epss": 0.0052,
-    "epss_percentil": 0.37508,
+    "epss_percentil": 0.3754,
     "epss_cve": "CVE-2026-86145"
    },
    "resumo": "Falhas no PCRE2 (CVSS até 8.2).",
@@ -5723,7 +5973,12 @@
     "missao": "media",
     "fontes": [
      "CISA (SSVC na NVD)"
-    ]
+    ],
+    "por_missao": {
+     "alta": "agir_agora",
+     "media": "agir_em_breve",
+     "baixa": "acompanhar_de_perto"
+    }
    },
    "inventario": null,
    "alertas_nacionais": [],
@@ -5863,7 +6118,7 @@
     "prioridade_ubuntu": "medium",
     "rotulo": null,
     "epss": 0.01353,
-    "epss_percentil": 0.71715,
+    "epss_percentil": 0.71746,
     "epss_cve": "CVE-2026-3731"
    },
    "resumo": "Falhas na libssh (CVSS até 6.5). Não afeta o OpenSSH.",
@@ -5882,7 +6137,12 @@
     "missao": "media",
     "fontes": [
      "CISA (SSVC na NVD)"
-    ]
+    ],
+    "por_missao": {
+     "alta": "acompanhar",
+     "media": "acompanhar",
+     "baixa": "acompanhar"
+    }
    },
    "inventario": null,
    "alertas_nacionais": [],
@@ -6012,7 +6272,7 @@
     "prioridade_ubuntu": "medium",
     "rotulo": null,
     "epss": 0.00429,
-    "epss_percentil": 0.28843,
+    "epss_percentil": 0.28864,
     "epss_cve": "CVE-2026-97399"
    },
    "resumo": "Falhas na biblioteca C do sistema (CVSS até 7.0).",
@@ -6031,7 +6291,12 @@
     "missao": "alta",
     "fontes": [
      "CISA (SSVC na NVD)"
-    ]
+    ],
+    "por_missao": {
+     "alta": "acompanhar",
+     "media": "acompanhar",
+     "baixa": "acompanhar"
+    }
    },
    "inventario": null,
    "alertas_nacionais": [],
@@ -6165,7 +6430,7 @@
     "prioridade_ubuntu": "high",
     "rotulo": null,
     "epss": 0.01198,
-    "epss_percentil": 0.68044,
+    "epss_percentil": 0.68077,
     "epss_cve": "CVE-2026-75806"
    },
    "resumo": "Falhas no OpenSSL (CVSS até 8.2, uma de prioridade alta no Ubuntu).",
@@ -6184,7 +6449,12 @@
     "missao": "alta",
     "fontes": [
      "CISA (SSVC na NVD)"
-    ]
+    ],
+    "por_missao": {
+     "alta": "acompanhar",
+     "media": "acompanhar",
+     "baixa": "acompanhar"
+    }
    },
    "inventario": null,
    "alertas_nacionais": [],
@@ -6310,7 +6580,7 @@
     "prioridade_ubuntu": "high",
     "rotulo": null,
     "epss": 0.00784,
-    "epss_percentil": 0.52579,
+    "epss_percentil": 0.52617,
     "epss_cve": "CVE-2026-92392"
    },
    "resumo": "Falhas no curl/libcurl (CVSS até 9.1, prioridade baixa no Ubuntu).",
@@ -6329,7 +6599,12 @@
     "missao": "media",
     "fontes": [
      "CISA (SSVC na NVD)"
-    ]
+    ],
+    "por_missao": {
+     "alta": "agir_agora",
+     "media": "agir_em_breve",
+     "baixa": "acompanhar_de_perto"
+    }
    },
    "inventario": null,
    "alertas_nacionais": [],
@@ -6473,7 +6748,12 @@
     "missao": "media",
     "fontes": [
      "sem CVE associado"
-    ]
+    ],
+    "por_missao": {
+     "alta": "acompanhar",
+     "media": "acompanhar",
+     "baixa": "acompanhar"
+    }
    },
    "inventario": null,
    "alertas_nacionais": [],
@@ -6609,7 +6889,7 @@
     "prioridade_ubuntu": "medium",
     "rotulo": null,
     "epss": 0.01236,
-    "epss_percentil": 0.69011,
+    "epss_percentil": 0.69042,
     "epss_cve": "CVE-2026-112314"
    },
    "resumo": "Várias falhas no MIT Kerberos (CVSS até 7.5).",
@@ -6629,7 +6909,12 @@
     "fontes": [
      "CISA (SSVC na NVD)",
      "derivado do KEV e EPSS (sem vetor CVSS)"
-    ]
+    ],
+    "por_missao": {
+     "alta": "agir_em_breve",
+     "media": "agir_em_breve",
+     "baixa": "acompanhar_de_perto"
+    }
    },
    "inventario": null,
    "alertas_nacionais": [],
@@ -6876,7 +7161,12 @@
     "missao": "alta",
     "fontes": [
      "CISA (SSVC na NVD)"
-    ]
+    ],
+    "por_missao": {
+     "alta": "agir_agora",
+     "media": "agir_agora",
+     "baixa": "agir_agora"
+    }
    },
    "inventario": null,
    "alertas_nacionais": [
@@ -7130,7 +7420,7 @@
     "prioridade_ubuntu": "medium",
     "rotulo": null,
     "epss": 0.00937,
-    "epss_percentil": 0.59204,
+    "epss_percentil": 0.59238,
     "epss_cve": "CVE-2026-33033"
    },
    "resumo": "Falhas no Django empacotado pela distro. Aplicações em virtualenv precisam de pip install -U django.",
@@ -7149,7 +7439,12 @@
     "missao": "alta",
     "fontes": [
      "CISA (SSVC na NVD)"
-    ]
+    ],
+    "por_missao": {
+     "alta": "acompanhar_de_perto",
+     "media": "acompanhar",
+     "baixa": "acompanhar"
+    }
    },
    "inventario": null,
    "alertas_nacionais": [],
@@ -7352,7 +7647,7 @@
     "prioridade_ubuntu": "medium",
     "rotulo": null,
     "epss": 0.00736,
-    "epss_percentil": 0.50504,
+    "epss_percentil": 0.50542,
     "epss_cve": "CVE-2026-116331"
    },
    "resumo": "Falhas no PostgreSQL (CVSS até 8.8).",
@@ -7371,7 +7666,12 @@
     "missao": "alta",
     "fontes": [
      "CISA (SSVC na NVD)"
-    ]
+    ],
+    "por_missao": {
+     "alta": "acompanhar",
+     "media": "acompanhar",
+     "baixa": "acompanhar"
+    }
    },
    "inventario": null,
    "alertas_nacionais": [],
@@ -7638,7 +7938,7 @@
     "prioridade_ubuntu": "medium",
     "rotulo": null,
     "epss": 0.18609,
-    "epss_percentil": 0.97837,
+    "epss_percentil": 0.9784,
     "epss_cve": "CVE-2026-33526"
    },
    "resumo": "Falhas no Squid (CVSS até 7.7).",
@@ -7658,7 +7958,12 @@
     "fontes": [
      "CISA (SSVC na NVD)",
      "derivado do KEV e EPSS (sem vetor CVSS)"
-    ]
+    ],
+    "por_missao": {
+     "alta": "acompanhar",
+     "media": "acompanhar",
+     "baixa": "acompanhar"
+    }
    },
    "inventario": null,
    "alertas_nacionais": [],
@@ -7825,7 +8130,7 @@
     "prioridade_ubuntu": "medium",
     "rotulo": null,
     "epss": 0.00703,
-    "epss_percentil": 0.48873,
+    "epss_percentil": 0.48915,
     "epss_cve": "CVE-2026-132713"
    },
    "resumo": "Várias falhas no MediaWiki (CVSS até 6.5).",
@@ -7846,7 +8151,12 @@
      "CISA (SSVC na NVD)",
      "derivado do CVSS, KEV e EPSS",
      "derivado do KEV e EPSS (sem vetor CVSS)"
-    ]
+    ],
+    "por_missao": {
+     "alta": "acompanhar",
+     "media": "acompanhar",
+     "baixa": "acompanhar"
+    }
    },
    "inventario": null,
    "alertas_nacionais": [],
@@ -8094,8 +8404,8 @@
     "total_cves": 12,
     "prioridade_ubuntu": "high",
     "rotulo": null,
-    "epss": 0.59265,
-    "epss_percentil": 0.99341,
+    "epss": 0.72539,
+    "epss_percentil": 0.99603,
     "epss_cve": "CVE-2026-114938"
    },
    "resumo": "Atualizações trimestrais e extras do OpenJDK com dezenas de CVEs (componentes de rede, TLS, XML e bibliotecas).",
@@ -8114,7 +8424,12 @@
     "missao": "alta",
     "fontes": [
      "CISA (SSVC na NVD)"
-    ]
+    ],
+    "por_missao": {
+     "alta": "acompanhar_de_perto",
+     "media": "acompanhar",
+     "baixa": "acompanhar"
+    }
    },
    "inventario": null,
    "alertas_nacionais": [],
@@ -8468,7 +8783,7 @@
     "prioridade_ubuntu": "medium",
     "rotulo": null,
     "epss": 0.01552,
-    "epss_percentil": 0.75427,
+    "epss_percentil": 0.75453,
     "epss_cve": "CVE-2026-107815"
    },
    "resumo": "Atualização de MySQL (73 CVEs no Ubuntu) e MariaDB.",
@@ -8487,7 +8802,12 @@
     "missao": "alta",
     "fontes": [
      "CISA (SSVC na NVD)"
-    ]
+    ],
+    "por_missao": {
+     "alta": "acompanhar_de_perto",
+     "media": "acompanhar",
+     "baixa": "acompanhar"
+    }
    },
    "inventario": null,
    "alertas_nacionais": [],
@@ -9100,7 +9420,7 @@
     "prioridade_ubuntu": "medium",
     "rotulo": null,
     "epss": 0.00733,
-    "epss_percentil": 0.50346,
+    "epss_percentil": 0.50385,
     "epss_cve": "CVE-2026-135520"
    },
    "resumo": "Atualizações frequentes do Firefox ESR e do Thunderbird (10 avisos de cada no Debian desde outubro).",
@@ -9120,7 +9440,12 @@
     "fontes": [
      "CISA (SSVC na NVD)",
      "derivado do KEV e EPSS (sem vetor CVSS)"
-    ]
+    ],
+    "por_missao": {
+     "alta": "acompanhar",
+     "media": "acompanhar",
+     "baixa": "acompanhar"
+    }
    },
    "inventario": null,
    "alertas_nacionais": [],
@@ -9464,7 +9789,7 @@
     "prioridade_ubuntu": "medium",
     "rotulo": null,
     "epss": 0.00342,
-    "epss_percentil": 0.20237,
+    "epss_percentil": 0.20254,
     "epss_cve": "CVE-2026-104920"
    },
    "resumo": "Documentos maliciosos podem explorar falhas do LibreOffice.",
@@ -9483,7 +9808,12 @@
     "missao": "baixa",
     "fontes": [
      "CISA (SSVC na NVD)"
-    ]
+    ],
+    "por_missao": {
+     "alta": "acompanhar",
+     "media": "acompanhar",
+     "baixa": "acompanhar"
+    }
    },
    "inventario": null,
    "alertas_nacionais": [],
@@ -9747,7 +10077,7 @@
     "prioridade_ubuntu": "medium",
     "rotulo": null,
     "epss": 0.00849,
-    "epss_percentil": 0.55604,
+    "epss_percentil": 0.55642,
     "epss_cve": "CVE-2026-39919"
    },
    "resumo": "Imagens e PDFs enviados por usuários podem explorar o ImageMagick e o Ghostscript nos servidores que geram miniaturas e convertem arquivos.",
@@ -9766,7 +10096,12 @@
     "missao": "media",
     "fontes": [
      "CISA (SSVC na NVD)"
-    ]
+    ],
+    "por_missao": {
+     "alta": "acompanhar_de_perto",
+     "media": "acompanhar",
+     "baixa": "acompanhar"
+    }
    },
    "inventario": null,
    "alertas_nacionais": [],
@@ -10156,7 +10491,12 @@
     "fontes": [
      "CISA (SSVC na NVD)",
      "derivado do KEV e EPSS (sem vetor CVSS)"
-    ]
+    ],
+    "por_missao": {
+     "alta": "acompanhar_de_perto",
+     "media": "acompanhar",
+     "baixa": "acompanhar"
+    }
    },
    "inventario": null,
    "alertas_nacionais": [],
@@ -10546,7 +10886,7 @@
     "prioridade_ubuntu": "medium",
     "rotulo": null,
     "epss": 0.00594,
-    "epss_percentil": 0.42452,
+    "epss_percentil": 0.42492,
     "epss_cve": "CVE-2026-20031"
    },
    "resumo": "Correções em componentes de e-mail e listas de discussão.",
@@ -10566,7 +10906,12 @@
     "fontes": [
      "CISA (SSVC na NVD)",
      "derivado do KEV e EPSS (sem vetor CVSS)"
-    ]
+    ],
+    "por_missao": {
+     "alta": "acompanhar_de_perto",
+     "media": "acompanhar",
+     "baixa": "acompanhar"
+    }
    },
    "inventario": null,
    "alertas_nacionais": [],
@@ -10989,8 +11334,8 @@
     "prioridade_ubuntu": "medium",
     "rotulo": null,
     "epss": 0.00412,
-    "epss_percentil": 0.2707,
-    "epss_cve": "CVE-2026-78129"
+    "epss_percentil": 0.27097,
+    "epss_cve": "CVE-2026-78126"
    },
    "resumo": "Falhas no radsecproxy (usado na federação eduroam) e nas VPNs strongSwan e OpenVPN.",
    "afetadas": "Pacotes sem as correções listadas.",
@@ -11009,7 +11354,12 @@
     "fontes": [
      "CISA (SSVC na NVD)",
      "derivado do KEV e EPSS (sem vetor CVSS)"
-    ]
+    ],
+    "por_missao": {
+     "alta": "acompanhar_de_perto",
+     "media": "acompanhar",
+     "baixa": "acompanhar"
+    }
    },
    "inventario": null,
    "alertas_nacionais": [],
@@ -11251,7 +11601,7 @@
     "prioridade_ubuntu": "medium",
     "rotulo": null,
     "epss": 0.0046,
-    "epss_percentil": 0.31867,
+    "epss_percentil": 0.31902,
     "epss_cve": "CVE-2026-102702"
    },
    "resumo": "Falhas no hipervisor Xen podem permitir que uma VM afete o host ou outras VMs.",
@@ -11271,7 +11621,12 @@
     "fontes": [
      "CISA (SSVC na NVD)",
      "derivado do KEV e EPSS (sem vetor CVSS)"
-    ]
+    ],
+    "por_missao": {
+     "alta": "acompanhar_de_perto",
+     "media": "acompanhar",
+     "baixa": "acompanhar"
+    }
    },
    "inventario": null,
    "alertas_nacionais": [],
@@ -11447,7 +11802,7 @@
     "prioridade_ubuntu": "medium",
     "rotulo": null,
     "epss": 0.02873,
-    "epss_percentil": 0.8754,
+    "epss_percentil": 0.87555,
     "epss_cve": "CVE-2026-66066"
    },
    "resumo": "Falhas no interpretador Ruby e no Rails empacotados pela distro.",
@@ -11466,7 +11821,12 @@
     "missao": "media",
     "fontes": [
      "CISA (SSVC na NVD)"
-    ]
+    ],
+    "por_missao": {
+     "alta": "agir_agora",
+     "media": "agir_em_breve",
+     "baixa": "acompanhar_de_perto"
+    }
    },
    "inventario": null,
    "alertas_nacionais": [],
@@ -11748,7 +12108,7 @@
     "prioridade_ubuntu": "medium",
     "rotulo": null,
     "epss": 0.0085,
-    "epss_percentil": 0.55613,
+    "epss_percentil": 0.55651,
     "epss_cve": "CVE-2026-121373"
    },
    "resumo": "Falhas no framework PHP Symfony empacotado pela distro.",
@@ -11767,7 +12127,12 @@
     "missao": "alta",
     "fontes": [
      "CISA (SSVC na NVD)"
-    ]
+    ],
+    "por_missao": {
+     "alta": "agir_agora",
+     "media": "agir_em_breve",
+     "baixa": "acompanhar_de_perto"
+    }
    },
    "inventario": null,
    "alertas_nacionais": [],
@@ -11969,7 +12334,7 @@
     "prioridade_ubuntu": "medium",
     "rotulo": null,
     "epss": 0.01862,
-    "epss_percentil": 0.79785,
+    "epss_percentil": 0.79808,
     "epss_cve": "CVE-2026-25243"
    },
    "resumo": "Falhas no Redis e no Valkey.",
@@ -11988,7 +12353,12 @@
     "missao": "media",
     "fontes": [
      "CISA (SSVC na NVD)"
-    ]
+    ],
+    "por_missao": {
+     "alta": "agir_em_breve",
+     "media": "agir_em_breve",
+     "baixa": "acompanhar_de_perto"
+    }
    },
    "inventario": null,
    "alertas_nacionais": [],
@@ -12177,7 +12547,7 @@
     "prioridade_ubuntu": "medium",
     "rotulo": null,
     "epss": 0.01554,
-    "epss_percentil": 0.75474,
+    "epss_percentil": 0.75499,
     "epss_cve": "CVE-2026-48933"
    },
    "resumo": "Falhas no Node.js empacotado pela distro.",
@@ -12196,7 +12566,12 @@
     "missao": "media",
     "fontes": [
      "CISA (SSVC na NVD)"
-    ]
+    ],
+    "por_missao": {
+     "alta": "acompanhar",
+     "media": "acompanhar",
+     "baixa": "acompanhar"
+    }
    },
    "inventario": null,
    "alertas_nacionais": [],
@@ -12410,7 +12785,7 @@
     "prioridade_ubuntu": "medium",
     "rotulo": null,
     "epss": 0.01306,
-    "epss_percentil": 0.70609,
+    "epss_percentil": 0.70642,
     "epss_cve": "CVE-2026-15308"
    },
    "resumo": "Falhas no Tornado (servidor web), no Pillow (imagens) e no Python 3.11.",
@@ -12429,7 +12804,12 @@
     "missao": "media",
     "fontes": [
      "CISA (SSVC na NVD)"
-    ]
+    ],
+    "por_missao": {
+     "alta": "agir_agora",
+     "media": "agir_em_breve",
+     "baixa": "acompanhar_de_perto"
+    }
    },
    "inventario": null,
    "alertas_nacionais": [],
@@ -12764,7 +13144,7 @@
     "prioridade_ubuntu": "high",
     "rotulo": null,
     "epss": 0.00885,
-    "epss_percentil": 0.57035,
+    "epss_percentil": 0.57068,
     "epss_cve": "CVE-2026-119741"
    },
    "resumo": "Falhas em ferramentas presentes em praticamente todo servidor; algumas permitem escalada local de privilégio (inclui pam_namespace, CVE-2025-6020, CVSS 7.8, corrigido no Debian 12 pelo DLA-4941-1).",
@@ -12784,7 +13164,12 @@
     "fontes": [
      "CISA (SSVC na NVD)",
      "derivado do KEV e EPSS (sem vetor CVSS)"
-    ]
+    ],
+    "por_missao": {
+     "alta": "acompanhar_de_perto",
+     "media": "acompanhar",
+     "baixa": "acompanhar"
+    }
    },
    "inventario": null,
    "alertas_nacionais": [],
@@ -13226,7 +13611,7 @@
     "prioridade_ubuntu": "medium",
     "rotulo": null,
     "epss": 0.00966,
-    "epss_percentil": 0.60393,
+    "epss_percentil": 0.60427,
     "epss_cve": "CVE-2026-48554"
    },
    "resumo": "Falhas no Nagios Core empacotado pela distro.",
@@ -13245,7 +13630,12 @@
     "missao": "media",
     "fontes": [
      "CISA (SSVC na NVD)"
-    ]
+    ],
+    "por_missao": {
+     "alta": "acompanhar_de_perto",
+     "media": "acompanhar",
+     "baixa": "acompanhar"
+    }
    },
    "inventario": null,
    "alertas_nacionais": [],
@@ -13414,7 +13804,7 @@
     "prioridade_ubuntu": "medium",
     "rotulo": null,
     "epss": 0.01982,
-    "epss_percentil": 0.81206,
+    "epss_percentil": 0.8123,
     "epss_cve": "CVE-2026-123655"
    },
    "resumo": "38 CVE(s) publicados na NVD nos últimos 90 dias; 5 com nota 7,0 ou mais. Maior nota: 9.8 (CVE-2025-63564).",
@@ -13548,7 +13938,7 @@
      "kev": null,
      "corrigido_em": [],
      "resumo": "A flaw was found in Moodle. Due to missing ownership checks in badge alignments, an authenticated user with badge management privileges can view and modify alignments associated with badges they do not own. This vulnerability can lead to unauthorized data disc",
-     "epss": 0.00294
+     "epss": 0.00264
     },
     {
      "cve": "CVE-2026-133069",
@@ -13785,7 +14175,7 @@
      "kev": null,
      "corrigido_em": [],
      "resumo": "A flaw was found in Moodle. Insufficient authorization checks in the quiz overrides web service allow an authenticated user with teacher privileges to modify user and group overrides for quizzes they do not have permission to manage. An attacker could exploit ",
-     "epss": 0.00354
+     "epss": 0.00317
     },
     {
      "cve": "CVE-2026-133075",
@@ -13871,7 +14261,12 @@
     "missao": "alta",
     "fontes": [
      "CISA (SSVC na NVD)"
-    ]
+    ],
+    "por_missao": {
+     "alta": "acompanhar_de_perto",
+     "media": "acompanhar",
+     "baixa": "acompanhar"
+    }
    },
    "inventario": null,
    "alertas_nacionais": [],
@@ -13967,7 +14362,7 @@
     "prioridade_ubuntu": "medium",
     "rotulo": null,
     "epss": 0.00971,
-    "epss_percentil": 0.60619,
+    "epss_percentil": 0.60653,
     "epss_cve": "CVE-2026-53629"
    },
    "resumo": "23 CVE(s) publicados na NVD nos últimos 90 dias; 13 com nota 7,0 ou mais. Maior nota: 9.4 (CVE-2026-48482).",
@@ -14217,7 +14612,12 @@
     "missao": "media",
     "fontes": [
      "CISA (SSVC na NVD)"
-    ]
+    ],
+    "por_missao": {
+     "alta": "acompanhar_de_perto",
+     "media": "acompanhar",
+     "baixa": "acompanhar"
+    }
    },
    "inventario": null,
    "alertas_nacionais": [],
@@ -14282,7 +14682,7 @@
     "prioridade_ubuntu": null,
     "rotulo": null,
     "epss": 0.00337,
-    "epss_percentil": 0.19537,
+    "epss_percentil": 0.19556,
     "epss_cve": "CVE-2026-111609"
    },
    "resumo": "2 CVE(s) publicados na NVD nos últimos 90 dias; 0 com nota 7,0 ou mais. Maior nota: 5.3 (CVE-2021-48028).",
@@ -14322,7 +14722,12 @@
     "missao": "media",
     "fontes": [
      "CISA (SSVC na NVD)"
-    ]
+    ],
+    "por_missao": {
+     "alta": "agir_em_breve",
+     "media": "agir_em_breve",
+     "baixa": "acompanhar_de_perto"
+    }
    },
    "inventario": null,
    "alertas_nacionais": [],
@@ -14387,7 +14792,7 @@
     "prioridade_ubuntu": null,
     "rotulo": null,
     "epss": 0.00869,
-    "epss_percentil": 0.56434,
+    "epss_percentil": 0.56472,
     "epss_cve": "CVE-2026-49832"
    },
    "resumo": "4 CVE(s) publicados na NVD nos últimos 90 dias; 1 com nota 7,0 ou mais. Maior nota: 8.0 (CVE-2026-49832).",
@@ -14447,7 +14852,12 @@
     "missao": "media",
     "fontes": [
      "CISA (SSVC na NVD)"
-    ]
+    ],
+    "por_missao": {
+     "alta": "acompanhar",
+     "media": "acompanhar",
+     "baixa": "acompanhar"
+    }
    },
    "inventario": null,
    "alertas_nacionais": [],
@@ -14515,7 +14925,7 @@
     "prioridade_ubuntu": null,
     "rotulo": null,
     "epss": 0.02373,
-    "epss_percentil": 0.84573,
+    "epss_percentil": 0.84593,
     "epss_cve": "CVE-2026-105106"
    },
    "resumo": "3 CVE(s) publicados na NVD nos últimos 90 dias; 3 com nota 7,0 ou mais. Maior nota: 8.8 (CVE-2026-19780).",
@@ -14565,7 +14975,12 @@
     "missao": "media",
     "fontes": [
      "CISA (SSVC na NVD)"
-    ]
+    ],
+    "por_missao": {
+     "alta": "agir_em_breve",
+     "media": "agir_em_breve",
+     "baixa": "acompanhar_de_perto"
+    }
    },
    "inventario": null,
    "alertas_nacionais": [],
@@ -14616,7 +15031,7 @@
     "prioridade_ubuntu": null,
     "rotulo": null,
     "epss": 0.00591,
-    "epss_percentil": 0.42252,
+    "epss_percentil": 0.42294,
     "epss_cve": "CVE-2026-107059"
    },
    "resumo": "3 CVE(s) publicados na NVD nos últimos 90 dias; 2 com nota 7,0 ou mais. Maior nota: 7.5 (CVE-2026-104189).",
@@ -14666,7 +15081,12 @@
     "missao": "media",
     "fontes": [
      "CISA (SSVC na NVD)"
-    ]
+    ],
+    "por_missao": {
+     "alta": "agir_em_breve",
+     "media": "agir_em_breve",
+     "baixa": "acompanhar_de_perto"
+    }
    },
    "inventario": null,
    "alertas_nacionais": [],
@@ -14726,7 +15146,7 @@
     "prioridade_ubuntu": "medium",
     "rotulo": null,
     "epss": 0.00431,
-    "epss_percentil": 0.29138,
+    "epss_percentil": 0.29157,
     "epss_cve": "CVE-2026-108752"
    },
    "resumo": "1 CVE(s) publicados na NVD nos últimos 90 dias; 0 com nota 7,0 ou mais. Maior nota: 2.3 (CVE-2026-108752).",
@@ -14756,7 +15176,12 @@
     "missao": "media",
     "fontes": [
      "CISA (SSVC na NVD)"
-    ]
+    ],
+    "por_missao": {
+     "alta": "acompanhar",
+     "media": "acompanhar",
+     "baixa": "acompanhar"
+    }
    },
    "inventario": null,
    "alertas_nacionais": [],
@@ -14830,7 +15255,7 @@
     "prioridade_ubuntu": null,
     "rotulo": null,
     "epss": 0.00847,
-    "epss_percentil": 0.55516,
+    "epss_percentil": 0.55554,
     "epss_cve": "CVE-2026-74909"
    },
    "resumo": "26 CVE(s) publicados na NVD nos últimos 90 dias; 9 com nota 7,0 ou mais. Maior nota: 9.1 (CVE-2026-120984).",
@@ -14844,7 +15269,7 @@
      "kev": null,
      "corrigido_em": [],
      "resumo": "A flaw was found in the Keycloak server's client management component. When a client is created or imported with authorization services enabled, the system fails to properly clear an internal session attribute used during the setup process. This allows an auth",
-     "epss": 0.00607
+     "epss": 0.00711
     },
     {
      "cve": "CVE-2026-74909",
@@ -15034,7 +15459,7 @@
      "kev": null,
      "corrigido_em": [],
      "resumo": "A flaw was found in Keycloak. This vulnerability enables information disclosure when the parameterized-scopes feature is enabled. The protocol mapper fails to enforce authorization checks for certain scope parameter types during token and authorization request",
-     "epss": null
+     "epss": 0.00472
     },
     {
      "cve": "CVE-2026-92856",
@@ -15111,7 +15536,12 @@
     "fontes": [
      "CISA (SSVC na NVD)",
      "derivado do CVSS, KEV e EPSS"
-    ]
+    ],
+    "por_missao": {
+     "alta": "acompanhar_de_perto",
+     "media": "acompanhar",
+     "baixa": "acompanhar"
+    }
    },
    "inventario": null,
    "alertas_nacionais": [],
@@ -15166,7 +15596,7 @@
     "prioridade_ubuntu": null,
     "rotulo": null,
     "epss": 0.00307,
-    "epss_percentil": 0.15967,
+    "epss_percentil": 0.15999,
     "epss_cve": "CVE-2026-73191"
    },
    "resumo": "1 CVE(s) publicados na NVD nos últimos 90 dias; 0 com nota 7,0 ou mais. Maior nota: 6.1 (CVE-2026-73191).",
@@ -15196,7 +15626,12 @@
     "missao": "alta",
     "fontes": [
      "CISA (SSVC na NVD)"
-    ]
+    ],
+    "por_missao": {
+     "alta": "acompanhar",
+     "media": "acompanhar",
+     "baixa": "acompanhar"
+    }
    },
    "inventario": null,
    "alertas_nacionais": [],
@@ -15245,7 +15680,7 @@
     "prioridade_ubuntu": "medium",
     "rotulo": null,
     "epss": 0.00649,
-    "epss_percentil": 0.45736,
+    "epss_percentil": 0.4578,
     "epss_cve": "CVE-2026-109411"
    },
    "resumo": "1 CVE(s) publicados na NVD nos últimos 90 dias; 1 com nota 7,0 ou mais. Maior nota: 8.1 (CVE-2026-109411).",
@@ -15275,7 +15710,12 @@
     "missao": "alta",
     "fontes": [
      "CISA (SSVC na NVD)"
-    ]
+    ],
+    "por_missao": {
+     "alta": "acompanhar",
+     "media": "acompanhar",
+     "baixa": "acompanhar"
+    }
    },
    "inventario": null,
    "alertas_nacionais": [],
@@ -15383,7 +15823,7 @@
     "prioridade_ubuntu": "medium",
     "rotulo": null,
     "epss": 0.00409,
-    "epss_percentil": 0.2681,
+    "epss_percentil": 0.26836,
     "epss_cve": "CVE-2026-59782"
    },
    "resumo": "4 CVE(s) publicados na NVD nos últimos 90 dias; 0 com nota 7,0 ou mais. Maior nota: 6.9 (CVE-2026-59782).",
@@ -15443,7 +15883,12 @@
     "missao": "media",
     "fontes": [
      "CISA (SSVC na NVD)"
-    ]
+    ],
+    "por_missao": {
+     "alta": "acompanhar",
+     "media": "acompanhar",
+     "baixa": "acompanhar"
+    }
    },
    "inventario": null,
    "alertas_nacionais": [],
@@ -15593,7 +16038,7 @@
     "prioridade_ubuntu": "medium",
     "rotulo": null,
     "epss": 0.00921,
-    "epss_percentil": 0.58542,
+    "epss_percentil": 0.58578,
     "epss_cve": "CVE-2026-114160"
    },
    "resumo": "31 CVE(s) publicados na NVD nos últimos 90 dias; 10 com nota 7,0 ou mais. Maior nota: 9.8 (CVE-2026-114160).",
@@ -15627,7 +16072,7 @@
      "kev": null,
      "corrigido_em": [],
      "resumo": "Grafana OSS and Grafana Enterprise did not safely resolve symbolic links when extracting plugin archives. A crafted plugin archive can chain relative symbolic link entries to escape the plugin installation directory, writing arbitrary files and an executable b",
-     "epss": 0.00779
+     "epss": 0.00685
     },
     {
      "cve": "CVE-2026-33379",
@@ -15702,7 +16147,7 @@
      "kev": null,
      "corrigido_em": [],
      "resumo": "When independent Grafana instances share the same [rendering] renderer_token, an image renderer key issued by one instance is accepted by the others, so a user on one instance could act as the user with the same ID on another (origin validation error). This af",
-     "epss": 0.00161
+     "epss": 0.00165
     },
     {
      "cve": "CVE-2026-12704",
@@ -15842,7 +16287,7 @@
      "kev": null,
      "corrigido_em": [],
      "resumo": "A user with read access to Grafana's server logs, or to a log store they are shipped to, can recover the OAuth and OIDC access, refresh and ID tokens of users who sign in through the Generic OAuth, Google or GitLab providers. Grafana writes these tokens to its",
-     "epss": 0.00162
+     "epss": 0.00166
     },
     {
      "cve": "CVE-2026-110289",
@@ -15928,7 +16373,12 @@
     "missao": "media",
     "fontes": [
      "CISA (SSVC na NVD)"
-    ]
+    ],
+    "por_missao": {
+     "alta": "acompanhar_de_perto",
+     "media": "acompanhar",
+     "baixa": "acompanhar"
+    }
    },
    "inventario": null,
    "alertas_nacionais": [],
@@ -16068,8 +16518,8 @@
     "total_cves": 93,
     "prioridade_ubuntu": null,
     "rotulo": null,
-    "epss": 0.01256,
-    "epss_percentil": 0.69522,
+    "epss": 0.01209,
+    "epss_percentil": 0.68353,
     "epss_cve": "CVE-2026-136835"
    },
    "resumo": "93 CVE(s) publicados na NVD nos últimos 90 dias; 40 com nota 7,0 ou mais. Maior nota: 9.9 (CVE-2026-136835).",
@@ -16083,7 +16533,7 @@
      "kev": null,
      "corrigido_em": [],
      "resumo": "Jenkins Script Security Plugin 1436.v1082791135e4 and earlier does not reject @Builder annotations whose builderStrategy member names an arbitrary class when the annotation is referred to using a partially qualified class name, allowing attackers with permissi",
-     "epss": 0.01256
+     "epss": 0.01209
     },
     {
      "cve": "CVE-2026-84645",
@@ -16327,7 +16777,7 @@
      "kev": null,
      "corrigido_em": [],
      "resumo": "Sandbox protection in Jenkins Pipeline: Groovy Plugin 4403.v471713a_cea_19 and earlier can be circumvented through interface field initializers, allowing attackers with permission to define and run sandboxed Pipelines to bypass the sandbox protection and execu",
-     "epss": 0.00996
+     "epss": 0.00959
     },
     {
      "cve": "CVE-2026-136837",
@@ -16337,7 +16787,7 @@
      "kev": null,
      "corrigido_em": [],
      "resumo": "Jenkins Warnings Plugin 13.10251.va_452d3553728 through 13.10365.v85cd7a_c8110b_ (both inclusive) allows defining inline Groovy parsers whose Groovy scripts are compiled on the Jenkins controller without sandbox protection, allowing attackers able to define in",
-     "epss": 0.01165
+     "epss": 0.01122
     },
     {
      "cve": "CVE-2026-92126",
@@ -16509,7 +16959,7 @@
      "kev": null,
      "corrigido_em": [],
      "resumo": "Jenkins Gradle Plugin 2.21.1282.v024680ce00a_b_ and earlier does not configure its XML parser to prevent XML external entity (XXE) attacks when processing Maven extension configuration files from build workspaces.",
-     "epss": 0.0073
+     "epss": 0.00703
     }
    ],
    "decisao": {
@@ -16527,7 +16977,12 @@
      "CISA (SSVC na NVD)",
      "derivado do CVSS, KEV e EPSS",
      "derivado do KEV e EPSS (sem vetor CVSS)"
-    ]
+    ],
+    "por_missao": {
+     "alta": "acompanhar_de_perto",
+     "media": "acompanhar",
+     "baixa": "acompanhar"
+    }
    },
    "inventario": null,
    "alertas_nacionais": [],
@@ -16584,7 +17039,7 @@
     "prioridade_ubuntu": null,
     "rotulo": null,
     "epss": 0.03023,
-    "epss_percentil": 0.88193,
+    "epss_percentil": 0.88206,
     "epss_cve": "CVE-2023-54391"
    },
    "resumo": "4 CVE(s) publicados na NVD nos últimos 90 dias; 2 com nota 7,0 ou mais. Maior nota: 9.3 (CVE-2023-54391).",
@@ -16646,7 +17101,12 @@
      "CISA (SSVC na NVD)",
      "derivado do CVSS, KEV e EPSS",
      "derivado do KEV e EPSS (sem vetor CVSS)"
-    ]
+    ],
+    "por_missao": {
+     "alta": "acompanhar_de_perto",
+     "media": "acompanhar",
+     "baixa": "acompanhar"
+    }
    },
    "inventario": null,
    "alertas_nacionais": [],
@@ -16721,7 +17181,7 @@
     "prioridade_ubuntu": null,
     "rotulo": null,
     "epss": 0.32401,
-    "epss_percentil": 0.98726,
+    "epss_percentil": 0.98727,
     "epss_cve": "CVE-2026-111214"
    },
    "resumo": "27 CVE(s) publicados na NVD nos últimos 90 dias; 15 com nota 7,0 ou mais. Maior nota: 8.8 (CVE-2026-110908).",
@@ -17011,7 +17471,12 @@
     "missao": "alta",
     "fontes": [
      "CISA (SSVC na NVD)"
-    ]
+    ],
+    "por_missao": {
+     "alta": "agir_em_breve",
+     "media": "agir_em_breve",
+     "baixa": "acompanhar_de_perto"
+    }
    },
    "inventario": null,
    "alertas_nacionais": [],
@@ -17077,7 +17542,7 @@
     "prioridade_ubuntu": null,
     "rotulo": null,
     "epss": 0.02803,
-    "epss_percentil": 0.87203,
+    "epss_percentil": 0.87219,
     "epss_cve": "CVE-2026-119409"
    },
    "resumo": "18 CVE(s) publicados na NVD nos últimos 90 dias; 9 com nota 7,0 ou mais. Maior nota: 9.9 (CVE-2026-57155).",
@@ -17277,7 +17742,12 @@
     "missao": "alta",
     "fontes": [
      "CISA (SSVC na NVD)"
-    ]
+    ],
+    "por_missao": {
+     "alta": "agir_agora",
+     "media": "agir_em_breve",
+     "baixa": "acompanhar_de_perto"
+    }
    },
    "inventario": null,
    "alertas_nacionais": [],
@@ -17558,7 +18028,12 @@
     "fontes": [
      "CISA (SSVC na NVD)",
      "derivado do CVSS, KEV e EPSS"
-    ]
+    ],
+    "por_missao": {
+     "alta": "agir_agora",
+     "media": "agir_agora",
+     "baixa": "agir_agora"
+    }
    },
    "inventario": null,
    "alertas_nacionais": [],
@@ -17625,7 +18100,7 @@
     "prioridade_ubuntu": null,
     "rotulo": null,
     "epss": 0.01278,
-    "epss_percentil": 0.70009,
+    "epss_percentil": 0.70043,
     "epss_cve": "CVE-2026-110455"
    },
    "resumo": "19 CVE(s) publicados na NVD nos últimos 90 dias; 15 com nota 7,0 ou mais. Maior nota: 9.9 (CVE-2026-132802).",
@@ -17835,7 +18310,12 @@
     "missao": "alta",
     "fontes": [
      "CISA (SSVC na NVD)"
-    ]
+    ],
+    "por_missao": {
+     "alta": "acompanhar_de_perto",
+     "media": "acompanhar",
+     "baixa": "acompanhar"
+    }
    },
    "inventario": null,
    "alertas_nacionais": [],
@@ -17885,7 +18365,7 @@
     "prioridade_ubuntu": null,
     "rotulo": null,
     "epss": 0.02962,
-    "epss_percentil": 0.87951,
+    "epss_percentil": 0.87965,
     "epss_cve": "CVE-2026-124577"
    },
    "resumo": "2 CVE(s) publicados na NVD nos últimos 90 dias; 1 com nota 7,0 ou mais. Maior nota: 8.9 (CVE-2026-124577).",
@@ -17925,7 +18405,12 @@
     "missao": "media",
     "fontes": [
      "CISA (SSVC na NVD)"
-    ]
+    ],
+    "por_missao": {
+     "alta": "agir_agora",
+     "media": "agir_em_breve",
+     "baixa": "acompanhar_de_perto"
+    }
    },
    "inventario": null,
    "alertas_nacionais": [],
@@ -17976,7 +18461,7 @@
     "prioridade_ubuntu": null,
     "rotulo": null,
     "epss": 0.00411,
-    "epss_percentil": 0.26965,
+    "epss_percentil": 0.26992,
     "epss_cve": "CVE-2026-85544"
    },
    "resumo": "1 CVE(s) publicados na NVD nos últimos 90 dias; 0 com nota 7,0 ou mais. Maior nota: 6.1 (CVE-2026-85544).",
@@ -18006,7 +18491,12 @@
     "missao": "media",
     "fontes": [
      "CISA (SSVC na NVD)"
-    ]
+    ],
+    "por_missao": {
+     "alta": "acompanhar",
+     "media": "acompanhar",
+     "baixa": "acompanhar"
+    }
    },
    "inventario": null,
    "alertas_nacionais": [],
@@ -18180,7 +18670,7 @@
     "prioridade_ubuntu": null,
     "rotulo": null,
     "epss": 0.02445,
-    "epss_percentil": 0.85054,
+    "epss_percentil": 0.8507,
     "epss_cve": "CVE-2026-126148"
    },
    "resumo": "123 CVE(s) publicados na NVD nos últimos 90 dias; 107 com nota 7,0 ou mais. Maior nota: 9.9 (CVE-2026-26084).",
@@ -18604,7 +19094,12 @@
     "missao": "alta",
     "fontes": [
      "CISA (SSVC na NVD)"
-    ]
+    ],
+    "por_missao": {
+     "alta": "agir_agora",
+     "media": "agir_agora",
+     "baixa": "agir_agora"
+    }
    },
    "inventario": null,
    "alertas_nacionais": [],
@@ -18672,7 +19167,7 @@
     "prioridade_ubuntu": null,
     "rotulo": null,
     "epss": 0.00716,
-    "epss_percentil": 0.49509,
+    "epss_percentil": 0.49551,
     "epss_cve": "CVE-2023-22793"
    },
    "resumo": "14 CVE(s) publicados na NVD nos últimos 90 dias; 8 com nota 7,0 ou mais. Maior nota: 9.4 (CVE-2025-64393).",
@@ -18832,7 +19327,12 @@
     "missao": "alta",
     "fontes": [
      "CISA (SSVC na NVD)"
-    ]
+    ],
+    "por_missao": {
+     "alta": "acompanhar_de_perto",
+     "media": "acompanhar",
+     "baixa": "acompanhar"
+    }
    },
    "inventario": null,
    "alertas_nacionais": [],
@@ -18913,7 +19413,7 @@
     "prioridade_ubuntu": null,
     "rotulo": null,
     "epss": 0.01001,
-    "epss_percentil": 0.61814,
+    "epss_percentil": 0.61847,
     "epss_cve": "CVE-2026-115785"
    },
    "resumo": "27 CVE(s) publicados na NVD nos últimos 90 dias; 11 com nota 7,0 ou mais. Maior nota: 9.3 (CVE-2026-93641).",
@@ -19203,7 +19703,12 @@
     "missao": "alta",
     "fontes": [
      "CISA (SSVC na NVD)"
-    ]
+    ],
+    "por_missao": {
+     "alta": "acompanhar_de_perto",
+     "media": "acompanhar",
+     "baixa": "acompanhar"
+    }
    },
    "inventario": null,
    "alertas_nacionais": [],
@@ -19298,8 +19803,8 @@
     "prioridade_ubuntu": null,
     "rotulo": null,
     "epss": 0.01694,
-    "epss_percentil": 0.77546,
-    "epss_cve": "CVE-2026-124223"
+    "epss_percentil": 0.77571,
+    "epss_cve": "CVE-2026-69282"
    },
    "resumo": "47 CVE(s) publicados na NVD nos últimos 90 dias; 47 com nota 7,0 ou mais. Maior nota: 9.9 (CVE-2026-120002).",
    "afetadas": "Versões corrigidas citadas na NVD: 15.02.2562.049, 15.02.2562.053, 16.0.10417.20228, 16.0.20326.20074, 16.0.20326.20082, 16.0.20326.20090, 16.0.20326.20094, 16.0.20326.20136, 16.0.20326.20190, 16.0.20326.20278",
@@ -19799,7 +20304,12 @@
     "missao": "media",
     "fontes": [
      "CISA (SSVC na NVD)"
-    ]
+    ],
+    "por_missao": {
+     "alta": "acompanhar",
+     "media": "acompanhar",
+     "baixa": "acompanhar"
+    }
    },
    "inventario": null,
    "alertas_nacionais": [],
@@ -19895,7 +20405,7 @@
     "prioridade_ubuntu": null,
     "rotulo": null,
     "epss": 0.02182,
-    "epss_percentil": 0.8306,
+    "epss_percentil": 0.83079,
     "epss_cve": "CVE-2026-88771"
    },
    "resumo": "39 CVE(s) publicados na NVD nos últimos 90 dias; 35 com nota 7,0 ou mais. Maior nota: 9.5 (CVE-2026-88771).",
@@ -20341,7 +20851,12 @@
     "missao": "alta",
     "fontes": [
      "CISA (SSVC na NVD)"
-    ]
+    ],
+    "por_missao": {
+     "alta": "agir_agora",
+     "media": "agir_agora",
+     "baixa": "agir_agora"
+    }
    },
    "inventario": null,
    "alertas_nacionais": [],
@@ -20392,7 +20907,7 @@
     "prioridade_ubuntu": null,
     "rotulo": null,
     "epss": 0.02724,
-    "epss_percentil": 0.86788,
+    "epss_percentil": 0.86805,
     "epss_cve": "CVE-2026-76519"
    },
    "resumo": "Falha de travessia de diretório (path traversal) permite a um atacante remoto, sem login, gravar arquivos arbitrários no sistema operacional do gateway (AsyncOS).",
@@ -20411,7 +20926,12 @@
     "missao": "alta",
     "fontes": [
      "CISA (SSVC na NVD)"
-    ]
+    ],
+    "por_missao": {
+     "alta": "agir_agora",
+     "media": "agir_agora",
+     "baixa": "agir_agora"
+    }
    },
    "inventario": null,
    "alertas_nacionais": [
@@ -20485,7 +21005,7 @@
     "prioridade_ubuntu": null,
     "rotulo": null,
     "epss": 0.01535,
-    "epss_percentil": 0.75157,
+    "epss_percentil": 0.75183,
     "epss_cve": "CVE-2026-103406"
    },
    "resumo": "Um atacante remoto executa comandos como root no Session Smart Router ou Conductor por meio de um ID de minion Salt forjado.",
@@ -20504,7 +21024,12 @@
     "missao": "alta",
     "fontes": [
      "CISA (SSVC na NVD)"
-    ]
+    ],
+    "por_missao": {
+     "alta": "agir_agora",
+     "media": "agir_agora",
+     "baixa": "agir_agora"
+    }
    },
    "inventario": null,
    "alertas_nacionais": [],
