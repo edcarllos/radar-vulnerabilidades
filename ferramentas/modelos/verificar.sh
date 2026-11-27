@@ -72,6 +72,10 @@ radar_carregar_dpkg
 }
 
 # ---------- modo completo: todo o histórico de CVEs da distro ----------
+if [ "$COMPLETO" = 1 ] && [ "${RADAR_FAMILIA:-deb}" = rpm ] && [ -z "${RADAR_EOL:-}" ]; then
+  echo "Modo completo ainda indisponível para RHEL e compatíveis: o Radar confere os itens do painel. Para a lista completa, use: dnf updateinfo list --security"
+  exit 1
+fi
 if [ "$COMPLETO" = 1 ] && [ -n "${RADAR_EOL:-}" ]; then
   echo "Modo completo indisponível: o Radar não tem dados por pacote de sistemas sem suporte. $RADAR_EOL"
   exit 1
@@ -278,7 +282,11 @@ else
       [ -z "$(radar_versao_instalada "$lib")" ] && continue
       if [ "$mostrou" = 0 ]; then echo "${C_NEG}== Uso das bibliotecas afetadas${C_FIM}"; mostrou=1; fi
       echo "  $lib ($id)"
-      deps=$(apt-cache rdepends --installed --no-recommends --no-suggests --no-enhances "$lib" 2>/dev/null | awk 'NR>2 {gsub(/[ |]/,""); print}' | sort -u | head -n 15 | tr '\n' ' ')
+      if [ "${RADAR_FAMILIA:-deb}" = rpm ]; then
+        deps=$(rpm -q --whatrequires "$lib" --qf '%{NAME}\n' 2>/dev/null | grep -v '^no package' | sort -u | head -n 15 | tr '\n' ' ')
+      else
+        deps=$(apt-cache rdepends --installed --no-recommends --no-suggests --no-enhances "$lib" 2>/dev/null | awk 'NR>2 {gsub(/[ |]/,""); print}' | sort -u | head -n 15 | tr '\n' ' ')
+      fi
       [ -n "$deps" ] && echo "    pacotes que dependem: $deps"
       if [ "$(id -u)" = 0 ]; then
         procs=$(radar_processos_lib "$lib" | awk '{printf "%s(%s) ", $2, $1}')
@@ -301,6 +309,12 @@ else
     echo
   fi
 
+  if [ -z "$RADAR_IMAGEM" ] && [ "${RADAR_FAMILIA:-deb}" = rpm ] && [ "$(id -u)" = 0 ] && dnf needs-restarting --help >/dev/null 2>&1; then
+    echo "${C_NEG}== Serviços com bibliotecas antigas em memória (dnf needs-restarting)${C_FIM}"
+    dnf -q needs-restarting -s 2>/dev/null | sed 's/^/  /' | head -n 20
+    dnf -q needs-restarting -r >/dev/null 2>&1 || echo "  ${C_AMAR}O sistema precisa reiniciar para concluir as atualizações (kernel ou bibliotecas básicas).${C_FIM}"
+    echo
+  fi
   if [ -z "$RADAR_IMAGEM" ] && command -v needrestart >/dev/null 2>&1 && [ "$(id -u)" = 0 ]; then
     echo "${C_NEG}== Serviços com bibliotecas antigas em memória (needrestart)${C_FIM}"
     needrestart -r l -b 2>/dev/null | grep -E '^NEEDRESTART-(SVC|KSTA)' | sed 's/^/  /'

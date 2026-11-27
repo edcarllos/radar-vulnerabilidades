@@ -254,6 +254,47 @@ PY
       sleep "$NVD_PAUSA"
     done
   fi
+  # F24: dados de segurança da Red Hat (RHEL 8, 9 e 10 e compatíveis) para os CVEs dos itens e do KEV.
+  # Até 1.500 por coleta (8 em paralelo), primeiro os dos itens; renova cópias com mais de 3 dias.
+  echo "== Red Hat (dados de segurança por CVE)"
+  mkdir -p "$CACHE/rh"
+  rhtmp=$(mktemp -d)
+  python3 -I - "$CACHE" > "$rhtmp/pend.txt" <<'PY'
+import json, os, re, sys, time
+cache = sys.argv[1]
+agora = time.time()
+vistos, out = set(), []
+def quer(c):
+    f = os.path.join(cache, "rh", c + ".json")
+    return not os.path.exists(f) or agora - os.path.getmtime(f) > 3 * 86400
+try:
+    itens = open(os.path.join(cache, "cves.txt")).read().split()
+except OSError:
+    itens = []
+try:
+    kev = sorted(json.load(open(os.path.join(cache, "kev.json")))["vulnerabilities"], key=lambda v: v.get("dateAdded", ""), reverse=True)
+except Exception:
+    kev = []
+for c in itens + [v.get("cveID", "") for v in kev]:
+    if re.fullmatch(r"CVE-\d{4}-\d{4,7}", c) and c not in vistos and quer(c):
+        vistos.add(c)
+        out.append(c)
+print("\n".join(out[:1500]))
+PY
+  n_rh=$(grep -c . "$rhtmp/pend.txt" || true)
+  if [ "$n_rh" -gt 0 ]; then
+    teste=$(head -n1 "$rhtmp/pend.txt")
+    cod=$(curl -s -m 30 -o /dev/null -w '%{http_code}' "https://access.redhat.com/hydra/rest/securitydata/cve/$teste.json" || true)
+    if [ "$cod" = 200 ] || [ "$cod" = 404 ]; then
+      echo "Red Hat: $n_rh CVEs a consultar."
+      timeout 900 xargs -r -P8 -I{} sh -c 'c=$(curl -s -m 30 -o "$0/{}.json" -w "%{http_code}" "https://access.redhat.com/hydra/rest/securitydata/cve/{}.json"); [ "$c" = 404 ] && echo {} >> "$0/404.txt"; [ "$c" = 200 ] || rm -f "$0/{}.json"' "$rhtmp" < "$rhtmp/pend.txt" || true
+      python3 -I "$PROJ/ferramentas/redhat.py" compactar-pasta "$rhtmp" "$CACHE/rh" || echo "AVISO: falha ao compactar os dados da Red Hat."
+    else
+      echo "AVISO: os dados de segurança da Red Hat não responderam agora (HTTP $cod); seguindo com o cache."
+      echo "Red Hat (dados de segurança)" >> "$CACHE/falhas.txt"
+    fi
+  fi
+  rm -rf "$rhtmp"
 fi
 
 if [ "${1:-}" = "--so-baixar" ]; then echo "== Download concluído (sem construir)"; exit 0; fi

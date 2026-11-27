@@ -7,7 +7,7 @@ Painel público e gratuito com as falhas de segurança **exploradas ou urgentes*
 O painel tem estas abas:
 - **Hoje:** o que mudou desde a coleta anterior (falhas que entraram no catálogo de exploradas, alertas do CTIR Gov e do CAIS, itens novos) e a situação de cada fonte.
 - **Exploradas:** o catálogo KEV inteiro da CISA, de qualquer ano, com a situação da correção no Debian e na Ubuntu. Por padrão, só categorias de servidor e rede.
-- **Novas:** itens curados, com gravidade, versões afetadas, correção por distro (Debian 12/13, Ubuntu 20.04/22.04/24.04/26.04), mitigação, referências e uma decisão com prazo sugerido. Antes de 01/11/2026 só entram falhas exploradas; a partir dessa data, todas as dos produtos acompanhados.
+- **Novas:** itens curados, com gravidade, versões afetadas, correção por distro (Debian 12/13, Ubuntu 20.04/22.04/24.04/26.04, RHEL, Rocky, Alma e CentOS Stream 8/9/10), mitigação, referências e uma decisão com prazo sugerido. Antes de 01/11/2026 só entram falhas exploradas; a partir dessa data, todas as dos produtos acompanhados.
 - **Por sistema:** as falhas exploradas e o histórico completo de CVEs de uma versão de distro, e o que fazer com Debian 11 (sem suporte), Ubuntu 20.04 (só Ubuntu Pro), Proxmox VE e TrueNAS.
 - **Scripts:** verificação, correção com ponto de restauração, rollback e playbook Ansible. No Proxmox VE, a correção faz a atualização completa guiada (com snapshot ZFS ou backup antes); no TrueNAS e no Debian 11 só há verificação.
 - **Relatório:** boletim mensal com números gerais e o uso no PPSI.
@@ -19,6 +19,7 @@ O painel tem estas abas:
 - **Fontes:** só oficiais:
   - CISA KEV, NVD e FIRST EPSS;
   - Debian Security Tracker (DSA/DLA) e Ubuntu Security (CVE Tracker, OVAL, USN);
+  - Red Hat Security Data (RHEL 8, 9 e 10; vale também para Rocky, Alma e CentOS Stream);
   - alertas do CTIR Gov e do CAIS/RNP (só título, data, CVEs e link);
   - avisos dos fornecedores.
 - **Publicação:** a coleta valida tudo antes de publicar (sintaxe dos scripts, `SHA256SUMS` e assinatura). Só então publica no GitHub Pages.
@@ -74,6 +75,7 @@ Para servir o painel na intranet, com coleta no servidor da instituição e envi
 - O catálogo KEV da CISA é de domínio público (CC0).
 - Os estados por distro, os `indices/` e o `historico.json` derivam do Debian Security Tracker e do Ubuntu Security (CVE Tracker, OVAL © Canonical Ltd., USN). São usados com atribuição, para fins educacionais e não comerciais.
 - Os alertas do CAIS/RNP aparecem só com título, data, CVEs e link para o original.
+- Os dados de segurança da Red Hat (https://access.redhat.com/security/data) são © Red Hat, sob CC BY 4.0.
 - O Radar é um projeto comunitário oferecido **sem garantia**: ajuda a priorizar, mas não substitui os avisos oficiais nem o julgamento da sua equipe.
 
 ## Licença

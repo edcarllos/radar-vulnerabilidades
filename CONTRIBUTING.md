@@ -22,7 +22,7 @@ Issues e pull requests são públicos. Não publique servidores, versões instal
 1. Siga o formato dos itens existentes. Use um `id` novo, estável e em kebab-case. Nunca renomeie nem remova ids existentes.
 2. `tecnologia` precisa ser uma chave de `tecnologias`. Se criar uma nova, acrescente também em `criticidade.json` a importância sugerida (`alta`, `media` ou `baixa`).
 3. `tipo` é um destes:
-   - `pacote`: tem `fontes` por versão (`deb12`, `deb13`, `u2004`, `u2204`, `u2404`, `u2604`), com os nomes dos pacotes-fonte;
+   - `pacote`: tem `fontes` por versão (`deb12`, `deb13`, `u2004`, `u2204`, `u2404`, `u2604`; no RHEL e compatíveis, as linhas vêm sozinhas dos dados da Red Hat pelos CVEs do item), com os nomes dos pacotes-fonte;
    - `kernel`;
    - `app`: Drupal, WordPress, GitLab ou FreeSWITCH, com as versões mínimas;
    - `manual`: equipamentos e sistemas fora do Debian/Ubuntu, com `como_verificar`.
