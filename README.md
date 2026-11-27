@@ -34,7 +34,13 @@ gpg --verify SHA256SUMS.asc SHA256SUMS
 sha256sum -c --ignore-missing SHA256SUMS
 ```
 
-Impressão digital da chave do projeto: `será publicada aqui após a primeira coleta assinada`. Ela fica aqui, fora do site que a chave protege.
+Impressão digital da chave do projeto (Radar de Vulnerabilidades (scripts), ed25519, válida até 26/11/2028):
+
+```
+58EC 76D9 3AC9 5E0C 5CB3  B930 3ACB C8D1 F007 CB83
+```
+
+Ela fica aqui, fora do site que a chave protege. Depois de importar, confira com `gpg --fingerprint`.
 
 Rode sempre a verificação primeiro, depois a correção com `--simular`, e só então corrija, com backup ou snapshot.
 
