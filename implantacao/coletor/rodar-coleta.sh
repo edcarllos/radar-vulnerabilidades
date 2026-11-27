@@ -40,6 +40,7 @@ mkdir -p "$novo/indices" "$novo/scripts"
 cp "$PROJ/site/vulns.json" "$PROJ/site/coletas.json" "$PROJ/site/historico.json" "$PROJ/site/exploradas.json" "$novo/"
 cp "$PROJ"/site/indices/*.txt "$novo/indices/"
 cp "$PROJ"/scripts/radar-*.sh "$PROJ"/scripts/radar-*.yml "$PROJ/scripts/SHA256SUMS" "$novo/scripts/"
+cp "$PROJ"/scripts/radar-*.ps1 "$novo/scripts/"
 [ -f "$PROJ/scripts/SHA256SUMS.asc" ] && cp "$PROJ/scripts/SHA256SUMS.asc" "$novo/scripts/"
 cp -r "$PROJ/implantacao/servidores" "$novo/servidores"
 if [ -n "$RADAR_GPG_CHAVE" ] && command -v gpg >/dev/null 2>&1; then

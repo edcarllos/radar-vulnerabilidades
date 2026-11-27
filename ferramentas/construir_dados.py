@@ -31,8 +31,14 @@ RELEASES = {
             "nota": "Dados da Red Hat; Rocky e Alma publicam as mesmas correções horas ou dias depois. PHP e outros pacotes de módulo ainda não são acompanhados"},
     "el9": {"familia": "rhel", "codinome": "el9", "major": "9", "rotulo": "RHEL 9 e compatíveis (Rocky, Alma, CentOS Stream 9)",
             "nota": "Dados da Red Hat; Rocky e Alma publicam as mesmas correções horas ou dias depois; no CentOS Stream a comparação é aproximada"},
+    # F25: Windows Server (dados do Microsoft Security Update Guide; só na aba Exploradas, em Por sistema e nos scripts .ps1).
     "el10": {"familia": "rhel", "codinome": "el10", "major": "10", "rotulo": "RHEL 10 e compatíveis (Rocky, Alma, CentOS Stream 10)",
              "nota": "Dados da Red Hat; Rocky e Alma publicam as mesmas correções horas ou dias depois; no CentOS Stream a comparação é aproximada"},
+    "ws2016": {"familia": "windows", "codinome": "ws2016", "versao": "2016", "rotulo": "Windows Server 2016",
+               "nota": "Suporte estendido da Microsoft até 12/01/2027: planeje a migração"},
+    "ws2019": {"familia": "windows", "codinome": "ws2019", "versao": "2019", "rotulo": "Windows Server 2019", "nota": "Suporte estendido da Microsoft até 09/01/2029"},
+    "ws2022": {"familia": "windows", "codinome": "ws2022", "versao": "2022", "rotulo": "Windows Server 2022", "nota": "Suporte estendido da Microsoft até 14/10/2031"},
+    "ws2025": {"familia": "windows", "codinome": "ws2025", "versao": "2025", "rotulo": "Windows Server 2025", "nota": "Suporte padrão da Microsoft"},
 }
 POR_AVISO = {}  # (aviso, codinome, pacote) -> versão publicada pelo aviso
 ESTADOS = {"corrigido", "parcial", "pro", "sem_correcao", "em_triagem", "nao_afetado", "nao_empacotado", "nao_verificado"}
@@ -578,6 +584,7 @@ FONTES_CACHE = [
     ("Ubuntu OVAL", ["oval/com.ubuntu.noble.cve.oval.xml.bz2"]), ("Ubuntu CVE Tracker", ["uct.tsv"]), ("Avisos USN", ["usn/p0.json"]),
     ("FIRST EPSS", ["epss.csv.gz"]), ("CAIS/RNP", ["cais/pagina1.html"]), ("CTIR Gov", ["ctir/links.txt"]),
     ("TrueNAS (avisos)", ["truenas.xml"]), ("Red Hat (dados de segurança)", ["rh"]),
+    ("Microsoft (Security Update Guide)", ["msrc"]),
     ("NVD (produtos)", ["nvd-produtos"]),
 ]
 
@@ -667,6 +674,10 @@ def gerar_exploradas(kev, cfg, saida_dir, itens, ctir_todos, alertas_cais, cache
                 x = so_rhel(cache, c, r["major"])
                 if x:
                     so[rel] = x
+            elif r["familia"] == "windows" and v.get("vendorProject") == "Microsoft":
+                x = so_windows(cache, c, r["versao"])
+                if x:
+                    so[rel] = x
         for rel, linhas in (por_cve.get(c) or {}).items():
             # Pior caso por distro: sem correção > só Pro > corrigido.
             ordem = {"a": 0, "u": 1, "t": 2, "d": 3, "p": 4, "c": 5}
@@ -686,6 +697,8 @@ def gerar_exploradas(kev, cfg, saida_dir, itens, ctir_todos, alertas_cais, cache
            "categorias": cats, "padrao": [c for c in cfg.get("padrao", []) if c in cats], "itens": lista}
     with open(os.path.join(saida_dir, "exploradas.json"), "w", encoding="utf-8") as fh:
         json.dump(out, fh, ensure_ascii=False, separators=(",", ":"))
+    for v in sorted(WS_SEM_BUILD):
+        print("info: Windows Server %s: %d falha(s) com KB sem build conhecido, fora dos scripts: %s" % (v, len(WS_SEM_BUILD[v]), ", ".join(WS_SEM_BUILD[v][:6])), file=sys.stderr)
     return len(lista)
 
 
@@ -758,6 +771,31 @@ def linhas_rhel(cache, cves, major):
     if any(l["estado"] != "nao_afetado" for l in linhas):
         linhas = [l for l in linhas if l["estado"] != "nao_afetado"]
     return linhas
+
+
+_MS_BUILDS = None
+WS_MAJOR = {"2016": "14393", "2019": "17763", "2022": "20348", "2025": "26100"}
+WS_SEM_BUILD = {}
+
+
+def so_windows(cache, cve, versao):
+    """Situação de um CVE no Windows Server: corrigido pela atualização cumulativa (KB) a partir de um build.
+    Quando o guia não informa o build (entradas antigas), vale só a correspondência exata do KB no histórico."""
+    global _MS_BUILDS
+    d = ler_json(os.path.join(cache, "msrc", cve + ".json"), None)
+    w = ((d or {}).get("ws") or {}).get(versao) if isinstance(d, dict) else None
+    if not w or not re.match(r"^\d{6,8}$", str(w.get("kb", ""))):
+        return None
+    b = str(w.get("build") or "")
+    if not b:
+        if _MS_BUILDS is None:
+            m = ler_json(os.path.join(cache, "msrc-builds.json"), {})
+            _MS_BUILDS = m.get("kb", {}) if isinstance(m, dict) and isinstance(m.get("kb"), dict) else {}
+        b = str((_MS_BUILDS.get(w["kb"]) or {}).get(WS_MAJOR.get(versao, "")) or "")
+    if not re.match(r"^10\.0\.\d{5}\.\d{1,6}$", b) or b.split(".")[2] != WS_MAJOR.get(versao):
+        WS_SEM_BUILD.setdefault(versao, []).append(cve + " KB" + w["kb"])
+        return None
+    return {"e": "c", "v": b, "p": "KB" + w["kb"]}
 
 
 def so_rhel(cache, cve, major):
@@ -992,6 +1030,8 @@ def main():
             cves = [d["cve"] for d in detalhes] + [c for c in cves if c not in NVD_IDX]
         linhas = {}
         for rel_id in RELEASES:
+            if RELEASES[rel_id]["familia"] == "windows":
+                continue
             if RELEASES[rel_id]["familia"] == "rhel":
                 # F24: linhas do RHEL vêm dos dados da Red Hat pelos CVEs do item (sem lista de pacotes curada).
                 if it["tipo"] in ("pacote", "kernel"):
@@ -1241,7 +1281,7 @@ def main():
         "fora_do_marco": fora_marco,
         "cves_fora_do_marco": fora_marco_cves,
         "fontes_estado": frescor_fontes(args.cache),
-        "fontes": ["CISA KEV", "Debian Security Tracker", "Ubuntu Security (CVE e USN)", "Red Hat Security Data", "NVD", "FIRST EPSS", "CTIR Gov", "CAIS/RNP", "avisos dos fornecedores"],
+        "fontes": ["CISA KEV", "Debian Security Tracker", "Ubuntu Security (CVE e USN)", "Red Hat Security Data", "Microsoft Security Update Guide", "NVD", "FIRST EPSS", "CTIR Gov", "CAIS/RNP", "avisos dos fornecedores"],
     }
     coletas.append(coleta)
     coletas = coletas[-200:]

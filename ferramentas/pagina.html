@@ -302,6 +302,18 @@ footer { color: var(--muted); font-size: .82rem; display: grid; gap: 6px; }
           <div class="aviso" id="scr-hash" style="font-size:.85rem"></div>
           <pre class="code script" id="scr-texto" tabindex="0"></pre>
         </div>
+        <div class="painel" id="scr-windows">
+          <div>
+            <h2>Windows Server (PowerShell)</h2>
+            <p style="margin:4px 0 0;color:var(--muted)">Scripts prontos para o Windows Server 2016, 2019, 2022 e 2025, refeitos a cada coleta com as falhas exploradas (KEV) que a Microsoft corrigiu nessas versões; algumas antigas, cujo build a Microsoft não informa, ficam de fora. Não dependem dos filtros acima. As atualizações do Windows são cumulativas: o servidor está corrigido quando o build dele é igual ou maior que o build corrigido de cada falha.</p>
+          </div>
+          <ul style="margin:0;padding-left:20px;display:grid;gap:8px">
+            <li><a href="scripts/radar-verificar.ps1" download><b>radar-verificar.ps1</b></a>: somente leitura, não precisa de administrador. <code>powershell -ExecutionPolicy Bypass -File radar-verificar.ps1</code>. Opções: <code>-Todos</code> lista também as corrigidas; <code>-Csv</code> e <code>-Json</code> para planilha ou sistemas; <code>-Registro</code> gera o CSV do registro de vulnerabilidades do PPSI, que fica no servidor; <code>-Saida arquivo.csv</code> grava em UTF-8, que o Excel abre com acentos. Saída 0 = nada vulnerável, 1 = falta atualização, 2 = sistema não suportado ou script sem dados.</li>
+            <li><a href="scripts/radar-corrigir.ps1" download><b>radar-corrigir.ps1</b></a>: instala as atualizações de segurança pendentes pelo próprio Windows Update (ou pelo WSUS da instituição). Teste com <code>-Simular</code>; para valer, rode como administrador. Pergunta antes de instalar, guarda a lista de atualizações e o build em <code>C:\ProgramData\radar-vuln\</code> e nunca reinicia sozinho.</li>
+            <li><a href="scripts/radar-rollback.ps1" download><b>radar-rollback.ps1</b></a>: desinstala a atualização cumulativa instalada pela correção (wusa no 2016, DISM do 2019 em diante). Reexpõe o servidor às falhas: use só para recuperar um serviço quebrado e prefira voltar o snapshot da VM.</li>
+          </ul>
+          <p class="aviso w" style="margin:0">Antes de rodar, confira o hash: <code>Get-FileHash radar-verificar.ps1 -Algorithm SHA256</code> deve bater com a linha do arquivo em <a href="scripts/SHA256SUMS">SHA256SUMS</a>. Os scripts não têm assinatura Authenticode; o <code>-ExecutionPolicy Bypass</code> vale só para aquela execução. Se o arquivo veio pelo navegador, depois de conferir o hash rode <code>Unblock-File radar-verificar.ps1</code>. Windows Server 2012 e 2012 R2 estão sem suporte desde 13/10/2026.</p>
+        </div>
       </section>
 
       <section id="aba-servidores" data-aba-sec="servidores" data-so-interno hidden>
@@ -318,7 +330,7 @@ footer { color: var(--muted); font-size: .82rem; display: grid; gap: 6px; }
         <div class="painel">
           <div>
             <h2>Falhas exploradas: o catálogo KEV inteiro</h2>
-            <p style="margin:4px 0 0;color:var(--muted)">Todas as falhas com ataques reais confirmados pela CISA, de qualquer ano. Por padrão aparecem só as categorias que costumam existir em servidores e na rede de instituições de ensino; use "mostrar tudo" para ver celulares, estações e equipamentos industriais. Quando a falha está num pacote do Debian ou da Ubuntu, a situação da correção aparece em cada versão.</p>
+            <p style="margin:4px 0 0;color:var(--muted)">Todas as falhas com ataques reais confirmados pela CISA, de qualquer ano. Por padrão aparecem só as categorias que costumam existir em servidores e na rede de instituições de ensino; use "mostrar tudo" para ver celulares, estações e equipamentos industriais. Quando a falha está num pacote do Debian, da Ubuntu ou do RHEL, ou no próprio Windows Server, a situação da correção aparece em cada versão.</p>
           </div>
           <div class="barra" style="justify-content:flex-start;flex-wrap:wrap">
             <input type="search" id="x-busca" placeholder="CVE, fornecedor ou produto" style="width:auto;min-width:200px" autocomplete="off" aria-label="Buscar">
@@ -449,6 +461,7 @@ footer { color: var(--muted); font-size: .82rem; display: grid; gap: 6px; }
             <li><a href="https://security-tracker.debian.org/" target="_blank" rel="noopener">Debian Security Tracker</a> e avisos DSA/DLA.</li>
             <li><a href="https://ubuntu.com/security" target="_blank" rel="noopener">Ubuntu Security</a>: CVE Tracker, OVAL e avisos USN.</li>
             <li><a href="https://access.redhat.com/security/data" target="_blank" rel="noopener">Red Hat Security Data</a>: situação de cada CVE no RHEL 8, 9 e 10 e avisos RHSA, usados também para Rocky, Alma e CentOS Stream. Dados © Red Hat, sob licença <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY 4.0</a>.</li>
+            <li><a href="https://msrc.microsoft.com/update-guide" target="_blank" rel="noopener">Microsoft Security Update Guide</a>: atualização (KB) e build que corrigem cada falha explorada no Windows Server 2016, 2019, 2022 e 2025. O build das atualizações antigas, que o guia não informa, vem das páginas de histórico de atualizações da Microsoft (support.microsoft.com), por correspondência exata do KB. Dados da Microsoft, usados com atribuição; o Radar não é afiliado à Microsoft.</li>
             <li><a href="https://www.rnp.br/servicos/cais/" target="_blank" rel="noopener">CAIS/RNP</a>: alertas da rede acadêmica brasileira (título, data e link; o painel indica se a assinatura PGP do CAIS foi conferida).</li>
             <li>Avisos dos fornecedores, citados em cada item.</li>
           </ul>
@@ -460,8 +473,9 @@ footer { color: var(--muted); font-size: .82rem; display: grid; gap: 6px; }
           <h3>Limites</h3>
           <ul>
             <li>O Radar é um projeto comunitário oferecido sem garantia: pode haver atraso, erro ou falha que ele não conhece. Ele ajuda a priorizar; não substitui os avisos oficiais nem o julgamento da sua equipe.</li>
-            <li>Os scripts cobrem Debian 12 e 13, Ubuntu 20.04, 22.04, 24.04 e 26.04, RHEL, Rocky, Alma e CentOS Stream 8, 9 e 10 (com dnf; PHP e outros pacotes de módulo do RHEL 8 ainda não são acompanhados) e o Proxmox VE (atualização completa guiada). No Debian 11 (sem suporte) e no TrueNAS só há verificação. Equipamentos e sistemas fora dessas distros aparecem como verificação manual.</li>
+            <li>Os scripts cobrem Debian 12 e 13, Ubuntu 20.04, 22.04, 24.04 e 26.04, RHEL, Rocky, Alma e CentOS Stream 8, 9 e 10 (com dnf; PHP e outros pacotes de módulo do RHEL 8 ainda não são acompanhados) o Proxmox VE (atualização completa guiada) e o Windows Server 2016, 2019, 2022 e 2025 (só as falhas exploradas com KB e build conhecidos, com PowerShell e Windows Update). No Debian 11 (sem suporte) e no TrueNAS só há verificação. Equipamentos e sistemas fora dessas distros aparecem como verificação manual.</li>
             <li>A versão mínima das aplicações web vem da descrição da NVD; confira o aviso do projeto antes de agir.</li>
+            <li>No Windows Server, o KB e o build de cada falha são os que a Microsoft lista hoje no guia de atualizações. Quando ela revisa uma falha, o build pode ser de um mês depois da primeira correção: o script então pede uma atualização mais nova do que a estritamente necessária, nunca uma mais velha.</li>
             <li>Os scripts de correção rodam como root no seu servidor. Leia antes, rode a verificação e o <code>--simular</code> primeiro e tenha backup.</li>
           </ul>
 
@@ -480,6 +494,7 @@ footer { color: var(--muted); font-size: .82rem; display: grid; gap: 6px; }
             <li><b>CVE:</b> o número de uma falha conhecida. <b>CVSS:</b> a nota de gravidade, de 0 a 10.</li>
             <li><b>KEV:</b> o catálogo da CISA com falhas que já estão sendo usadas em ataques. <b>EPSS:</b> a probabilidade de uma falha ser explorada nos próximos 30 dias (FIRST).</li>
             <li><b>DSA, DLA e USN:</b> os avisos de segurança do Debian e da Ubuntu. <b>Mitigação:</b> reduzir o risco quando ainda não há correção. <b>Rollback:</b> voltar à versão anterior.</li>
+            <li><b>KB e build:</b> no Windows, cada atualização mensal tem um número KB e leva o sistema a um build (por exemplo 10.0.20348.2031). Como as atualizações são cumulativas, o build mais novo já traz as correções anteriores.</li>
             <li><b>Fim de suporte:</b> a versão não recebe mais correções gratuitas; falhas novas ficam abertas para sempre.</li>
           </ul>
 
@@ -509,7 +524,7 @@ sha256sum -c --ignore-missing SHA256SUMS</pre>
   </div>
 
   <footer>
-    <p id="rodape-fontes">Fontes oficiais: <a href="https://www.cisa.gov/known-exploited-vulnerabilities-catalog">CISA KEV</a> · <a href="https://security-tracker.debian.org/">Debian Security Tracker</a> · <a href="https://ubuntu.com/security/notices">Ubuntu Security Notices</a> · <a href="https://nvd.nist.gov/">NVD</a> · avisos dos fornecedores.</p>
+    <p id="rodape-fontes">Fontes oficiais: <a href="https://www.cisa.gov/known-exploited-vulnerabilities-catalog">CISA KEV</a> · <a href="https://security-tracker.debian.org/">Debian Security Tracker</a> · <a href="https://ubuntu.com/security/notices">Ubuntu Security Notices</a> · <a href="https://nvd.nist.gov/">NVD</a> · <a href="https://access.redhat.com/security/data">Red Hat Security Data</a> · <a href="https://msrc.microsoft.com/update-guide">Microsoft Security Update Guide</a> · avisos dos fornecedores.</p>
     <p>Os estados por distro vêm das fontes oficiais na data da coleta. Leia o aviso original antes de mudar produção.</p>
     <p data-so-publico hidden>Projeto comunitário, sem garantia. <a href="#sobre">Sobre, privacidade e como contribuir</a> · <a data-repo-href="" target="_blank" rel="noopener">GitHub</a> · <span class="aviso-nvd">This product uses the NVD API but is not endorsed or certified by the NVD.</span></p>
   </footer>
@@ -638,10 +653,13 @@ sha256sum -c --ignore-missing SHA256SUMS</pre>
       fs.appendChild(el("label", { class: "chk" }, [cb, o[1], contagem ? el("span", { class: "n", text: String(contagem(o[0])) }) : null]));
     });
   }
+  // Versões com itens e scripts gerados no navegador (Linux). O Windows Server tem scripts prontos na aba Scripts.
+  function relItens() { return Object.keys(D.releases).filter(function (r) { return (D.releases[r] || {}).familia !== "windows"; }); }
   function montarFiltros() {
     var its = D.itens;
+    F.releases = F.releases.filter(function (r) { return relItens().indexOf(r) >= 0; });
     var conta = function (fn) { return function (v) { return its.filter(function (i) { return fn(i, v); }).length; }; };
-    grupoChk("f-releases", Object.keys(D.releases).map(function (r) { return [r, D.releases[r].rotulo]; }), "releases");
+    grupoChk("f-releases", relItens().map(function (r) { return [r, D.releases[r].rotulo]; }), "releases");
     var fsev = document.getElementById("f-sev"); fsev.replaceChildren();
     SEV.forEach(function (s) {
       var cb = el("input", { type: "checkbox", value: s.k }); cb.checked = F.sev.indexOf(s.k) >= 0;
@@ -683,7 +701,7 @@ sha256sum -c --ignore-missing SHA256SUMS</pre>
     document.getElementById("f-ordem").addEventListener("change", function (e) { F.ordem = e.target.value; salvarRender(); });
     document.getElementById("f-ate").addEventListener("change", function (e) { F.ate = e.target.value; salvarRender(); });
     document.getElementById("f-limpar").addEventListener("click", function () { F = padraoFiltros(); montarFiltros(); salvarRender(); });
-    document.querySelector('[data-todos="releases"]').addEventListener("click", function () { F.releases = Object.keys(D.releases); montarFiltros(); salvarRender(); });
+    document.querySelector('[data-todos="releases"]').addEventListener("click", function () { F.releases = relItens(); montarFiltros(); salvarRender(); });
     document.querySelector('[data-todos="tec"]').addEventListener("click", function () { F.tecExcl = []; montarFiltros(); salvarRender(); });
     document.querySelector('[data-nenhum="tec"]').addEventListener("click", function () { F.tecExcl = Object.keys(D.tecnologias); montarFiltros(); salvarRender(); });
     document.getElementById("sel-todos").addEventListener("click", function () { visiveis().forEach(function (i) { excluidos.delete(i.id); }); gravar("excluidos", Array.from(excluidos)); render(); });
@@ -1198,7 +1216,9 @@ sha256sum -c --ignore-missing SHA256SUMS</pre>
     ["h-busca", "h-ordem", "h-so-kev", "h-tab", "h-mais"].forEach(function (id) { var n = document.getElementById(id); if (n) (n.closest("label") || n.closest(".scroll") || n).style.display = semHist ? "none" : ""; });
     if (semHist) {
       document.getElementById("h-resumo").replaceChildren();
-      document.getElementById("h-baixar").replaceChildren(el("p", { style: "margin:0", text: "O histórico completo de CVEs por pacote ainda não está disponível para esta versão. As falhas exploradas aparecem acima; para a lista completa no servidor, use: dnf updateinfo list --security" }));
+      document.getElementById("h-baixar").replaceChildren((D.releases[rel] || {}).familia === "windows"
+        ? el("p", { style: "margin:0" }, ["O Radar acompanha no Windows Server só as falhas exploradas (acima). Para todas as correções de cada mês, veja o ", link("Security Update Guide da Microsoft", "https://msrc.microsoft.com/update-guide"), "."])
+        : el("p", { style: "margin:0", text: "O histórico completo de CVEs por pacote ainda não está disponível para esta versão. As falhas exploradas aparecem acima; para a lista completa no servidor, use: dnf updateinfo list --security" }));
       document.getElementById("h-info").textContent = "";
       return;
     }
@@ -1310,10 +1330,10 @@ sha256sum -c --ignore-missing SHA256SUMS</pre>
     if (typeof e.nota === "number") pills.push(el("span", { class: "pill", text: "CVSS " + e.nota.toFixed(1) }));
     pills.push(el("span", { class: "pill", text: (X.categorias || {})[e.cat] || e.cat }));
     (e.nac || []).forEach(function (a) { pills.push(el("a", { class: "pill p-info", href: a.url, target: "_blank", rel: "noopener", title: a.titulo, text: a.fonte + " " + dataBR(a.data) })); });
-    var rels = XF.rel ? [XF.rel] : Object.keys(e.so || {});
+    var rels = XF.rel ? [XF.rel] : (D ? Object.keys(D.releases) : Object.keys(e.so || {}));
     var so = rels.filter(function (r) { return e.so && e.so[r]; }).map(function (r) {
       var x = e.so[r], es = SO_EST[x.e] || [x.e, ""];
-      return el("span", { class: "pill " + es[1], title: "Pacote-fonte " + x.p + (x.v ? ", corrigido em " + x.v : ""), text: ((D && D.releases[r]) ? D.releases[r].rotulo.replace(/ \(.*\)$/, "") : r) + ": " + es[0] });
+      return el("span", { class: "pill " + es[1], title: /^ws/.test(r) ? "Corrigido pela atualização " + x.p + " (build " + x.v + " ou mais novo)" : "Pacote-fonte " + x.p + (x.v ? ", corrigido em " + x.v : ""), text: ((D && D.releases[r]) ? D.releases[r].rotulo.replace(/ \(.*\)$/, "") : r) + ": " + es[0] });
     });
     var corpo = [
       el("p", {}, [el("b", { text: "Descrição da CISA (em inglês): " }), e.desc || "—"]),
@@ -1386,14 +1406,15 @@ sha256sum -c --ignore-missing SHA256SUMS</pre>
     var partes = [el("p", { class: "ref", text: (r.rotulo || rel) + ": " + (r.nota || "suportada") + "." })];
     if (!X) { carregarExploradas(); alvo.replaceChildren.apply(alvo, partes.concat([el("p", { text: "Carregando as falhas exploradas…" })])); return; }
     var nesta = X.itens.filter(function (e) { return e.so && e.so[rel]; });
+    if (r.familia === "windows") { alvo.replaceChildren.apply(alvo, partes.concat(sistemaWindows(rel, nesta))); return; }
     var abertas = nesta.filter(function (e) { return semCorrecao(e.so[rel].e); });
     var corr = nesta.filter(function (e) { return e.so[rel].e === "c"; });
     var pro = nesta.filter(function (e) { return e.so[rel].e === "p"; });
     partes.push(el("div", { class: "resumo" }, [
       el("div", { class: "tile c" }, [el("b", { text: String(abertas.length) }), el("span", { text: "falhas exploradas (KEV) sem correção nesta versão" })]),
       el("div", { class: "tile o" }, [el("b", { text: String(corr.length) }), el("span", { text: "falhas exploradas já corrigidas: confira se o servidor está atualizado" })]),
-      el("div", { class: "tile" }, [el("b", { text: String(pro.length) }), el("span", { text: "corrigidas só no Ubuntu Pro" })])
-    ]));
+      r.familia === "ubuntu" ? el("div", { class: "tile" }, [el("b", { text: String(pro.length) }), el("span", { text: "corrigidas só no Ubuntu Pro" })]) : null
+    ].filter(Boolean)));
     partes.push(el("div", { style: "display:flex;gap:8px;flex-wrap:wrap" }, [
       el("button", { type: "button", class: "btn prim", text: "Gerar scripts para esta versão", onclick: function () { F.releases = [rel]; gravar("filtros", F); montarFiltros(); location.hash = "#scripts"; } }),
       el("button", { type: "button", class: "btn", text: "Ver as exploradas sem correção nesta versão", onclick: function () { XF.rel = rel; XF.sem = true; XF.cats = Object.keys(X.categorias); location.hash = "#exploradas"; } })
@@ -1402,6 +1423,32 @@ sha256sum -c --ignore-missing SHA256SUMS</pre>
       return el("li", {}, [link(e.cve, "https://nvd.nist.gov/vuln/detail/" + e.cve), " · " + e.f + " " + e.p + " (pacote " + e.so[rel].p + ", " + (SO_EST[e.so[rel].e] || [e.so[rel].e])[0] + ")"]);
     })));
     alvo.replaceChildren.apply(alvo, partes);
+  }
+
+  // F25: Windows Server. As atualizações são cumulativas: basta o build do servidor ser igual ou maior que o do KB mais novo.
+  function sistemaWindows(rel, nesta) {
+    if (!nesta.length) return [el("p", { class: "aviso w", style: "margin:0", text: "Sem dados da Microsoft para esta versão nesta coleta. A situação volta a aparecer quando a coleta conseguir consultar o guia de atualizações da Microsoft." })];
+    var maior = nesta.slice().sort(function (a, b) { return cmpBuild(b.so[rel].v, a.so[rel].v); })[0];
+    var ano = addDias(HOJE, -365), recentes = nesta.filter(function (e) { return e.d >= ano; });
+    var out = [el("div", { class: "resumo" }, [
+      el("div", { class: "tile c" }, [el("b", { text: String(nesta.length) }), el("span", { text: "falhas exploradas (KEV) que a Microsoft corrigiu nesta versão" })]),
+      el("div", { class: "tile h" }, [el("b", { text: String(recentes.length) }), el("span", { text: "entraram no KEV nos últimos 12 meses" })]),
+      maior ? el("div", { class: "tile o" }, [el("b", { text: maior.so[rel].p }), el("span", { text: "build " + maior.so[rel].v + " ou mais novo corrige todas elas" })]) : null
+    ].filter(Boolean)),
+      el("p", { style: "margin:0" }, ["Descubra o build do servidor com ", el("code", { text: "winver" }), " ou no PowerShell: ", el("code", { text: "(Get-ItemProperty 'HKLM:\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion').UBR" }), ". O script de verificação faz a comparação com cada falha."]),
+      el("div", { style: "display:flex;gap:8px;flex-wrap:wrap" }, [
+        el("button", { type: "button", class: "btn prim", text: "Scripts PowerShell do Windows Server", onclick: function () { location.hash = "#scripts"; setTimeout(function () { var n = document.getElementById("scr-windows"); if (n) n.scrollIntoView({ block: "start" }); }, 50); } }),
+        el("button", { type: "button", class: "btn", text: "Ver estas falhas na aba Exploradas", onclick: function () { XF.rel = rel; XF.sem = false; XF.cats = Object.keys(X.categorias); location.hash = "#exploradas"; } })
+      ])];
+    if (nesta.length) out.push(el("ul", { style: "margin:0;padding-left:20px" }, nesta.slice(0, 8).map(function (e) {
+      return el("li", {}, [link(e.cve, "https://msrc.microsoft.com/update-guide/vulnerability/" + e.cve), " · " + e.n + " (" + e.so[rel].p + ", build " + e.so[rel].v + ")"]);
+    })));
+    return out;
+  }
+  function cmpBuild(a, b) {
+    var x = String(a || "").split("."), y = String(b || "").split(".");
+    for (var i = 0; i < 4; i++) { var d = (Number(x[i]) || 0) - (Number(y[i]) || 0); if (d) return d; }
+    return 0;
   }
 
   // ---------- F23: outros sistemas (sem dados por pacote ou com atualização própria) ----------
@@ -1421,6 +1468,9 @@ sha256sum -c --ignore-missing SHA256SUMS</pre>
         p("O que fazer: migre para Rocky, Alma ou RHEL 9 ou 10 (escolha a versão acima para ver a situação). Pelo PPSI (controle 2.2), sistema sem suporte precisa de exceção documentada.")]),
       cartao("Ubuntu 20.04 LTS (focal)", el("span", { class: "pill p-warn", text: "suporte padrão encerrado em 31/05/2025" }), [
         p("O Radar tem os dados dele (escolha a versão acima). Correções novas saem só no Ubuntu Pro (ESM): sem ele, as falhas novas ficam abertas. Planeje a migração para o 22.04 ou 24.04.")]),
+      cartao("Windows Server 2012 e 2012 R2", el("span", { class: "pill p-crit", text: "sem suporte desde 13/10/2026" }), [
+        p("O suporte estendido pago (ESU) terminou em 13/10/2026: não há mais correções, nem pagas. O script do Radar avisa e encerra."),
+        p("O que fazer: migre para o Windows Server 2022 ou 2025. O 2016 também está perto do fim (suporte até 12/01/2027). Pelo PPSI (controle 2.2), sistema sem suporte precisa de exceção documentada enquanto não for migrado.")]),
       cartao("Proxmox VE 8 e 9", el("span", { class: "pill p-info", text: "base Debian 12 e 13" }), [
         p("Escolha Debian 12 (Proxmox VE 8) ou Debian 13 (Proxmox VE 9) acima. A verificação confere os pacotes Debian; o kernel e os pacotes próprios do Proxmox, não."),
         p("A correção do Radar faz a atualização completa guiada (apt full-upgrade), como a Proxmox recomenda, com snapshot ZFS ou backup antes. Desfazer é pelo snapshot."),

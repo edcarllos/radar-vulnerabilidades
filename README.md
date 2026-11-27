@@ -8,8 +8,8 @@ O painel tem estas abas:
 - **Hoje:** o que mudou desde a coleta anterior (falhas que entraram no catálogo de exploradas, alertas do CTIR Gov e do CAIS, itens novos) e a situação de cada fonte.
 - **Exploradas:** o catálogo KEV inteiro da CISA, de qualquer ano, com a situação da correção no Debian e na Ubuntu. Por padrão, só categorias de servidor e rede.
 - **Novas:** itens curados, com gravidade, versões afetadas, correção por distro (Debian 12/13, Ubuntu 20.04/22.04/24.04/26.04, RHEL, Rocky, Alma e CentOS Stream 8/9/10), mitigação, referências e uma decisão com prazo sugerido. Antes de 01/11/2026 só entram falhas exploradas; a partir dessa data, todas as dos produtos acompanhados.
-- **Por sistema:** as falhas exploradas e o histórico completo de CVEs de uma versão de distro, e o que fazer com Debian 11 (sem suporte), Ubuntu 20.04 (só Ubuntu Pro), Proxmox VE e TrueNAS.
-- **Scripts:** verificação, correção com ponto de restauração, rollback e playbook Ansible. No Proxmox VE, a correção faz a atualização completa guiada (com snapshot ZFS ou backup antes); no TrueNAS e no Debian 11 só há verificação.
+- **Por sistema:** as falhas exploradas e o histórico completo de CVEs de uma versão de distro, as falhas exploradas corrigidas em cada Windows Server (2016 a 2025, com KB e build), e o que fazer com Debian 11 (sem suporte), Ubuntu 20.04 (só Ubuntu Pro), Windows Server 2012 (sem suporte), Proxmox VE e TrueNAS.
+- **Scripts:** verificação, correção com ponto de restauração, rollback e playbook Ansible. No Proxmox VE, a correção faz a atualização completa guiada (com snapshot ZFS ou backup antes); no TrueNAS e no Debian 11 só há verificação. No Windows Server 2016, 2019, 2022 e 2025 há scripts PowerShell prontos (verificação, correção pelo Windows Update ou WSUS, e rollback guiado).
 - **Relatório:** boletim mensal com números gerais e o uso no PPSI.
 - **Aprender:** como usar, prazos e normas (PPSI, CTIR Gov, ANPD), glossário e laboratório.
 
@@ -20,6 +20,7 @@ O painel tem estas abas:
   - CISA KEV, NVD e FIRST EPSS;
   - Debian Security Tracker (DSA/DLA) e Ubuntu Security (CVE Tracker, OVAL, USN);
   - Red Hat Security Data (RHEL 8, 9 e 10; vale também para Rocky, Alma e CentOS Stream);
+  - Microsoft Security Update Guide (KB e build corrigido no Windows Server, só para as falhas exploradas);
   - alertas do CTIR Gov e do CAIS/RNP (só título, data, CVEs e link);
   - avisos dos fornecedores.
 - **Publicação:** a coleta valida tudo antes de publicar (sintaxe dos scripts, `SHA256SUMS` e assinatura). Só então publica no GitHub Pages.
@@ -37,6 +38,8 @@ gpg --import chave-radar.asc
 gpg --verify SHA256SUMS.asc SHA256SUMS
 sha256sum -c --ignore-missing SHA256SUMS
 ```
+
+No Windows Server, compare `Get-FileHash radar-verificar.ps1 -Algorithm SHA256` com a linha do arquivo no `SHA256SUMS`.
 
 Impressão digital da chave do projeto (Radar de Vulnerabilidades (scripts), ed25519, válida até 26/11/2028):
 
@@ -76,6 +79,7 @@ Para servir o painel na intranet, com coleta no servidor da instituição e envi
 - Os estados por distro, os `indices/` e o `historico.json` derivam do Debian Security Tracker e do Ubuntu Security (CVE Tracker, OVAL © Canonical Ltd., USN). São usados com atribuição, para fins educacionais e não comerciais.
 - Os alertas do CAIS/RNP aparecem só com título, data, CVEs e link para o original.
 - Os dados de segurança da Red Hat (https://access.redhat.com/security/data) são © Red Hat, sob CC BY 4.0.
+- O KB e o build corrigido de cada falha no Windows Server vêm do Microsoft Security Update Guide (https://msrc.microsoft.com/update-guide). O build das atualizações antigas, que o guia não informa, vem das páginas de histórico de atualizações da Microsoft (support.microsoft.com), por correspondência exata do KB. São usados com atribuição, para fins educacionais e não comerciais; o Radar não é afiliado à Microsoft.
 - O Radar é um projeto comunitário oferecido **sem garantia**: ajuda a priorizar, mas não substitui os avisos oficiais nem o julgamento da sua equipe.
 
 ## Licença

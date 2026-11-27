@@ -57,6 +57,38 @@ for (const tipo of ["verificar", "corrigir", "rollback", "ansible"]) {
   console.log(`scripts/${nome}: ${r.itens} itens, ${r.linhas} linhas de dados, ${r.descartes} descartadas`);
   somas.push(`${createHash("sha256").update(r.texto, "utf8").digest("hex")}  ${nome}`);
 }
+// F25: scripts do Windows Server (PowerShell) com as falhas exploradas que têm correção no Windows Server
+// (aba Exploradas). Cada linha é validada; o arquivo vai com BOM UTF-8 para o PowerShell 5.1 ler os acentos.
+const arqExpl = join(proj, "site", "exploradas.json");
+if (existsSync(arqExpl)) {
+  const expl = JSON.parse(readFileSync(arqExpl, "utf8"));
+  const RW = { cve: /^CVE-\d{4}-\d{4,7}$/, kb: /^KB\d{6,8}$/, build: /^10\.0\.\d{5}\.\d{1,6}$/, data: /^\d{4}-\d{2}-\d{2}$/ };
+  const limparWin = (t) => String(t || "").replace(/[\u0000-\u001f\u007f\u2028\u2029|`$]/g, " ").replace(/\s+/g, " ").trim().slice(0, 160);
+  const linhasWin = [];
+  let descWin = 0;
+  for (const e of expl.itens || []) {
+    for (const r of ["ws2016", "ws2019", "ws2022", "ws2025"]) {
+      const x = (e.so || {})[r];
+      if (!x) continue;
+      if (!RW.cve.test(e.cve) || !RW.kb.test(x.p || "") || !RW.build.test(x.v || "") || !RW.data.test(e.d || "")) { descWin++; continue; }
+      linhasWin.push([r, e.cve, x.p.slice(2), x.v, e.d, e.r ? 1 : 0, limparWin(`${e.f} ${e.p}: ${e.n}`)].join("|"));
+    }
+  }
+  const comumWin = ler("modelos/windows-comum.ps1");
+  for (const tipo of ["verificar", "corrigir", "rollback"]) {
+    let t = ler(`modelos/windows-${tipo}.ps1`).split("@@COMUM@@").join(comumWin);
+    const col = dados.coleta || {};
+    const dataCol = /^\d{4}-\d{2}-\d{2}$/.test(String(col.data || "")) ? col.data : "desconhecida";
+    const kevCol = /^[0-9.]{4,20}$/.test(String(col.kev_versao || "")) ? String(col.kev_versao) : "?";
+    t = t.split("@@COLETA@@").join(dataCol).split("@@KEV@@").join(kevCol)
+      .split("@@GERADO@@").join(geradoEm).split("@@DADOS@@").join(linhasWin.join("\n"));
+    t = "\ufeff" + t.replace(/\r?\n/g, "\r\n");
+    const nome = `radar-${tipo}.ps1`;
+    writeFileSync(join(proj, "scripts", nome), t, "utf8");
+    console.log(`scripts/${nome}: ${linhasWin.length} linhas de dados (Windows Server), ${descWin} descartadas`);
+    somas.push(`${createHash("sha256").update(t, "utf8").digest("hex")}  ${nome}`);
+  }
+}
 // F1: integridade. SHA256SUMS sempre; assinatura GPG se RADAR_GPG_CHAVE estiver definida.
 const arqSomas = join(proj, "scripts", "SHA256SUMS");
 writeFileSync(arqSomas, somas.join("\n") + "\n");

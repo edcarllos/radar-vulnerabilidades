@@ -19,6 +19,11 @@ ls "$PROJ"/site/indices/*.txt >/dev/null 2>&1 || falha "site/indices/ vazio."
 
 # Mesmas conferências da coleta institucional: nada é publicado se algo falhar.
 for f in "$PROJ"/scripts/*.sh; do bash -n "$f" || falha "sintaxe em $f"; done
+ls "$PROJ"/scripts/radar-*.ps1 >/dev/null 2>&1 || falha "scripts PowerShell (radar-*.ps1) ausentes."
+# Sintaxe do PowerShell, quando o pwsh existe (o runner Ubuntu do GitHub já o traz).
+if command -v pwsh >/dev/null 2>&1; then
+  RADAR_PS1="$(printf '%s\n' "$PROJ"/scripts/radar-*.ps1)" pwsh -NoProfile -NonInteractive -Command '$e = 0; foreach ($f in ($env:RADAR_PS1 -split "`n" | Where-Object { $_ })) { $err = $null; [void][System.Management.Automation.Language.Parser]::ParseFile($f, [ref]$null, [ref]$err); if ($err) { $e++; Write-Host "$f : $($err[0].Message)" } }; exit $e' || falha "sintaxe nos scripts PowerShell."
+fi
 (cd "$PROJ/scripts" && sha256sum -c --quiet SHA256SUMS) || falha "SHA256SUMS não confere."
 if [ -n "${RADAR_GPG_CHAVE:-}" ]; then
   [ -s "$PROJ/scripts/SHA256SUMS.asc" ] || falha "a chave de assinatura está configurada, mas SHA256SUMS.asc não foi gerado."
@@ -65,6 +70,7 @@ for arq in sys.argv[1:]:
 PY
 cp "$PROJ"/site/indices/*.txt "$SAIDA/indices/"
 cp "$PROJ"/scripts/radar-*.sh "$PROJ"/scripts/radar-*.yml "$PROJ/scripts/SHA256SUMS" "$SAIDA/scripts/"
+cp "$PROJ"/scripts/radar-*.ps1 "$SAIDA/scripts/"
 [ -s "$PROJ/scripts/SHA256SUMS.asc" ] && cp "$PROJ/scripts/SHA256SUMS.asc" "$SAIDA/scripts/"
 if [ -n "${RADAR_GPG_CHAVE:-}" ]; then
   gpg --batch --armor --export "$RADAR_GPG_CHAVE" > "$SAIDA/chave-radar.asc"

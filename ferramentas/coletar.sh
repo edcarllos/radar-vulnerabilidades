@@ -295,6 +295,62 @@ PY
     fi
   fi
   rm -rf "$rhtmp"
+  # F25: Microsoft Security Update Guide (KB e build corrigido no Windows Server) para as falhas da Microsoft no KEV.
+  echo "== Microsoft (Security Update Guide por CVE)"
+  mkdir -p "$CACHE/msrc"
+  mstmp=$(mktemp -d)
+  python3 -I - "$CACHE" > "$mstmp/pend.txt" <<'PY'
+import json, os, re, sys, time
+cache = sys.argv[1]
+agora = time.time()
+try:
+    kev = sorted(json.load(open(os.path.join(cache, "kev.json")))["vulnerabilities"], key=lambda v: v.get("dateAdded", ""), reverse=True)
+except Exception:
+    kev = []
+out = []
+for v in kev:
+    c = v.get("cveID", "")
+    if v.get("vendorProject") != "Microsoft" or not re.fullmatch(r"CVE-\d{4}-\d{4,7}", c):
+        continue
+    f = os.path.join(cache, "msrc", c + ".json")
+    try:
+        formato = json.load(open(f)).get("v")
+    except Exception:
+        formato = None
+    # Formato 2 guarda o KB mesmo sem build; cópias do formato 1 são baixadas de novo.
+    if formato != 2 or agora - os.path.getmtime(f) > 7 * 86400:
+        out.append(c)
+print("\n".join(out[:500]))
+PY
+  n_ms=$(grep -c . "$mstmp/pend.txt" || true)
+  if [ "$n_ms" -gt 0 ]; then
+    base="https://api.msrc.microsoft.com/sug/v2.0/en-US/affectedProduct?%24filter=cveNumber%20eq%20%27"
+    teste=$(head -n1 "$mstmp/pend.txt")
+    cod=$(curl -s -m 30 -o /dev/null -w '%{http_code}' "$base$teste%27" || true)
+    if [ "$cod" = 200 ]; then
+      echo "Microsoft: $n_ms CVEs a consultar."
+      timeout 900 xargs -r -P6 -I{} sh -c 'c=$(curl -s -m 30 -o "$0/{}.json" -w "%{http_code}" "$1{}%27"); [ "$c" = 404 ] && echo {} >> "$0/404.txt"; [ "$c" = 200 ] || rm -f "$0/{}.json"' "$mstmp" "$base" < "$mstmp/pend.txt" || true
+      python3 -I "$PROJ/ferramentas/msrc.py" compactar-pasta "$mstmp" "$CACHE/msrc" || echo "AVISO: falha ao compactar os dados da Microsoft."
+    else
+      echo "AVISO: o guia de atualizações da Microsoft não respondeu agora (HTTP $cod); seguindo com o cache."
+      echo "Microsoft (Security Update Guide)" >> "$CACHE/falhas.txt"
+    fi
+  fi
+  # Páginas de histórico de atualizações: build dos KBs antigos, que o guia não informa. O mapa só cresce.
+  for pg in windows-10-and-windows-server-2016-update-history-4acfbc84-a290-1b54-536a-1c0430e9f3fd \
+            windows-10-and-windows-server-2019-update-history-725fc2e1-4443-6831-a5ca-51ff5cbcb059 \
+            windows-server-2022-update-history-e1caa597-00c5-4ab9-9f3e-8212fe80b2ee; do
+    u="https://support.microsoft.com/en-us/topic/$pg"
+    curl -sSfL --compressed -m 90 -o "$mstmp/$pg.html" "$u" 2>/dev/null || rm -f "$mstmp/$pg.html"
+  done
+  if ls "$mstmp"/*.html >/dev/null 2>&1; then
+    python3 -I "$PROJ/ferramentas/msrc.py" builds "$CACHE/msrc-builds.json" "$mstmp"/*.html || echo "AVISO: falha ao ler o histórico de atualizações da Microsoft."
+  fi
+  if [ "$(ls "$mstmp"/*.html 2>/dev/null | wc -l)" -lt 3 ]; then
+    echo "AVISO: alguma página de histórico de atualizações da Microsoft não respondeu; seguindo com o mapa em cache."
+    echo "Microsoft (histórico de atualizações)" >> "$CACHE/falhas.txt"
+  fi
+  rm -rf "$mstmp"
 fi
 
 if [ "${1:-}" = "--so-baixar" ]; then echo "== Download concluído (sem construir)"; exit 0; fi
