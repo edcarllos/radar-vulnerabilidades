@@ -1,0 +1,3 @@
+Estado da coleta pública do Radar, gravado pelo GitHub Actions a cada coleta.
+vulns.json e coletas.json da última coleta: guardam as datas de primeira coleta e o histórico.
+Não edite à mão.
