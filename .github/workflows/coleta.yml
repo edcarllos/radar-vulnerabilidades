@@ -40,12 +40,19 @@ jobs:
       - id: pages
         uses: actions/configure-pages@v6
 
-      - name: Restaurar o cache das fontes
+      - id: cache
+        name: Restaurar o cache das fontes
         uses: actions/cache/restore@v6
         with:
           path: ~/.cache/radar-vulnerabilidades
           key: radar-fontes-${{ github.run_id }}-${{ github.run_attempt }}
           restore-keys: radar-fontes-
+
+      - name: Semear o cache (só quando o cache do GitHub está vazio)
+        if: steps.cache.outputs.cache-matched-key == ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: bash ferramentas/ci-semear-cache.sh
 
       - name: Coletar, construir e montar o site
         timeout-minutes: 100   # deixa tempo para guardar o cache mesmo se a coleta estourar

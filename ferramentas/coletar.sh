@@ -96,8 +96,14 @@ if [ "${1:-}" != "--sem-rede" ]; then
     fi
   done < "$CACHE/cais/links.txt"
   echo "== Ubuntu (USNs recentes)"
+  # Se o site da Ubuntu falhar (504, lentidão), para na primeira falha e segue com o cache: não trava a coleta.
   for off in $(seq 0 20 300); do
-    baixar "$CACHE/usn/p$off.json" "https://ubuntu.com/security/notices.json?limit=20&offset=$off&order=newest" || true
+    if ! curl -fsSL --compressed -m 30 -o "$CACHE/usn/p$off.json.tmp" "https://ubuntu.com/security/notices.json?limit=20&offset=$off&order=newest" 2>/dev/null; then
+      rm -f "$CACHE/usn/p$off.json.tmp"
+      echo "AVISO: avisos USN da Ubuntu indisponíveis agora (página $off); seguindo com o cache."
+      break
+    fi
+    mv "$CACHE/usn/p$off.json.tmp" "$CACHE/usn/p$off.json"
   done
   echo "== NVD por produto (janela móvel de 90 dias; pausa de ${NVD_PAUSA} s entre consultas)"
   python3 -I "$PROJ/ferramentas/construir_dados.py" --cache "$CACHE" --projeto "$PROJ" --listar-consultas > "$CACHE/consultas-nvd.tsv"
@@ -111,20 +117,33 @@ if [ "${1:-}" != "--sem-rede" ]; then
   done < "$CACHE/consultas-nvd.tsv"
   echo "== Ubuntu e NVD por CVE"
   python3 -I "$PROJ/ferramentas/construir_dados.py" --cache "$CACHE" --projeto "$PROJ" --listar-cves > "$CACHE/cves.txt"
-  # Ubuntu: rebaixa arquivos com mais de 1 dia (8 downloads em paralelo).
-  while read -r c; do
+  # Ubuntu: rebaixa arquivos com mais de 1 dia (8 downloads em paralelo). Antes, testa o site: se não responder,
+  # segue com o cache em vez de esperar o tempo limite de centenas de pedidos.
+  mkdir -p "$CACHE/ubuntu"
+  pend_u="$(while read -r c; do
     [[ "$c" =~ ^CVE-[0-9]{4}-[0-9]{4,7}$ ]] || continue
     f="$CACHE/ubuntu/$c.json"
     if [ ! -s "$f" ] || [ -n "$(find "$f" -mmin +1440 2>/dev/null)" ]; then echo "$c"; fi
-  done < "$CACHE/cves.txt" | xargs -r -P8 -I{} sh -c 'curl -fsSL --compressed -m 60 -o "$0/ubuntu/{}.json.tmp" "https://ubuntu.com/security/cves/{}.json" 2>/dev/null && mv "$0/ubuntu/{}.json.tmp" "$0/ubuntu/{}.json"; rm -f "$0/ubuntu/{}.json.tmp"' "$CACHE"
-  # NVD: só CVEs ainda sem arquivo ou com mais de 3 dias; limite de 5 req/30 s sem chave.
+  done < "$CACHE/cves.txt")"
+  n_u=$(printf '%s' "$pend_u" | grep -c . || true)
+  if [ "$n_u" -gt 0 ]; then
+    # Teste com um CVE da própria lista (um CVE famoso viria do CDN mesmo com o site fora do ar).
+    teste="$(printf '%s\n' "$pend_u" | head -1)"
+    if curl -fsS --compressed -m 20 -o /dev/null "https://ubuntu.com/security/cves/$teste.json" 2>/dev/null; then
+      echo "Ubuntu por CVE: $n_u a baixar (8 em paralelo, no máximo 10 minutos)."
+      printf '%s\n' "$pend_u" | timeout 600 xargs -r -P8 -I{} sh -c 'curl -fsSL --compressed -m 30 -o "$0/ubuntu/{}.json.tmp" "https://ubuntu.com/security/cves/{}.json" 2>/dev/null && mv "$0/ubuntu/{}.json.tmp" "$0/ubuntu/{}.json"; rm -f "$0/ubuntu/{}.json.tmp"' "$CACHE" \
+        || echo "AVISO: a Ubuntu demorou demais; os CVEs que faltaram seguem com a cópia do cache."
+    else
+      echo "AVISO: o site da Ubuntu não respondeu; $n_u CVEs seguem com a cópia do cache (ou sem dados da Ubuntu)."
+    fi
+  fi
+  # NVD: só CVEs ainda sem arquivo ou com mais de 3 dias; limite de 5 req/30 s sem chave. Mostra o progresso.
+  mkdir -p "$CACHE/nvd"
+  pend_n=()
   while read -r c; do
     [[ "$c" =~ ^CVE-[0-9]{4}-[0-9]{4,7}$ ]] || continue
     f="$CACHE/nvd/$c.json"
-    if [ ! -s "$f" ] || [ -n "$(find "$f" -mmin +4320 2>/dev/null)" ]; then
-      baixar_nvd "$f" "https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=$c" || true
-      sleep "$NVD_PAUSA"
-    fi
+    if [ ! -s "$f" ] || [ -n "$(find "$f" -mmin +4320 2>/dev/null)" ]; then pend_n+=("$c"); fi
   done < <(RADAR_NVD_TODOS="${NVD_CHAVE:+1}" python3 -I - "$CACHE/cves.txt" <<'PY'
 import sys
 # Prioriza CVEs de itens explorados não cobertos pelo Ubuntu (produtos de fornecedores).
@@ -154,6 +173,14 @@ for c in open(sys.argv[1]).read().split():
         print(c)
 PY
 )
+  echo "NVD por CVE: ${#pend_n[@]} a baixar."
+  i=0
+  for c in "${pend_n[@]}"; do
+    baixar_nvd "$CACHE/nvd/$c.json" "https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=$c" || true
+    sleep "$NVD_PAUSA"
+    i=$((i + 1))
+    if [ $((i % 100)) = 0 ]; then echo "NVD por CVE: $i de ${#pend_n[@]}"; fi
+  done
 fi
 
 if [ "${1:-}" = "--so-baixar" ]; then echo "== Download concluído (sem construir)"; exit 0; fi
