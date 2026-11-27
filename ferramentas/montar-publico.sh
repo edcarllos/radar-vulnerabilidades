@@ -65,6 +65,7 @@ for arq in sys.argv[1:]:
 PY
 cp "$PROJ"/site/indices/*.txt "$SAIDA/indices/"
 cp "$PROJ"/scripts/radar-*.sh "$PROJ"/scripts/radar-*.yml "$PROJ/scripts/SHA256SUMS" "$SAIDA/scripts/"
+cp "$PROJ"/scripts/radar-*.ps1 "$SAIDA/scripts/"
 [ -s "$PROJ/scripts/SHA256SUMS.asc" ] && cp "$PROJ/scripts/SHA256SUMS.asc" "$SAIDA/scripts/"
 if [ -n "${RADAR_GPG_CHAVE:-}" ]; then
   gpg --batch --armor --export "$RADAR_GPG_CHAVE" > "$SAIDA/chave-radar.asc"
