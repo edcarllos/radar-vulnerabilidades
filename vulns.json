@@ -1,7 +1,7 @@
 {
- "gerado_em": "2026-11-27T17:25-03:00",
+ "gerado_em": "2026-11-27T19:13-03:00",
  "coleta": {
-  "id": "2026-11-27T17:25-03:00",
+  "id": "2026-11-27T19:13-03:00",
   "data": "2026-11-27",
   "kev_versao": "2026.11.27",
   "itens_total": 82,
@@ -32,30 +32,30 @@
     "codinome": "bookworm",
     "data": "2026-11-27",
     "pacotes_com_cve": 3361,
-    "confirmados": 4156,
+    "confirmados": 3821,
     "sem_distincao": 0,
     "adiados": 5092,
     "em_triagem": 117,
-    "cves_abertos": 9261,
+    "cves_abertos": 8925,
     "cves_kev_abertos": 26,
     "kernels": [],
     "arquivo": "indices/idx-deb12.txt",
-    "bytes": 3545290
+    "bytes": 3546931
    },
    "deb13": {
     "rel": "deb13",
     "codinome": "trixie",
     "data": "2026-11-27",
     "pacotes_com_cve": 3376,
-    "confirmados": 2328,
+    "confirmados": 2349,
     "sem_distincao": 0,
-    "adiados": 4542,
+    "adiados": 4538,
     "em_triagem": 122,
-    "cves_abertos": 6979,
+    "cves_abertos": 6996,
     "cves_kev_abertos": 9,
     "kernels": [],
     "arquivo": "indices/idx-deb13.txt",
-    "bytes": 3702179
+    "bytes": 3704022
    },
    "u2004": {
     "rel": "u2004",
@@ -480,17 +480,17 @@
    {
     "fonte": "CISA KEV",
     "estado": "em dia",
-    "copia": "2026-11-27T17:16-03:00"
+    "copia": "2026-11-27T19:04-03:00"
    },
    {
     "fonte": "Debian Security Tracker",
     "estado": "em dia",
-    "copia": "2026-11-27T17:16-03:00"
+    "copia": "2026-11-27T19:04-03:00"
    },
    {
     "fonte": "Avisos DSA/DLA",
     "estado": "em dia",
-    "copia": "2026-11-27T17:16-03:00"
+    "copia": "2026-11-27T19:04-03:00"
    },
    {
     "fonte": "Ubuntu OVAL",
@@ -505,7 +505,7 @@
    {
     "fonte": "Avisos USN",
     "estado": "em dia",
-    "copia": "2026-11-27T17:17-03:00"
+    "copia": "2026-11-27T19:04-03:00"
    },
    {
     "fonte": "FIRST EPSS",
@@ -515,12 +515,12 @@
    {
     "fonte": "CAIS/RNP",
     "estado": "em dia",
-    "copia": "2026-11-27T17:16-03:00"
+    "copia": "2026-11-27T19:04-03:00"
    },
    {
     "fonte": "CTIR Gov",
     "estado": "em dia",
-    "copia": "2026-11-27T17:17-03:00"
+    "copia": "2026-11-27T19:04-03:00"
    },
    {
     "fonte": "TrueNAS (avisos)",
@@ -530,12 +530,17 @@
    {
     "fonte": "Red Hat (dados de segurança)",
     "estado": "em dia",
-    "copia": "2026-11-27T17:24-03:00"
+    "copia": "2026-11-27T19:12-03:00"
+   },
+   {
+    "fonte": "Microsoft (Security Update Guide)",
+    "estado": "em dia",
+    "copia": "2026-11-27T19:12-03:00"
    },
    {
     "fonte": "NVD (produtos)",
     "estado": "em dia",
-    "copia": "2026-11-27T08:17-03:00"
+    "copia": "2026-11-27T19:08-03:00"
    }
   ],
   "fontes": [
@@ -543,6 +548,7 @@
    "Debian Security Tracker",
    "Ubuntu Security (CVE e USN)",
    "Red Hat Security Data",
+   "Microsoft Security Update Guide",
    "NVD",
    "FIRST EPSS",
    "CTIR Gov",
@@ -608,6 +614,34 @@
    "major": "10",
    "rotulo": "RHEL 10 e compatíveis (Rocky, Alma, CentOS Stream 10)",
    "nota": "Dados da Red Hat; Rocky e Alma publicam as mesmas correções horas ou dias depois; no CentOS Stream a comparação é aproximada"
+  },
+  "ws2016": {
+   "familia": "windows",
+   "codinome": "ws2016",
+   "versao": "2016",
+   "rotulo": "Windows Server 2016",
+   "nota": "Suporte estendido da Microsoft até 12/01/2027: planeje a migração"
+  },
+  "ws2019": {
+   "familia": "windows",
+   "codinome": "ws2019",
+   "versao": "2019",
+   "rotulo": "Windows Server 2019",
+   "nota": "Suporte estendido da Microsoft até 09/01/2029"
+  },
+  "ws2022": {
+   "familia": "windows",
+   "codinome": "ws2022",
+   "versao": "2022",
+   "rotulo": "Windows Server 2022",
+   "nota": "Suporte estendido da Microsoft até 14/10/2031"
+  },
+  "ws2025": {
+   "familia": "windows",
+   "codinome": "ws2025",
+   "versao": "2025",
+   "rotulo": "Windows Server 2025",
+   "nota": "Suporte padrão da Microsoft"
   }
  },
  "tecnologias": {
@@ -16230,12 +16264,13 @@
      {
       "pacote": "postfixadmin",
       "cves_avaliados": 1,
-      "abertos": [
-       "CVE-2026-127178"
-      ],
+      "abertos": [],
       "sem_impacto": [],
       "em_triagem": 0,
-      "estado": "sem_correcao"
+      "versao": "3.3.15+ds-2+deb13u1",
+      "ubuntu_pro": false,
+      "estado": "corrigido",
+      "aviso": "DSA-6666-1"
      },
      {
       "pacote": "cyrus-sasl2",
@@ -16701,7 +16736,7 @@
      "u": "https://security-tracker.debian.org/tracker/DLA-4873-1"
     }
    ],
-   "revisao": "9a200b10c391",
+   "revisao": "4ddf06bf6a6b",
    "coletado_em": "2026-11-25",
    "atualizado_em": "2026-11-25"
   },
