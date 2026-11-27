@@ -524,7 +524,7 @@ sha256sum -c --ignore-missing SHA256SUMS</pre>
   </div>
 
   <footer>
-    <p id="rodape-fontes">Fontes oficiais: <a href="https://www.cisa.gov/known-exploited-vulnerabilities-catalog">CISA KEV</a> · <a href="https://security-tracker.debian.org/">Debian Security Tracker</a> · <a href="https://ubuntu.com/security/notices">Ubuntu Security Notices</a> · <a href="https://nvd.nist.gov/">NVD</a> · avisos dos fornecedores.</p>
+    <p id="rodape-fontes">Fontes oficiais: <a href="https://www.cisa.gov/known-exploited-vulnerabilities-catalog">CISA KEV</a> · <a href="https://security-tracker.debian.org/">Debian Security Tracker</a> · <a href="https://ubuntu.com/security/notices">Ubuntu Security Notices</a> · <a href="https://nvd.nist.gov/">NVD</a> · <a href="https://access.redhat.com/security/data">Red Hat Security Data</a> · <a href="https://msrc.microsoft.com/update-guide">Microsoft Security Update Guide</a> · avisos dos fornecedores.</p>
     <p>Os estados por distro vêm das fontes oficiais na data da coleta. Leia o aviso original antes de mudar produção.</p>
     <p data-so-publico hidden>Projeto comunitário, sem garantia. <a href="#sobre">Sobre, privacidade e como contribuir</a> · <a data-repo-href="" target="_blank" rel="noopener">GitHub</a> · <span class="aviso-nvd">This product uses the NVD API but is not endorsed or certified by the NVD.</span></p>
   </footer>
@@ -1440,7 +1440,7 @@ sha256sum -c --ignore-missing SHA256SUMS</pre>
         el("button", { type: "button", class: "btn", text: "Ver estas falhas na aba Exploradas", onclick: function () { XF.rel = rel; XF.sem = false; XF.cats = Object.keys(X.categorias); location.hash = "#exploradas"; } })
       ])];
     if (nesta.length) out.push(el("ul", { style: "margin:0;padding-left:20px" }, nesta.slice(0, 8).map(function (e) {
-      return el("li", {}, [link(e.cve, "https://msrc.microsoft.com/update-guide/vulnerability/" + e.cve), " · " + e.p + ": " + e.n + " (" + e.so[rel].p + ", build " + e.so[rel].v + ")"]);
+      return el("li", {}, [link(e.cve, "https://msrc.microsoft.com/update-guide/vulnerability/" + e.cve), " · " + e.n + " (" + e.so[rel].p + ", build " + e.so[rel].v + ")"]);
     })));
     return out;
   }

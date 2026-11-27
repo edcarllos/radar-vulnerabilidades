@@ -32,13 +32,13 @@ RELEASES = {
     "el9": {"familia": "rhel", "codinome": "el9", "major": "9", "rotulo": "RHEL 9 e compatíveis (Rocky, Alma, CentOS Stream 9)",
             "nota": "Dados da Red Hat; Rocky e Alma publicam as mesmas correções horas ou dias depois; no CentOS Stream a comparação é aproximada"},
     # F25: Windows Server (dados do Microsoft Security Update Guide; só na aba Exploradas, em Por sistema e nos scripts .ps1).
+    "el10": {"familia": "rhel", "codinome": "el10", "major": "10", "rotulo": "RHEL 10 e compatíveis (Rocky, Alma, CentOS Stream 10)",
+             "nota": "Dados da Red Hat; Rocky e Alma publicam as mesmas correções horas ou dias depois; no CentOS Stream a comparação é aproximada"},
     "ws2016": {"familia": "windows", "codinome": "ws2016", "versao": "2016", "rotulo": "Windows Server 2016",
                "nota": "Suporte estendido da Microsoft até 12/01/2027: planeje a migração"},
     "ws2019": {"familia": "windows", "codinome": "ws2019", "versao": "2019", "rotulo": "Windows Server 2019", "nota": "Suporte estendido da Microsoft até 09/01/2029"},
     "ws2022": {"familia": "windows", "codinome": "ws2022", "versao": "2022", "rotulo": "Windows Server 2022", "nota": "Suporte estendido da Microsoft até 14/10/2031"},
     "ws2025": {"familia": "windows", "codinome": "ws2025", "versao": "2025", "rotulo": "Windows Server 2025", "nota": "Suporte padrão da Microsoft"},
-    "el10": {"familia": "rhel", "codinome": "el10", "major": "10", "rotulo": "RHEL 10 e compatíveis (Rocky, Alma, CentOS Stream 10)",
-             "nota": "Dados da Red Hat; Rocky e Alma publicam as mesmas correções horas ou dias depois; no CentOS Stream a comparação é aproximada"},
 }
 POR_AVISO = {}  # (aviso, codinome, pacote) -> versão publicada pelo aviso
 ESTADOS = {"corrigido", "parcial", "pro", "sem_correcao", "em_triagem", "nao_afetado", "nao_empacotado", "nao_verificado"}
