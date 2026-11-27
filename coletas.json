@@ -3194,5 +3194,555 @@
    "CAIS/RNP",
    "avisos dos fornecedores"
   ]
+ },
+ {
+  "id": "2026-11-27T17:25-03:00",
+  "data": "2026-11-27",
+  "kev_versao": "2026.11.27",
+  "itens_total": 82,
+  "novos": [],
+  "alterados": [],
+  "janela_nvd_dias": 90,
+  "produtos_sem_cve": [
+   "nvd-dspace",
+   "nvd-koha",
+   "nvd-nextcloud",
+   "nvd-jupyterhub",
+   "nvd-shibboleth",
+   "nvd-apereo-cas",
+   "nvd-samba",
+   "nvd-openldap",
+   "nvd-freeradius",
+   "nvd-zabbix",
+   "nvd-hikvision",
+   "nvd-veeam",
+   "nvd-zimbra",
+   "nvd-sigaa-sei",
+   "nvd-sei"
+  ],
+  "cves_novos": [],
+  "historico": {
+   "deb12": {
+    "rel": "deb12",
+    "codinome": "bookworm",
+    "data": "2026-11-27",
+    "pacotes_com_cve": 3361,
+    "confirmados": 4156,
+    "sem_distincao": 0,
+    "adiados": 5092,
+    "em_triagem": 117,
+    "cves_abertos": 9261,
+    "cves_kev_abertos": 26,
+    "kernels": [],
+    "arquivo": "indices/idx-deb12.txt",
+    "bytes": 3545290
+   },
+   "deb13": {
+    "rel": "deb13",
+    "codinome": "trixie",
+    "data": "2026-11-27",
+    "pacotes_com_cve": 3376,
+    "confirmados": 2328,
+    "sem_distincao": 0,
+    "adiados": 4542,
+    "em_triagem": 122,
+    "cves_abertos": 6979,
+    "cves_kev_abertos": 9,
+    "kernels": [],
+    "arquivo": "indices/idx-deb13.txt",
+    "bytes": 3702179
+   },
+   "u2004": {
+    "rel": "u2004",
+    "codinome": "focal",
+    "data": "2026-11-27",
+    "pacotes_com_cve": 953,
+    "confirmados": 0,
+    "sem_distincao": 0,
+    "adiados": 0,
+    "em_triagem": 6838,
+    "cves_abertos": 6838,
+    "cves_kev_abertos": 3,
+    "kernels": [
+     "linux",
+     "linux-aws",
+     "linux-aws-5.11",
+     "linux-aws-5.13",
+     "linux-aws-5.15",
+     "linux-aws-5.8",
+     "linux-azure",
+     "linux-azure-5.11",
+     "linux-azure-5.13",
+     "linux-azure-5.15",
+     "linux-azure-5.8",
+     "linux-azure-fde",
+     "linux-azure-fde-5.15",
+     "linux-bluefield",
+     "linux-gcp",
+     "linux-gcp-5.11",
+     "linux-gcp-5.13",
+     "linux-gcp-5.15",
+     "linux-gcp-5.8",
+     "linux-gke",
+     "linux-gke-5.15",
+     "linux-gkeop",
+     "linux-gkeop-5.15",
+     "linux-hwe-5.11",
+     "linux-hwe-5.13",
+     "linux-hwe-5.15",
+     "linux-hwe-5.8",
+     "linux-ibm",
+     "linux-ibm-5.15",
+     "linux-intel-5.13",
+     "linux-intel-iotg-5.15",
+     "linux-iot",
+     "linux-kvm",
+     "linux-lowlatency-hwe-5.15",
+     "linux-nvidia-tegra-5.15",
+     "linux-oem-5.10",
+     "linux-oem-5.13",
+     "linux-oem-5.14",
+     "linux-oem-5.6",
+     "linux-oracle",
+     "linux-oracle-5.11",
+     "linux-oracle-5.13",
+     "linux-oracle-5.15",
+     "linux-oracle-5.8",
+     "linux-raspi",
+     "linux-riscv",
+     "linux-riscv-5.11",
+     "linux-riscv-5.15",
+     "linux-riscv-5.8",
+     "linux-xilinx-zynqmp"
+    ],
+    "arquivo": "indices/idx-u2004.txt",
+    "bytes": 3643909
+   },
+   "u2204": {
+    "rel": "u2204",
+    "codinome": "jammy",
+    "data": "2026-11-27",
+    "pacotes_com_cve": 2825,
+    "confirmados": 2350,
+    "sem_distincao": 0,
+    "adiados": 2224,
+    "em_triagem": 13358,
+    "cves_abertos": 16552,
+    "cves_kev_abertos": 51,
+    "kernels": [
+     "linux",
+     "linux-allwinner-5.19",
+     "linux-aws",
+     "linux-aws-5.19",
+     "linux-aws-6.2",
+     "linux-aws-6.5",
+     "linux-aws-6.8",
+     "linux-azure",
+     "linux-azure-5.19",
+     "linux-azure-6.2",
+     "linux-azure-6.5",
+     "linux-azure-6.8",
+     "linux-azure-fde",
+     "linux-azure-fde-6.2",
+     "linux-azure-fde-6.8",
+     "linux-gcp",
+     "linux-gcp-5.19",
+     "linux-gcp-6.2",
+     "linux-gcp-6.5",
+     "linux-gcp-6.8",
+     "linux-gke",
+     "linux-gkeop",
+     "linux-hwe-5.19",
+     "linux-hwe-6.2",
+     "linux-hwe-6.5",
+     "linux-hwe-6.8",
+     "linux-ibm",
+     "linux-ibm-6.8",
+     "linux-intel-iot-realtime",
+     "linux-intel-iotg",
+     "linux-kvm",
+     "linux-lowlatency",
+     "linux-lowlatency-hwe-5.19",
+     "linux-lowlatency-hwe-6.2",
+     "linux-lowlatency-hwe-6.5",
+     "linux-lowlatency-hwe-6.8",
+     "linux-nvidia",
+     "linux-nvidia-6.2",
+     "linux-nvidia-6.5",
+     "linux-nvidia-6.8",
+     "linux-nvidia-tegra",
+     "linux-nvidia-tegra-igx",
+     "linux-oem-5.17",
+     "linux-oem-6.0",
+     "linux-oem-6.1",
+     "linux-oem-6.5",
+     "linux-oracle",
+     "linux-oracle-6.5",
+     "linux-oracle-6.8",
+     "linux-raspi",
+     "linux-riscv",
+     "linux-riscv-5.19",
+     "linux-riscv-6.5",
+     "linux-riscv-6.8",
+     "linux-starfive-5.19",
+     "linux-starfive-6.2",
+     "linux-starfive-6.5",
+     "linux-xilinx-zynqmp"
+    ],
+    "arquivo": "indices/idx-u2204.txt",
+    "bytes": 6872131
+   },
+   "u2404": {
+    "rel": "u2404",
+    "codinome": "noble",
+    "data": "2026-11-27",
+    "pacotes_com_cve": 2696,
+    "confirmados": 1047,
+    "sem_distincao": 0,
+    "adiados": 1886,
+    "em_triagem": 13048,
+    "cves_abertos": 15674,
+    "cves_kev_abertos": 49,
+    "kernels": [
+     "linux",
+     "linux-aws",
+     "linux-aws-6.14",
+     "linux-aws-6.17",
+     "linux-aws-7.0",
+     "linux-azure",
+     "linux-azure-6.11",
+     "linux-azure-6.14",
+     "linux-azure-6.17",
+     "linux-azure-7.0",
+     "linux-azure-fde",
+     "linux-azure-fde-6.17",
+     "linux-azure-fde-7.0",
+     "linux-azure-nvidia",
+     "linux-azure-nvidia-6.14",
+     "linux-gcp",
+     "linux-gcp-6.11",
+     "linux-gcp-6.14",
+     "linux-gcp-6.17",
+     "linux-gcp-7.0",
+     "linux-gke",
+     "linux-gkeop",
+     "linux-hwe-6.11",
+     "linux-hwe-6.14",
+     "linux-hwe-6.17",
+     "linux-hwe-7.0",
+     "linux-ibm",
+     "linux-intel",
+     "linux-lowlatency",
+     "linux-lowlatency-hwe-6.11",
+     "linux-nvidia",
+     "linux-nvidia-6.11",
+     "linux-nvidia-6.17",
+     "linux-nvidia-7.0",
+     "linux-nvidia-lowlatency",
+     "linux-nvidia-tegra",
+     "linux-oem-6.11",
+     "linux-oem-6.14",
+     "linux-oem-6.17",
+     "linux-oem-6.8",
+     "linux-oracle",
+     "linux-oracle-6.14",
+     "linux-oracle-6.17",
+     "linux-oracle-7.0",
+     "linux-raspi",
+     "linux-raspi-realtime",
+     "linux-riscv",
+     "linux-riscv-6.14",
+     "linux-riscv-6.17",
+     "linux-riscv-7.0",
+     "linux-vmware",
+     "linux-xilinx"
+    ],
+    "arquivo": "indices/idx-u2404.txt",
+    "bytes": 6301978
+   },
+   "u2604": {
+    "rel": "u2604",
+    "codinome": "resolute",
+    "data": "2026-11-27",
+    "pacotes_com_cve": 2514,
+    "confirmados": 874,
+    "sem_distincao": 0,
+    "adiados": 612,
+    "em_triagem": 11249,
+    "cves_abertos": 12449,
+    "cves_kev_abertos": 7,
+    "kernels": [
+     "linux",
+     "linux-aws",
+     "linux-azure",
+     "linux-azure-fde",
+     "linux-gcp",
+     "linux-gke",
+     "linux-ibm",
+     "linux-nvidia",
+     "linux-nvidia-bos",
+     "linux-oem-7.0",
+     "linux-oracle",
+     "linux-raspi",
+     "linux-realtime",
+     "linux-riscv",
+     "linux-vmware"
+    ],
+    "arquivo": "indices/idx-u2604.txt",
+    "bytes": 3099828
+   }
+  },
+  "candidatos": [
+   {
+    "fonte": "CISA KEV",
+    "data": "2026-11-27",
+    "cves": [
+     "CVE-2026-120705"
+    ],
+    "titulo": "OSGeo GeoServer: OSGeo GeoServer XML Injection Vulnerability",
+    "url": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog"
+   },
+   {
+    "fonte": "CISA KEV",
+    "data": "2026-11-27",
+    "cves": [
+     "CVE-2026-129243"
+    ],
+    "titulo": "OSGeo GeoServer: OSGeo GeoServer Incorrect Authorization Vulnerability",
+    "url": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog"
+   },
+   {
+    "fonte": "CAIS/RNP",
+    "data": "2026-11-26",
+    "cves": [],
+    "titulo": "CAIS-Alerta 26_11_2026_ Vulnerabilidade crítica CVE-2026-125350 no Google Chrome.txt",
+    "url": "https://plataforma.rnp.br/arquivos/documents/CAIS-Alerta%2026_11_2026_%20Vulnerabilidade%20cr%C3%ADtica%20CVE-2026-125350%20no%20Google%20Chrome.txt?VersionId=TWnrqAzDFYdj5ubPP_6fvg0CffNd1E92"
+   },
+   {
+    "fonte": "CISA KEV",
+    "data": "2026-11-25",
+    "cves": [
+     "CVE-2025-41450"
+    ],
+    "titulo": "Danfoss AK-SM 800A Series: Danfoss AK-SM 800A Series Improper Authentication Vulnerability",
+    "url": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog"
+   },
+   {
+    "fonte": "CISA KEV",
+    "data": "2026-11-25",
+    "cves": [
+     "CVE-2023-25914"
+    ],
+    "titulo": "Danfoss AK-SM 800A Series: Danfoss AK-SM 800A Series Path Traversal Vulnerability",
+    "url": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog"
+   },
+   {
+    "fonte": "CISA KEV",
+    "data": "2026-11-25",
+    "cves": [
+     "CVE-2023-25915"
+    ],
+    "titulo": "Danfoss AK-SM 800A Series: Danfoss AK-SM 800A Series Improper Input Validation Vulnerability",
+    "url": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog"
+   },
+   {
+    "fonte": "CISA KEV",
+    "data": "2026-11-24",
+    "cves": [
+     "CVE-2026-132224"
+    ],
+    "titulo": "Optimizely Web Experimentation: Optimizely Web Experimentation External Control of Critical State Data Vulnerability",
+    "url": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog"
+   },
+   {
+    "fonte": "CISA KEV",
+    "data": "2026-11-24",
+    "cves": [
+     "CVE-2026-131914"
+    ],
+    "titulo": "Idunno AntiCsrf: Idunno AntiCsrf Deserialization of Untrusted Data Vulnerability",
+    "url": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog"
+   },
+   {
+    "fonte": "CISA KEV",
+    "data": "2026-11-23",
+    "cves": [
+     "CVE-2026-134624"
+    ],
+    "titulo": "N-able MailAssure: N-able MailAssure (SpamExperts) Server-Side Request Forgery (SSRF) Vulnerability",
+    "url": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog"
+   },
+   {
+    "fonte": "CISA KEV",
+    "data": "2026-11-13",
+    "cves": [
+     "CVE-2026-114713"
+    ],
+    "titulo": "UnrealIRCd UnrealIRCd: UnrealIRCd Improper Neutralization of Delimiters Vulnerability",
+    "url": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog"
+   },
+   {
+    "fonte": "CAIS/RNP",
+    "data": "2026-10-29",
+    "cves": [
+     "CVE-2026-76504"
+    ],
+    "titulo": "Vulnerabilidade no Cisco Catalyst SD-WAN Manager",
+    "url": "https://plataforma.rnp.br/arquivos/documents/CAIS-Alerta%2029-10-2026%20-%20Vulnerabilidade%20no%20Cisco%20Catalyst%20SD-WAN%20Manager.txt?VersionId=75Hft91w4KGORpHJ0Zm01QfrtExEs42d"
+   },
+   {
+    "fonte": "CAIS/RNP",
+    "data": "2026-10-29",
+    "cves": [
+     "CVE-2026-96951"
+    ],
+    "titulo": "Vulnerabilidade CVE-2026-96951 no Windows Shell permite desvio de mecanismo de proteção",
+    "url": "https://plataforma.rnp.br/arquivos/documents/CAIS-Alerta%2029-10-2026-%20Vulnerabilidade%20CVE-2026-96951%20no%20Windows%20Shell%20permite%20desvio%20de%20mecanismo%20de%20protecao.txt?VersionId=LbMX3oB7a4LfCbyTKtDWzK.JlCf9jiTF"
+   },
+   {
+    "fonte": "CTIR Gov",
+    "data": "2026-10-26",
+    "cves": [
+     "CVE-2026-96951"
+    ],
+    "titulo": "ALERTA 95/2026: Vulnerabilidade crítica no Windows",
+    "url": "https://www.gov.br/gsi/pt-br/assuntos/ctir/alertas/2026/alerta-95-2026"
+   },
+   {
+    "fonte": "CTIR Gov",
+    "data": "2026-10-26",
+    "cves": [
+     "CVE-2026-76504"
+    ],
+    "titulo": "ALERTA 99/2026: Vulnerabilidade crítica no Catalyst SD-WAN Manager - Cisco",
+    "url": "https://www.gov.br/gsi/pt-br/assuntos/ctir/alertas/2026/alerta-99-2026"
+   }
+  ],
+  "alertas_nacionais": 59,
+  "alertas_ctir": 110,
+  "nvd_descartados": {
+   "nvd-nextcloud": [
+    {
+     "cve": "CVE-2026-110447",
+     "produtos": [
+      "collabora:collabora_online_-_built-in_code_server"
+     ]
+    }
+   ]
+  },
+  "marco": "2026-11-01",
+  "fora_do_marco": [
+   "kernel-tcp-uaf-98432",
+   "openssl-2026-10",
+   "curl-2026-10",
+   "redis-valkey-2026-10",
+   "nodejs-2026-10",
+   "nagios4-2026-10"
+  ],
+  "cves_fora_do_marco": {
+   "nvd-moodle": 20,
+   "nvd-glpi": 14,
+   "nvd-ojs": 1,
+   "nvd-dspace": 4,
+   "nvd-koha": 3,
+   "nvd-nextcloud": 3,
+   "nvd-jupyterhub": 1,
+   "nvd-keycloak": 7,
+   "nvd-apereo-cas": 1,
+   "nvd-samba": 1,
+   "nvd-zabbix": 4,
+   "nvd-grafana": 19,
+   "nvd-jenkins": 71,
+   "nvd-proxmox": 3,
+   "nvd-pfsense-opnsense": 26,
+   "nvd-opnsense": 16,
+   "nvd-mikrotik": 13,
+   "nvd-unifi-aruba": 12,
+   "nvd-cftv": 1,
+   "nvd-hikvision": 1,
+   "nvd-fortinet": 24,
+   "nvd-veeam": 14,
+   "nvd-zimbra": 27,
+   "nvd-exchange-sharepoint": 32,
+   "nvd-netscaler": 7
+  },
+  "fontes_estado": [
+   {
+    "fonte": "Ubuntu (páginas de CVE)",
+    "estado": "falhou nesta coleta",
+    "copia": null
+   },
+   {
+    "fonte": "CISA KEV",
+    "estado": "em dia",
+    "copia": "2026-11-27T17:16-03:00"
+   },
+   {
+    "fonte": "Debian Security Tracker",
+    "estado": "em dia",
+    "copia": "2026-11-27T17:16-03:00"
+   },
+   {
+    "fonte": "Avisos DSA/DLA",
+    "estado": "em dia",
+    "copia": "2026-11-27T17:16-03:00"
+   },
+   {
+    "fonte": "Ubuntu OVAL",
+    "estado": "em dia",
+    "copia": "2026-11-27T12:30-03:00"
+   },
+   {
+    "fonte": "Ubuntu CVE Tracker",
+    "estado": "em dia",
+    "copia": "2026-11-27T12:35-03:00"
+   },
+   {
+    "fonte": "Avisos USN",
+    "estado": "em dia",
+    "copia": "2026-11-27T17:17-03:00"
+   },
+   {
+    "fonte": "FIRST EPSS",
+    "estado": "em dia",
+    "copia": "2026-11-27T12:31-03:00"
+   },
+   {
+    "fonte": "CAIS/RNP",
+    "estado": "em dia",
+    "copia": "2026-11-27T17:16-03:00"
+   },
+   {
+    "fonte": "CTIR Gov",
+    "estado": "em dia",
+    "copia": "2026-11-27T17:17-03:00"
+   },
+   {
+    "fonte": "TrueNAS (avisos)",
+    "estado": "em dia",
+    "copia": "2026-11-27T16:09-03:00"
+   },
+   {
+    "fonte": "Red Hat (dados de segurança)",
+    "estado": "em dia",
+    "copia": "2026-11-27T17:24-03:00"
+   },
+   {
+    "fonte": "NVD (produtos)",
+    "estado": "em dia",
+    "copia": "2026-11-27T08:17-03:00"
+   }
+  ],
+  "fontes": [
+   "CISA KEV",
+   "Debian Security Tracker",
+   "Ubuntu Security (CVE e USN)",
+   "Red Hat Security Data",
+   "NVD",
+   "FIRST EPSS",
+   "CTIR Gov",
+   "CAIS/RNP",
+   "avisos dos fornecedores"
+  ]
  }
 ]
