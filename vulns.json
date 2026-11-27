@@ -1,28 +1,12 @@
 {
- "gerado_em": "2026-11-27T14:48-03:00",
+ "gerado_em": "2026-11-27T16:16-03:00",
  "coleta": {
-  "id": "2026-11-27T14:48-03:00",
+  "id": "2026-11-27T16:16-03:00",
   "data": "2026-11-27",
-  "kev_versao": "2026.11.25",
+  "kev_versao": "2026.11.27",
   "itens_total": 82,
   "novos": [],
-  "alterados": [
-   "nvd-moodle",
-   "nvd-glpi",
-   "nvd-ojs",
-   "nvd-keycloak",
-   "nvd-grafana",
-   "nvd-jenkins",
-   "nvd-proxmox",
-   "nvd-pfsense-opnsense",
-   "nvd-opnsense",
-   "nvd-mikrotik",
-   "nvd-unifi-aruba",
-   "nvd-cftv",
-   "nvd-fortinet",
-   "nvd-exchange-sharepoint",
-   "nvd-netscaler"
-  ],
+  "alterados": [],
   "janela_nvd_dias": 90,
   "produtos_sem_cve": [
    "nvd-dspace",
@@ -48,30 +32,96 @@
     "codinome": "bookworm",
     "data": "2026-11-27",
     "pacotes_com_cve": 3361,
-    "confirmados": 4151,
+    "confirmados": 4154,
     "sem_distincao": 0,
     "adiados": 5092,
     "em_triagem": 118,
-    "cves_abertos": 9257,
+    "cves_abertos": 9260,
     "cves_kev_abertos": 26,
     "kernels": [],
     "arquivo": "indices/idx-deb12.txt",
-    "bytes": 3534639
+    "bytes": 3545222
    },
    "deb13": {
     "rel": "deb13",
     "codinome": "trixie",
     "data": "2026-11-27",
     "pacotes_com_cve": 3376,
-    "confirmados": 2323,
+    "confirmados": 2326,
     "sem_distincao": 0,
     "adiados": 4542,
     "em_triagem": 123,
-    "cves_abertos": 6975,
+    "cves_abertos": 6978,
     "cves_kev_abertos": 9,
     "kernels": [],
     "arquivo": "indices/idx-deb13.txt",
-    "bytes": 3692071
+    "bytes": 3702111
+   },
+   "u2004": {
+    "rel": "u2004",
+    "codinome": "focal",
+    "data": "2026-11-27",
+    "pacotes_com_cve": 953,
+    "confirmados": 0,
+    "sem_distincao": 0,
+    "adiados": 0,
+    "em_triagem": 6838,
+    "cves_abertos": 6838,
+    "cves_kev_abertos": 3,
+    "kernels": [
+     "linux",
+     "linux-aws",
+     "linux-aws-5.11",
+     "linux-aws-5.13",
+     "linux-aws-5.15",
+     "linux-aws-5.8",
+     "linux-azure",
+     "linux-azure-5.11",
+     "linux-azure-5.13",
+     "linux-azure-5.15",
+     "linux-azure-5.8",
+     "linux-azure-fde",
+     "linux-azure-fde-5.15",
+     "linux-bluefield",
+     "linux-gcp",
+     "linux-gcp-5.11",
+     "linux-gcp-5.13",
+     "linux-gcp-5.15",
+     "linux-gcp-5.8",
+     "linux-gke",
+     "linux-gke-5.15",
+     "linux-gkeop",
+     "linux-gkeop-5.15",
+     "linux-hwe-5.11",
+     "linux-hwe-5.13",
+     "linux-hwe-5.15",
+     "linux-hwe-5.8",
+     "linux-ibm",
+     "linux-ibm-5.15",
+     "linux-intel-5.13",
+     "linux-intel-iotg-5.15",
+     "linux-iot",
+     "linux-kvm",
+     "linux-lowlatency-hwe-5.15",
+     "linux-nvidia-tegra-5.15",
+     "linux-oem-5.10",
+     "linux-oem-5.13",
+     "linux-oem-5.14",
+     "linux-oem-5.6",
+     "linux-oracle",
+     "linux-oracle-5.11",
+     "linux-oracle-5.13",
+     "linux-oracle-5.15",
+     "linux-oracle-5.8",
+     "linux-raspi",
+     "linux-riscv",
+     "linux-riscv-5.11",
+     "linux-riscv-5.15",
+     "linux-riscv-5.8",
+     "linux-xilinx-zynqmp"
+    ],
+    "arquivo": "indices/idx-u2004.txt",
+    "bytes": 3643909
    },
    "u2204": {
     "rel": "u2204",
@@ -249,6 +299,24 @@
   },
   "candidatos": [
    {
+    "fonte": "CISA KEV",
+    "data": "2026-11-27",
+    "cves": [
+     "CVE-2026-120705"
+    ],
+    "titulo": "OSGeo GeoServer: OSGeo GeoServer XML Injection Vulnerability",
+    "url": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog"
+   },
+   {
+    "fonte": "CISA KEV",
+    "data": "2026-11-27",
+    "cves": [
+     "CVE-2026-129243"
+    ],
+    "titulo": "OSGeo GeoServer: OSGeo GeoServer Incorrect Authorization Vulnerability",
+    "url": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog"
+   },
+   {
     "fonte": "CAIS/RNP",
     "data": "2026-11-26",
     "cves": [],
@@ -405,19 +473,24 @@
   },
   "fontes_estado": [
    {
+    "fonte": "Ubuntu (páginas de CVE)",
+    "estado": "falhou nesta coleta",
+    "copia": null
+   },
+   {
     "fonte": "CISA KEV",
     "estado": "em dia",
-    "copia": "2026-11-27T14:36-03:00"
+    "copia": "2026-11-27T16:09-03:00"
    },
    {
     "fonte": "Debian Security Tracker",
     "estado": "em dia",
-    "copia": "2026-11-27T14:36-03:00"
+    "copia": "2026-11-27T16:09-03:00"
    },
    {
     "fonte": "Avisos DSA/DLA",
     "estado": "em dia",
-    "copia": "2026-11-27T14:36-03:00"
+    "copia": "2026-11-27T16:09-03:00"
    },
    {
     "fonte": "Ubuntu OVAL",
@@ -432,7 +505,7 @@
    {
     "fonte": "Avisos USN",
     "estado": "em dia",
-    "copia": "2026-11-27T14:40-03:00"
+    "copia": "2026-11-27T16:09-03:00"
    },
    {
     "fonte": "FIRST EPSS",
@@ -442,12 +515,17 @@
    {
     "fonte": "CAIS/RNP",
     "estado": "em dia",
-    "copia": "2026-11-27T14:36-03:00"
+    "copia": "2026-11-27T16:09-03:00"
    },
    {
     "fonte": "CTIR Gov",
     "estado": "em dia",
-    "copia": "2026-11-27T14:36-03:00"
+    "copia": "2026-11-27T16:09-03:00"
+   },
+   {
+    "fonte": "TrueNAS (avisos)",
+    "estado": "em dia",
+    "copia": "2026-11-27T16:09-03:00"
    },
    {
     "fonte": "NVD (produtos)",
@@ -471,31 +549,38 @@
    "familia": "debian",
    "codinome": "bookworm",
    "rotulo": "Debian 12 (bookworm)",
-   "nota": "Suporte LTS: correções chegam como DLA"
+   "nota": "Em LTS desde 11/06/2026 (até 30/06/2028): as correções chegam como avisos DLA"
   },
   "deb13": {
    "familia": "debian",
    "codinome": "trixie",
    "rotulo": "Debian 13 (trixie)",
-   "nota": ""
+   "nota": "Suporte regular do Debian"
+  },
+  "u2004": {
+   "familia": "ubuntu",
+   "codinome": "focal",
+   "rotulo": "Ubuntu 20.04 LTS (focal)",
+   "nota": "Suporte padrão encerrado em 31/05/2025: correções novas só com Ubuntu Pro (ESM); planeje a migração",
+   "fim_padrao": "2025-05-31"
   },
   "u2204": {
    "familia": "ubuntu",
    "codinome": "jammy",
    "rotulo": "Ubuntu 22.04 LTS (jammy)",
-   "nota": ""
+   "nota": "Suporte padrão da Canonical"
   },
   "u2404": {
    "familia": "ubuntu",
    "codinome": "noble",
    "rotulo": "Ubuntu 24.04 LTS (noble)",
-   "nota": ""
+   "nota": "Suporte padrão da Canonical"
   },
   "u2604": {
    "familia": "ubuntu",
    "codinome": "resolute",
    "rotulo": "Ubuntu 26.04 LTS (resolute)",
-   "nota": ""
+   "nota": "Suporte padrão da Canonical"
   }
  },
  "tecnologias": {
@@ -1246,6 +1331,24 @@
   }
  ],
  "candidatos": [
+  {
+   "fonte": "CISA KEV",
+   "data": "2026-11-27",
+   "cves": [
+    "CVE-2026-120705"
+   ],
+   "titulo": "OSGeo GeoServer: OSGeo GeoServer XML Injection Vulnerability",
+   "url": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog"
+  },
+  {
+   "fonte": "CISA KEV",
+   "data": "2026-11-27",
+   "cves": [
+    "CVE-2026-129243"
+   ],
+   "titulo": "OSGeo GeoServer: OSGeo GeoServer Incorrect Authorization Vulnerability",
+   "url": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog"
+  },
   {
    "fonte": "CAIS/RNP",
    "data": "2026-11-26",
@@ -2359,6 +2462,152 @@
    "url": "https://www.gov.br/gsi/pt-br/assuntos/ctir/alertas/2026/alerta-32-2026"
   }
  ],
+ "avisos_truenas": [
+  {
+   "titulo": "Linux Kernel IPv4 TCP Use-After-Free (CVE-2026-98432)",
+   "data": "2026-11-03",
+   "url": "https://www.truenas.com/docs/scale/25.04/scale/impact-statements/cve-2026-98432-tcp-uaf/",
+   "cves": [
+    "CVE-2026-98432"
+   ]
+  },
+  {
+   "titulo": "HA Heartbeat-Origin Authentication Bypass (CVE-2026-123033)",
+   "data": "2026-10-26",
+   "url": "https://www.truenas.com/docs/scale/25.04/scale/impact-statements/ha-node-auth-bypass/",
+   "cves": [
+    "CVE-2026-123033"
+   ]
+  },
+  {
+   "titulo": "eMudhra Intermediate CA Compromise (October 2026)",
+   "data": "2026-10-21",
+   "url": "https://www.truenas.com/docs/scale/25.04/scale/impact-statements/emudhra-ca-2026/",
+   "cves": []
+  },
+  {
+   "titulo": "PHP2Shell (CVE-2026-109618, CVE-2026-109619)",
+   "data": "2026-10-21",
+   "url": "https://www.truenas.com/docs/scale/25.04/scale/impact-statements/php2shell-2026/",
+   "cves": [
+    "CVE-2026-109618",
+    "CVE-2026-109619"
+   ]
+  },
+  {
+   "titulo": "Lodash Vulnerabilities in TrueNAS Web UI (CVE-2026-4800, CVE-2025-13465, CVE-2026-2950)",
+   "data": "2026-06-29",
+   "url": "https://www.truenas.com/docs/scale/25.04/scale/impact-statements/lodash-2026/",
+   "cves": [
+    "CVE-2025-13465",
+    "CVE-2026-2950",
+    "CVE-2026-4800"
+   ]
+  },
+  {
+   "titulo": "PeditCOW (CVE-2026-46331)",
+   "data": "2026-06-29",
+   "url": "https://www.truenas.com/docs/scale/25.04/scale/impact-statements/cve-2026-46331-pedit-cow/",
+   "cves": [
+    "CVE-2026-46331"
+   ]
+  },
+  {
+   "titulo": "SharedFrag (CVE-2026-43503)",
+   "data": "2026-06-29",
+   "url": "https://www.truenas.com/docs/scale/25.04/scale/impact-statements/cve-2026-43503-shared-frag/",
+   "cves": [
+    "CVE-2026-43503"
+   ]
+  },
+  {
+   "titulo": "CIFSwitch (CVE-2026-46243)",
+   "data": "2026-05-29",
+   "url": "https://www.truenas.com/docs/scale/25.04/scale/impact-statements/cifswitch/",
+   "cves": [
+    "CVE-2026-46243"
+   ]
+  },
+  {
+   "titulo": "Samba 4.23.8 Security Release (CVE-2026-1933, -2340, -3012, -3238, -4408, -4480)",
+   "data": "2026-05-29",
+   "url": "https://www.truenas.com/docs/scale/25.04/scale/impact-statements/samba-2026-security-release/",
+   "cves": [
+    "CVE-2026-1933"
+   ]
+  },
+  {
+   "titulo": "CVE-2026-31431 (Copy Fail)",
+   "data": "2026-05-08",
+   "url": "https://www.truenas.com/docs/scale/25.04/scale/impact-statements/cve-2026-31431-copy-fail/",
+   "cves": [
+    "CVE-2026-31431"
+   ]
+  },
+  {
+   "titulo": "CVE-2026-43284 and CVE-2026-43500 (Dirty Frag)",
+   "data": "2026-05-08",
+   "url": "https://www.truenas.com/docs/scale/25.04/scale/impact-statements/cve-2026-43284-43500-dirty-frag/",
+   "cves": [
+    "CVE-2026-43284",
+    "CVE-2026-43500"
+   ]
+  },
+  {
+   "titulo": "Security Report for TrueNAS 13.0-U5 and 13.0-U5.1",
+   "data": "2023-06-01",
+   "url": "https://www.truenas.com/docs/scale/25.04/articles/2023-05-29-security-report-13.0-u5/",
+   "cves": []
+  },
+  {
+   "titulo": "Security Report for TrueNAS SCALE 22.12.2",
+   "data": "2023-04-07",
+   "url": "https://www.truenas.com/docs/scale/25.04/articles/2023-04-07-security-report-scale-22.12.2/",
+   "cves": []
+  },
+  {
+   "titulo": "Security Report for TrueNAS SCALE 22.12.1",
+   "data": "2023-02-21",
+   "url": "https://www.truenas.com/docs/scale/25.04/articles/2023-02-21-security-report-scale-22.12.1/",
+   "cves": []
+  },
+  {
+   "titulo": "Security Report for TrueNAS SCALE 22.12.0",
+   "data": "2022-12-13",
+   "url": "https://www.truenas.com/docs/scale/25.04/articles/2022-12-13-security-report-scale-22.12.0/",
+   "cves": []
+  },
+  {
+   "titulo": "Security Report for TrueNAS 13.0-U3",
+   "data": "2022-11-01",
+   "url": "https://www.truenas.com/docs/scale/25.04/articles/2022-11-01-security-report-13.0-u3/",
+   "cves": []
+  },
+  {
+   "titulo": "Security Report for TrueNAS SCALE 22.02.4",
+   "data": "2022-09-20",
+   "url": "https://www.truenas.com/docs/scale/25.04/articles/2022-09-20-security-report-scale-22.02.4/",
+   "cves": []
+  },
+  {
+   "titulo": "Security Report for TrueNAS 13.0-U2",
+   "data": "2022-08-18",
+   "url": "https://www.truenas.com/docs/scale/25.04/articles/2022-08-18-security-report-13-0-u2/",
+   "cves": []
+  },
+  {
+   "titulo": "Security Report for TrueNAS SCALE 22.02.3",
+   "data": "2022-08-08",
+   "url": "https://www.truenas.com/docs/scale/25.04/articles/2022-07-20-security-report-scale-22.02.3/",
+   "cves": []
+  },
+  {
+   "titulo": "Security Report for TrueNAS SCALE 22.02.2",
+   "data": "2022-06-21",
+   "url": "https://www.truenas.com/docs/scale/25.04/articles/2022-06-21-security-report-scale-22.02.2/",
+   "cves": []
+  }
+ ],
  "itens": [
   {
    "id": "drupal-sa-core-2026-019",
@@ -2368,6 +2617,7 @@
    "situacao": "explorado",
    "exploracao": "Drupal declara exploração ativa; o CVE anterior (SA-CORE-2026-017) está no KEV desde 24/11.",
    "kev_cves": [
+    "CVE-2026-136716",
     "CVE-2026-132165"
    ],
    "kev": "2026-11-24",
@@ -2398,8 +2648,8 @@
     "codigo": "agir_agora",
     "rotulo": "Agir agora",
     "prazo_dias": 1,
-    "referencia": "2026-11-25",
-    "vence_em": "2026-11-26",
+    "referencia": "2026-11-27",
+    "vence_em": "2026-11-28",
     "exposto": false,
     "exploracao": "active",
     "automatizavel": false,
@@ -2578,6 +2828,19 @@
       "aviso": "DSA-6574-1"
      }
     ],
+    "u2004": [
+     {
+      "pacote": "php7.4",
+      "cves_avaliados": 2,
+      "abertos": [],
+      "sem_impacto": [],
+      "em_triagem": 0,
+      "versao": "7.4.3-4ubuntu2.29+esm5",
+      "ubuntu_pro": true,
+      "estado": "pro",
+      "aviso": "USN-8948-2"
+     }
+    ],
     "u2204": [
      {
       "pacote": "php8.1",
@@ -2636,7 +2899,7 @@
      "u": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog"
     }
    ],
-   "revisao": "893cd2a1e099",
+   "revisao": "0744d2fcc4ba",
    "coletado_em": "2026-11-25",
    "atualizado_em": "2026-11-25"
   },
@@ -2744,6 +3007,19 @@
       "aviso": "DSA-6295-1"
      }
     ],
+    "u2004": [
+     {
+      "pacote": "linux",
+      "cves_avaliados": 1,
+      "abertos": [],
+      "sem_impacto": [],
+      "em_triagem": 0,
+      "versao": "5.4.0-233.253",
+      "ubuntu_pro": false,
+      "estado": "corrigido",
+      "aviso": ""
+     }
+    ],
     "u2204": [
      {
       "pacote": "linux",
@@ -2794,7 +3070,7 @@
      "u": "https://security-tracker.debian.org/tracker/CVE-2026-46300"
     }
    ],
-   "revisao": "465d9924fb14",
+   "revisao": "efcde148d663",
    "coletado_em": "2026-11-25",
    "atualizado_em": "2026-11-25"
   },
@@ -3112,6 +3388,19 @@
       "aviso": "DSA-6582-1"
      }
     ],
+    "u2004": [
+     {
+      "pacote": "brotli",
+      "cves_avaliados": 1,
+      "abertos": [],
+      "sem_impacto": [],
+      "em_triagem": 0,
+      "versao": "1.0.7-6ubuntu0.1+esm1",
+      "ubuntu_pro": true,
+      "estado": "pro",
+      "aviso": "USN-8956-2"
+     }
+    ],
     "u2204": [
      {
       "pacote": "brotli",
@@ -3162,7 +3451,7 @@
      "u": "https://security-tracker.debian.org/tracker/CVE-2026-111497"
     }
    ],
-   "revisao": "9df3770dc1cf",
+   "revisao": "b249ff80f609",
    "coletado_em": "2026-11-25",
    "atualizado_em": "2026-11-25"
   },
@@ -3257,6 +3546,18 @@
       "aviso": "DSA-6608-1"
      }
     ],
+    "u2004": [
+     {
+      "pacote": "puppet",
+      "cves_avaliados": 1,
+      "abertos": [
+       "CVE-2026-115731"
+      ],
+      "sem_impacto": [],
+      "em_triagem": 1,
+      "estado": "em_triagem"
+     }
+    ],
     "u2204": [
      {
       "pacote": "puppet",
@@ -3300,7 +3601,7 @@
      "u": "https://ubuntu.com/security/CVE-2026-115731"
     }
    ],
-   "revisao": "19833160083f",
+   "revisao": "aa1117ea2a33",
    "coletado_em": "2026-11-25",
    "atualizado_em": "2026-11-25"
   },
@@ -3410,6 +3711,18 @@
       "estado": "sem_correcao"
      }
     ],
+    "u2004": [
+     {
+      "pacote": "axis",
+      "cves_avaliados": 1,
+      "abertos": [
+       "CVE-2026-90436"
+      ],
+      "sem_impacto": [],
+      "em_triagem": 1,
+      "estado": "em_triagem"
+     }
+    ],
     "u2204": [
      {
       "pacote": "axis",
@@ -3457,7 +3770,7 @@
      "u": "https://ubuntu.com/security/CVE-2026-90436"
     }
    ],
-   "revisao": "933636e670db",
+   "revisao": "6f75cdda6b90",
    "coletado_em": "2026-11-25",
    "atualizado_em": "2026-11-25"
   },
@@ -5301,6 +5614,16 @@
       "estado": "nao_afetado"
      }
     ],
+    "u2004": [
+     {
+      "pacote": "openssh",
+      "cves_avaliados": 1,
+      "abertos": [],
+      "sem_impacto": [],
+      "em_triagem": 0,
+      "estado": "nao_afetado"
+     }
+    ],
     "u2204": [
      {
       "pacote": "openssh",
@@ -5342,7 +5665,7 @@
      "u": "https://security-tracker.debian.org/tracker/CVE-2026-123158"
     }
    ],
-   "revisao": "719df41f51ee",
+   "revisao": "fab7f66b33ac",
    "coletado_em": "2026-11-25",
    "atualizado_em": "2026-11-25"
   },
@@ -5466,6 +5789,19 @@
       "aviso": "DSA-6641-1"
      }
     ],
+    "u2004": [
+     {
+      "pacote": "php7.4",
+      "cves_avaliados": 18,
+      "abertos": [],
+      "sem_impacto": [],
+      "em_triagem": 0,
+      "versao": "7.4.3-4ubuntu2.29+esm6",
+      "ubuntu_pro": true,
+      "estado": "pro",
+      "aviso": "USN-9185-1"
+     }
+    ],
     "u2204": [
      {
       "pacote": "php8.1",
@@ -5520,7 +5856,7 @@
      "u": "https://security-tracker.debian.org/tracker/DSA-6641-1"
     }
    ],
-   "revisao": "1d9d01274e36",
+   "revisao": "08b2db672d96",
    "coletado_em": "2026-11-25",
    "atualizado_em": "2026-11-25"
   },
@@ -5617,6 +5953,18 @@
       "aviso": "DSA-6628-1"
      }
     ],
+    "u2004": [
+     {
+      "pacote": "linux",
+      "cves_avaliados": 1,
+      "abertos": [
+       "CVE-2026-99362"
+      ],
+      "sem_impacto": [],
+      "em_triagem": 0,
+      "estado": "sem_correcao"
+     }
+    ],
     "u2204": [
      {
       "pacote": "linux",
@@ -5668,7 +6016,7 @@
      "u": "https://ubuntu.com/security/CVE-2026-99362"
     }
    ],
-   "revisao": "875502e94aa8",
+   "revisao": "b8027983fbca",
    "coletado_em": "2026-11-27",
    "atualizado_em": "2026-11-27"
   },
@@ -5762,6 +6110,19 @@
       "aviso": "DSA-6607-1"
      }
     ],
+    "u2004": [
+     {
+      "pacote": "apt",
+      "cves_avaliados": 1,
+      "abertos": [],
+      "sem_impacto": [],
+      "em_triagem": 0,
+      "versao": "2.0.12+esm1",
+      "ubuntu_pro": true,
+      "estado": "pro",
+      "aviso": "USN-8996-1"
+     }
+    ],
     "u2204": [
      {
       "pacote": "apt",
@@ -5808,7 +6169,7 @@
      "u": "https://security-tracker.debian.org/tracker/CVE-2026-109518"
     }
    ],
-   "revisao": "08cf90e05b56",
+   "revisao": "03580794fa36",
    "coletado_em": "2026-11-25",
    "atualizado_em": "2026-11-25"
   },
@@ -5932,6 +6293,19 @@
       "aviso": "DSA-6642-1"
      }
     ],
+    "u2004": [
+     {
+      "pacote": "nginx",
+      "cves_avaliados": 15,
+      "abertos": [],
+      "sem_impacto": [],
+      "em_triagem": 0,
+      "versao": "1.18.0-0ubuntu1.7+esm6",
+      "ubuntu_pro": true,
+      "estado": "pro",
+      "aviso": "USN-9182-1"
+     }
+    ],
     "u2204": [
      {
       "pacote": "nginx",
@@ -5990,7 +6364,7 @@
      "u": "https://plataforma.rnp.br/arquivos/documents/CAIS-Alerta%2021-10-2026-%20M%C3%BAltiplas%20vulnerabilidades%20no%20NGINX%20permitem%20nega%C3%A7%C3%A3o%20de%20servi%C3%A7o%20e%20poss%C3%ADvel%20execu%C3%A7%C3%A3o%20remota%20de%20c%C3%B3digo.txt?VersionId=emzNz3SICmStq7bFrlqdCRIKRvBRqFUx"
     }
    ],
-   "revisao": "44447dfae50f",
+   "revisao": "d590de3d72c8",
    "coletado_em": "2026-11-25",
    "atualizado_em": "2026-11-27"
   },
@@ -6097,6 +6471,21 @@
       "aviso": "DSA-6620-1"
      }
     ],
+    "u2004": [
+     {
+      "pacote": "apache2",
+      "cves_avaliados": 5,
+      "abertos": [
+       "CVE-2026-42528"
+      ],
+      "sem_impacto": [],
+      "em_triagem": 0,
+      "versao": "2.4.41-4ubuntu3.23+esm11",
+      "ubuntu_pro": true,
+      "estado": "parcial",
+      "aviso": "USN-9090-1"
+     }
+    ],
     "u2204": [
      {
       "pacote": "apache2",
@@ -6154,7 +6543,7 @@
      "u": "https://ubuntu.com/security/notices/USN-9090-1"
     }
    ],
-   "revisao": "ae369515b26d",
+   "revisao": "0adde3024694",
    "coletado_em": "2026-11-25",
    "atualizado_em": "2026-11-25"
   },
@@ -6255,6 +6644,21 @@
       "aviso": "DSA-6638-1"
      }
     ],
+    "u2004": [
+     {
+      "pacote": "haproxy",
+      "cves_avaliados": 5,
+      "abertos": [
+       "CVE-2026-55203",
+       "CVE-2026-55204",
+       "CVE-2026-110353",
+       "CVE-2026-110354"
+      ],
+      "sem_impacto": [],
+      "em_triagem": 4,
+      "estado": "em_triagem"
+     }
+    ],
     "u2204": [
      {
       "pacote": "haproxy",
@@ -6301,7 +6705,7 @@
      "u": "https://security-tracker.debian.org/tracker/DSA-6638-1"
     }
    ],
-   "revisao": "577372a4863a",
+   "revisao": "8cb3ae1bd71c",
    "coletado_em": "2026-11-25",
    "atualizado_em": "2026-11-25"
   },
@@ -6396,6 +6800,15 @@
       "aviso": "DSA-6659-1"
      }
     ],
+    "u2004": [
+     {
+      "pacote": "exim4",
+      "estado": "nao_verificado",
+      "cves_avaliados": 0,
+      "abertos": [],
+      "sem_impacto": []
+     }
+    ],
     "u2204": [
      {
       "pacote": "exim4",
@@ -6438,7 +6851,7 @@
      "u": "https://www.exim.org/static/doc/security/EXIM-Security-2026-11-19.1/EXIM-Security-2026-11-19.1.txt"
     }
    ],
-   "revisao": "8862916cff93",
+   "revisao": "1d037379973c",
    "coletado_em": "2026-11-25",
    "atualizado_em": "2026-11-27"
   },
@@ -6540,6 +6953,22 @@
       "aviso": "DSA-6522-1"
      }
     ],
+    "u2004": [
+     {
+      "pacote": "exim4",
+      "cves_avaliados": 5,
+      "abertos": [
+       "CVE-2026-66140",
+       "CVE-2026-66141",
+       "CVE-2026-94054",
+       "CVE-2026-94056",
+       "CVE-2026-94057"
+      ],
+      "sem_impacto": [],
+      "em_triagem": 5,
+      "estado": "em_triagem"
+     }
+    ],
     "u2204": [
      {
       "pacote": "exim4",
@@ -6594,7 +7023,7 @@
      "u": "https://ubuntu.com/security/CVE-2026-94054"
     }
    ],
-   "revisao": "b673b9622a54",
+   "revisao": "133d04b44aa1",
    "coletado_em": "2026-11-26",
    "atualizado_em": "2026-11-27"
   },
@@ -6831,6 +7260,32 @@
       "aviso": "DSA-6656-1"
      }
     ],
+    "u2004": [
+     {
+      "pacote": "runc",
+      "cves_avaliados": 3,
+      "abertos": [
+       "CVE-2025-31133",
+       "CVE-2025-52565",
+       "CVE-2026-41579"
+      ],
+      "sem_impacto": [],
+      "em_triagem": 1,
+      "estado": "sem_correcao"
+     },
+     {
+      "pacote": "runc-app",
+      "cves_avaliados": 3,
+      "abertos": [
+       "CVE-2025-31133",
+       "CVE-2025-52565",
+       "CVE-2026-41579"
+      ],
+      "sem_impacto": [],
+      "em_triagem": 1,
+      "estado": "sem_correcao"
+     }
+    ],
     "u2204": [
      {
       "pacote": "runc",
@@ -6924,7 +7379,7 @@
      "u": "https://security-tracker.debian.org/tracker/DSA-6656-1"
     }
    ],
-   "revisao": "b2679f338c1c",
+   "revisao": "6820d742fd68",
    "coletado_em": "2026-11-25",
    "atualizado_em": "2026-11-25"
   },
@@ -7024,6 +7479,18 @@
       "aviso": "DSA-6657-1"
      }
     ],
+    "u2004": [
+     {
+      "pacote": "libzstd",
+      "cves_avaliados": 1,
+      "abertos": [
+       "CVE-2026-124851"
+      ],
+      "sem_impacto": [],
+      "em_triagem": 1,
+      "estado": "em_triagem"
+     }
+    ],
     "u2204": [
      {
       "pacote": "libzstd",
@@ -7067,7 +7534,7 @@
      "u": "https://security-tracker.debian.org/tracker/CVE-2026-124851"
     }
    ],
-   "revisao": "bf18a1d7a76e",
+   "revisao": "06397fd99cab",
    "coletado_em": "2026-11-25",
    "atualizado_em": "2026-11-25"
   },
@@ -7197,6 +7664,31 @@
       "aviso": "DSA-6566-1"
      }
     ],
+    "u2004": [
+     {
+      "pacote": "expat",
+      "cves_avaliados": 15,
+      "abertos": [
+       "CVE-2026-102633",
+       "CVE-2026-124317",
+       "CVE-2026-113351",
+       "CVE-2026-115506",
+       "CVE-2026-128241",
+       "CVE-2026-134703",
+       "CVE-2026-118370",
+       "CVE-2026-117610",
+       "CVE-2026-93990",
+       "CVE-2026-77214",
+       "CVE-2025-59375"
+      ],
+      "sem_impacto": [],
+      "em_triagem": 10,
+      "versao": "2.2.9-1ubuntu0.8+esm3",
+      "ubuntu_pro": true,
+      "estado": "parcial",
+      "aviso": ""
+     }
+    ],
     "u2204": [
      {
       "pacote": "expat",
@@ -7245,7 +7737,7 @@
      "u": "https://ubuntu.com/security/notices/USN-9196-1"
     }
    ],
-   "revisao": "02ba8420edf6",
+   "revisao": "003420771b74",
    "coletado_em": "2026-11-25",
    "atualizado_em": "2026-11-27"
   },
@@ -7353,6 +7845,19 @@
       "aviso": "DSA-6530-1"
      }
     ],
+    "u2004": [
+     {
+      "pacote": "pcre2",
+      "cves_avaliados": 8,
+      "abertos": [],
+      "sem_impacto": [],
+      "em_triagem": 0,
+      "versao": "10.34-7ubuntu0.1+esm1",
+      "ubuntu_pro": true,
+      "estado": "pro",
+      "aviso": "USN-8974-1"
+     }
+    ],
     "u2204": [
      {
       "pacote": "pcre2",
@@ -7399,7 +7904,7 @@
      "u": "https://ubuntu.com/security/notices/USN-8974-1"
     }
    ],
-   "revisao": "0d07c629aa34",
+   "revisao": "f9eb1915991a",
    "coletado_em": "2026-11-25",
    "atualizado_em": "2026-11-25"
   },
@@ -7508,6 +8013,19 @@
       "aviso": "DSA-6410-1"
      }
     ],
+    "u2004": [
+     {
+      "pacote": "libssh",
+      "cves_avaliados": 13,
+      "abertos": [],
+      "sem_impacto": [],
+      "em_triagem": 0,
+      "versao": "0.9.3-2ubuntu2.5+esm5",
+      "ubuntu_pro": true,
+      "estado": "pro",
+      "aviso": "USN-9187-1"
+     }
+    ],
     "u2204": [
      {
       "pacote": "libssh",
@@ -7554,7 +8072,7 @@
      "u": "https://ubuntu.com/security/notices/USN-9187-1"
     }
    ],
-   "revisao": "a8f46bd0ab97",
+   "revisao": "019f4cfa432f",
    "coletado_em": "2026-11-25",
    "atualizado_em": "2026-11-25"
   },
@@ -7662,6 +8180,24 @@
       "aviso": ""
      }
     ],
+    "u2004": [
+     {
+      "pacote": "glibc",
+      "cves_avaliados": 7,
+      "abertos": [
+       "CVE-2026-18374",
+       "CVE-2026-89092",
+       "CVE-2026-86805",
+       "CVE-2026-8674",
+       "CVE-2026-95818",
+       "CVE-2026-84243",
+       "CVE-2026-97399"
+      ],
+      "sem_impacto": [],
+      "em_triagem": 5,
+      "estado": "sem_correcao"
+     }
+    ],
     "u2204": [
      {
       "pacote": "glibc",
@@ -7708,7 +8244,7 @@
      "u": "https://ubuntu.com/security/notices/USN-9065-1"
     }
    ],
-   "revisao": "4e7cc7eb79bf",
+   "revisao": "5deb3cd89911",
    "coletado_em": "2026-11-25",
    "atualizado_em": "2026-11-25"
   },
@@ -7982,6 +8518,37 @@
       "aviso": "DSA-6650-1"
      }
     ],
+    "u2004": [
+     {
+      "pacote": "krb5",
+      "cves_avaliados": 20,
+      "abertos": [
+       "CVE-2026-11850",
+       "CVE-2026-71199",
+       "CVE-2026-71200",
+       "CVE-2026-107364",
+       "CVE-2026-107884",
+       "CVE-2026-111423",
+       "CVE-2026-112314",
+       "CVE-2026-112315",
+       "CVE-2026-112316",
+       "CVE-2026-112317",
+       "CVE-2026-112318",
+       "CVE-2026-112319",
+       "CVE-2026-112320",
+       "CVE-2026-112321",
+       "CVE-2026-112322",
+       "CVE-2026-112323",
+       "CVE-2026-118380",
+       "CVE-2026-119079",
+       "CVE-2026-107778",
+       "CVE-2026-107708"
+      ],
+      "sem_impacto": [],
+      "em_triagem": 20,
+      "estado": "em_triagem"
+     }
+    ],
     "u2204": [
      {
       "pacote": "krb5",
@@ -8028,7 +8595,7 @@
      "u": "https://ubuntu.com/security/notices/USN-9202-1"
     }
    ],
-   "revisao": "fc40a11504a5",
+   "revisao": "417ae9d57794",
    "coletado_em": "2026-11-25",
    "atualizado_em": "2026-11-27"
   },
@@ -8263,6 +8830,81 @@
       "aviso": "DSA-6623-1"
      }
     ],
+    "u2004": [
+     {
+      "pacote": "tomcat9",
+      "cves_avaliados": 80,
+      "abertos": [
+       "CVE-2026-50229",
+       "CVE-2026-53404",
+       "CVE-2026-53434",
+       "CVE-2026-55276",
+       "CVE-2026-55955",
+       "CVE-2026-55956",
+       "CVE-2026-59083",
+       "CVE-2026-59084",
+       "CVE-2026-65182",
+       "CVE-2026-65183",
+       "CVE-2026-65637",
+       "CVE-2026-65905",
+       "CVE-2026-65927",
+       "CVE-2026-66299",
+       "CVE-2026-66422",
+       "CVE-2026-68525",
+       "CVE-2026-68569",
+       "CVE-2026-68763",
+       "CVE-2026-73180",
+       "CVE-2026-25854",
+       "CVE-2025-52520",
+       "CVE-2026-34487",
+       "CVE-2026-75973",
+       "CVE-2026-78383",
+       "CVE-2024-34750",
+       "CVE-2026-78437",
+       "CVE-2026-103119",
+       "CVE-2026-29146",
+       "CVE-2024-52316",
+       "CVE-2026-93446",
+       "CVE-2026-74048",
+       "CVE-2025-31651",
+       "CVE-2026-101356",
+       "CVE-2026-55957",
+       "CVE-2026-76183",
+       "CVE-2025-48976",
+       "CVE-2026-79677",
+       "CVE-2025-55752",
+       "CVE-2025-66614",
+       "CVE-2025-53506",
+       "CVE-2026-77756",
+       "CVE-2025-48989",
+       "CVE-2026-87022",
+       "CVE-2026-86350",
+       "CVE-2026-88041",
+       "CVE-2024-54677",
+       "CVE-2025-46701",
+       "CVE-2026-73581",
+       "CVE-2026-24733",
+       "CVE-2026-74049",
+       "CVE-2026-101296",
+       "CVE-2026-77791",
+       "CVE-2025-61795",
+       "CVE-2026-77762",
+       "CVE-2025-49125",
+       "CVE-2026-86248",
+       "CVE-2026-43514",
+       "CVE-2025-48988",
+       "CVE-2026-24880",
+       "CVE-2025-55668",
+       "CVE-2024-50379"
+      ],
+      "sem_impacto": [],
+      "em_triagem": 38,
+      "versao": "9.0.31-1ubuntu0.9+esm3",
+      "ubuntu_pro": true,
+      "estado": "parcial",
+      "aviso": ""
+     }
+    ],
     "u2204": [
      {
       "pacote": "tomcat9",
@@ -8371,7 +9013,7 @@
      "u": "https://ubuntu.com/security/notices/USN-9186-1"
     }
    ],
-   "revisao": "b4ff0fd03000",
+   "revisao": "36ed8150c19e",
    "coletado_em": "2026-11-25",
    "atualizado_em": "2026-11-25"
   },
@@ -8487,6 +9129,28 @@
       "aviso": "DSA-6648-1"
      }
     ],
+    "u2004": [
+     {
+      "pacote": "python-django",
+      "cves_avaliados": 12,
+      "abertos": [
+       "CVE-2026-15337",
+       "CVE-2026-15920",
+       "CVE-2026-25674",
+       "CVE-2026-33034",
+       "CVE-2026-77050",
+       "CVE-2026-84429",
+       "CVE-2026-108147",
+       "CVE-2026-113593"
+      ],
+      "sem_impacto": [],
+      "em_triagem": 7,
+      "versao": "2:2.2.12-1ubuntu0.29+esm8",
+      "ubuntu_pro": true,
+      "estado": "parcial",
+      "aviso": ""
+     }
+    ],
     "u2204": [
      {
       "pacote": "python-django",
@@ -8558,7 +9222,7 @@
      "u": "https://security-tracker.debian.org/tracker/DSA-6648-1"
     }
    ],
-   "revisao": "74f5a702579a",
+   "revisao": "07c12e8ed41c",
    "coletado_em": "2026-11-25",
    "atualizado_em": "2026-11-25"
   },
@@ -8700,6 +9364,64 @@
       "ubuntu_pro": false,
       "estado": "corrigido",
       "aviso": "DSA-6625-1"
+     }
+    ],
+    "u2004": [
+     {
+      "pacote": "postgresql-12",
+      "cves_avaliados": 47,
+      "abertos": [
+       "CVE-2026-6460",
+       "CVE-2026-6467",
+       "CVE-2026-14661",
+       "CVE-2026-16237",
+       "CVE-2026-16240",
+       "CVE-2026-18447",
+       "CVE-2026-116303",
+       "CVE-2026-116304",
+       "CVE-2026-116306",
+       "CVE-2026-116307",
+       "CVE-2026-116308",
+       "CVE-2026-116309",
+       "CVE-2026-116310",
+       "CVE-2026-116311",
+       "CVE-2026-116312",
+       "CVE-2026-116314",
+       "CVE-2026-116315",
+       "CVE-2026-116316",
+       "CVE-2026-116317",
+       "CVE-2026-116319",
+       "CVE-2026-116320",
+       "CVE-2026-116321",
+       "CVE-2026-116323",
+       "CVE-2026-116325",
+       "CVE-2026-116326",
+       "CVE-2026-116327",
+       "CVE-2026-116328",
+       "CVE-2026-116330",
+       "CVE-2026-116331",
+       "CVE-2026-116332",
+       "CVE-2026-116333",
+       "CVE-2026-116335",
+       "CVE-2026-116336",
+       "CVE-2026-120139",
+       "CVE-2026-120141",
+       "CVE-2026-120142",
+       "CVE-2026-120143",
+       "CVE-2026-120145",
+       "CVE-2026-120146",
+       "CVE-2026-120147",
+       "CVE-2026-120148",
+       "CVE-2026-120149",
+       "CVE-2026-120150",
+       "CVE-2026-120151",
+       "CVE-2026-120152",
+       "CVE-2026-120153",
+       "CVE-2026-120154"
+      ],
+      "sem_impacto": [],
+      "em_triagem": 47,
+      "estado": "em_triagem"
      }
     ],
     "u2204": [
@@ -8883,7 +9605,7 @@
      "u": "https://security-tracker.debian.org/tracker/DSA-6625-1"
     }
    ],
-   "revisao": "747c66a9b3a7",
+   "revisao": "c19fe199d93b",
    "coletado_em": "2026-11-25",
    "atualizado_em": "2026-11-25"
   },
@@ -8990,6 +9712,22 @@
       "aviso": "DSA-6606-1"
      }
     ],
+    "u2004": [
+     {
+      "pacote": "squid",
+      "cves_avaliados": 8,
+      "abertos": [
+       "CVE-2026-62846",
+       "CVE-2026-104786"
+      ],
+      "sem_impacto": [],
+      "em_triagem": 1,
+      "versao": "4.10-1ubuntu1.13+esm3",
+      "ubuntu_pro": true,
+      "estado": "parcial",
+      "aviso": "USN-8941-1"
+     }
+    ],
     "u2204": [
      {
       "pacote": "squid",
@@ -9045,7 +9783,7 @@
      "u": "https://security-tracker.debian.org/tracker/DSA-6606-1"
     }
    ],
-   "revisao": "6cd15908c8b6",
+   "revisao": "085c6cfb5e7d",
    "coletado_em": "2026-11-25",
    "atualizado_em": "2026-11-25"
   },
@@ -9203,6 +9941,48 @@
       "aviso": "DSA-6654-1"
      }
     ],
+    "u2004": [
+     {
+      "pacote": "mediawiki",
+      "cves_avaliados": 31,
+      "abertos": [
+       "CVE-2026-102966",
+       "CVE-2026-102967",
+       "CVE-2026-102968",
+       "CVE-2026-102970",
+       "CVE-2026-102971",
+       "CVE-2026-102972",
+       "CVE-2026-102973",
+       "CVE-2026-102974",
+       "CVE-2026-102975",
+       "CVE-2026-132657",
+       "CVE-2026-132670",
+       "CVE-2026-132672",
+       "CVE-2026-132673",
+       "CVE-2026-132674",
+       "CVE-2026-132680",
+       "CVE-2026-132681",
+       "CVE-2026-132682",
+       "CVE-2026-132693",
+       "CVE-2026-132706",
+       "CVE-2026-132707",
+       "CVE-2026-132708",
+       "CVE-2026-132709",
+       "CVE-2026-132712",
+       "CVE-2026-132713",
+       "CVE-2026-132714",
+       "CVE-2026-132718",
+       "CVE-2026-132719",
+       "CVE-2026-132720",
+       "CVE-2026-132728",
+       "CVE-2026-132730",
+       "CVE-2026-132736"
+      ],
+      "sem_impacto": [],
+      "em_triagem": 31,
+      "estado": "em_triagem"
+     }
+    ],
     "u2204": [
      {
       "pacote": "mediawiki",
@@ -9336,7 +10116,7 @@
      "u": "https://security-tracker.debian.org/tracker/DSA-6654-1"
     }
    ],
-   "revisao": "7c245f418974",
+   "revisao": "374e4d7fd8c3",
    "coletado_em": "2026-11-25",
    "atualizado_em": "2026-11-25"
   },
@@ -9455,6 +10235,41 @@
       "ubuntu_pro": false,
       "estado": "corrigido",
       "aviso": "DSA-6640-1"
+     }
+    ],
+    "u2004": [
+     {
+      "pacote": "openjdk-lts",
+      "cves_avaliados": 11,
+      "abertos": [],
+      "sem_impacto": [],
+      "em_triagem": 0,
+      "versao": "11.0.33.1+1-1ubuntu1~20.04.1",
+      "ubuntu_pro": false,
+      "estado": "corrigido",
+      "aviso": "USN-9154-1"
+     },
+     {
+      "pacote": "openjdk-17",
+      "cves_avaliados": 11,
+      "abertos": [],
+      "sem_impacto": [],
+      "em_triagem": 0,
+      "versao": "17.0.21.1+2-1~20.04.1",
+      "ubuntu_pro": false,
+      "estado": "corrigido",
+      "aviso": "USN-9155-1"
+     },
+     {
+      "pacote": "openjdk-8",
+      "cves_avaliados": 11,
+      "abertos": [],
+      "sem_impacto": [],
+      "em_triagem": 0,
+      "versao": "8u514-b01~us1-0ubuntu1~20.04.1",
+      "ubuntu_pro": false,
+      "estado": "corrigido",
+      "aviso": "USN-9181-1"
      }
     ],
     "u2204": [
@@ -9628,7 +10443,7 @@
      "u": "https://security-tracker.debian.org/tracker/DSA-6639-1"
     }
    ],
-   "revisao": "562dc51c33c8",
+   "revisao": "d88ae57a186d",
    "coletado_em": "2026-11-25",
    "atualizado_em": "2026-11-25"
   },
@@ -9818,6 +10633,87 @@
       "ubuntu_pro": false,
       "estado": "corrigido",
       "aviso": ""
+     }
+    ],
+    "u2004": [
+     {
+      "pacote": "mysql-8.0",
+      "cves_avaliados": 79,
+      "abertos": [
+       "CVE-2026-47023",
+       "CVE-2026-60184",
+       "CVE-2026-60331",
+       "CVE-2026-60585",
+       "CVE-2026-60747",
+       "CVE-2026-61081",
+       "CVE-2026-101727",
+       "CVE-2026-101617",
+       "CVE-2026-101797",
+       "CVE-2026-101748",
+       "CVE-2026-101774",
+       "CVE-2026-101724",
+       "CVE-2026-101788",
+       "CVE-2026-101754",
+       "CVE-2026-101622",
+       "CVE-2026-101762",
+       "CVE-2026-101608",
+       "CVE-2026-101787",
+       "CVE-2026-101780",
+       "CVE-2026-101770",
+       "CVE-2026-101624",
+       "CVE-2026-101731",
+       "CVE-2026-101616",
+       "CVE-2026-101751",
+       "CVE-2026-101679",
+       "CVE-2026-101730",
+       "CVE-2026-101766",
+       "CVE-2026-101721",
+       "CVE-2026-101607",
+       "CVE-2026-101799",
+       "CVE-2026-101613",
+       "CVE-2026-101728",
+       "CVE-2026-101725",
+       "CVE-2026-101618",
+       "CVE-2026-101609",
+       "CVE-2026-101726",
+       "CVE-2026-101619",
+       "CVE-2026-101781",
+       "CVE-2026-101796",
+       "CVE-2026-101775",
+       "CVE-2026-101801",
+       "CVE-2026-101614",
+       "CVE-2026-101798",
+       "CVE-2026-101795",
+       "CVE-2026-101785",
+       "CVE-2026-101750",
+       "CVE-2026-101803",
+       "CVE-2026-101802",
+       "CVE-2026-101729",
+       "CVE-2026-101747",
+       "CVE-2026-101789",
+       "CVE-2026-101621",
+       "CVE-2026-101761",
+       "CVE-2026-101800",
+       "CVE-2026-101610",
+       "CVE-2026-101733",
+       "CVE-2026-101772",
+       "CVE-2026-101773",
+       "CVE-2026-101794",
+       "CVE-2026-101778",
+       "CVE-2026-101760",
+       "CVE-2026-101612",
+       "CVE-2026-101732",
+       "CVE-2026-101627",
+       "CVE-2026-101623",
+       "CVE-2026-101784",
+       "CVE-2026-101611",
+       "CVE-2026-101776",
+       "CVE-2026-101771",
+       "CVE-2026-101615"
+      ],
+      "sem_impacto": [],
+      "em_triagem": 70,
+      "estado": "em_triagem"
      }
     ],
     "u2204": [
@@ -10176,7 +11072,7 @@
      "u": "https://security-tracker.debian.org/tracker/DLA-4835-1"
     }
    ],
-   "revisao": "5f2bc212aad3",
+   "revisao": "f8d3c1266b2c",
    "coletado_em": "2026-11-25",
    "atualizado_em": "2026-11-25"
   },
@@ -10469,6 +11365,16 @@
       "aviso": "DSA-6663-1"
      }
     ],
+    "u2004": [
+     {
+      "pacote": "thunderbird",
+      "cves_avaliados": 177,
+      "abertos": [],
+      "sem_impacto": [],
+      "em_triagem": 0,
+      "estado": "nao_empacotado"
+     }
+    ],
     "u2204": [
      {
       "pacote": "thunderbird",
@@ -10692,7 +11598,7 @@
      "u": "https://security-tracker.debian.org/tracker/DSA-6663-1"
     }
    ],
-   "revisao": "e8392dc95a40",
+   "revisao": "54223f42d0c0",
    "coletado_em": "2026-11-25",
    "atualizado_em": "2026-11-26"
   },
@@ -10834,6 +11740,42 @@
       "aviso": "DSA-6635-1"
      }
     ],
+    "u2004": [
+     {
+      "pacote": "libreoffice",
+      "cves_avaliados": 25,
+      "abertos": [
+       "CVE-2026-18563",
+       "CVE-2026-18564",
+       "CVE-2026-18565",
+       "CVE-2026-18566",
+       "CVE-2026-63277",
+       "CVE-2026-84234",
+       "CVE-2026-84443",
+       "CVE-2026-87932",
+       "CVE-2026-97892",
+       "CVE-2026-97894",
+       "CVE-2026-97999",
+       "CVE-2026-98100",
+       "CVE-2026-101351",
+       "CVE-2026-101352",
+       "CVE-2026-101353",
+       "CVE-2026-101892",
+       "CVE-2026-101929",
+       "CVE-2026-101930",
+       "CVE-2026-101933",
+       "CVE-2026-104007",
+       "CVE-2026-104692",
+       "CVE-2026-104920",
+       "CVE-2026-104933",
+       "CVE-2026-108169",
+       "CVE-2026-76181"
+      ],
+      "sem_impacto": [],
+      "em_triagem": 25,
+      "estado": "em_triagem"
+     }
+    ],
     "u2204": [
      {
       "pacote": "libreoffice",
@@ -10949,7 +11891,7 @@
      "u": "https://security-tracker.debian.org/tracker/DSA-6635-1"
     }
    ],
-   "revisao": "31b433ae6382",
+   "revisao": "376ac6ecc57c",
    "coletado_em": "2026-11-25",
    "atualizado_em": "2026-11-25"
   },
@@ -11123,6 +12065,78 @@
       "ubuntu_pro": false,
       "estado": "corrigido",
       "aviso": "DSA-6550-1"
+     }
+    ],
+    "u2004": [
+     {
+      "pacote": "imagemagick",
+      "cves_avaliados": 47,
+      "abertos": [
+       "CVE-2026-105081",
+       "CVE-2026-105083",
+       "CVE-2026-109258",
+       "CVE-2026-109259",
+       "CVE-2026-109260",
+       "CVE-2026-109262",
+       "CVE-2026-109263",
+       "CVE-2026-109264",
+       "CVE-2026-109265",
+       "CVE-2026-109266",
+       "CVE-2026-109267",
+       "CVE-2026-109268",
+       "CVE-2026-109269",
+       "CVE-2026-109270",
+       "CVE-2026-109272",
+       "CVE-2026-109273",
+       "CVE-2026-109274",
+       "CVE-2026-109275",
+       "CVE-2026-109276",
+       "CVE-2026-109277",
+       "CVE-2026-109278",
+       "CVE-2026-109279",
+       "CVE-2026-109280",
+       "CVE-2026-109281",
+       "CVE-2026-109282",
+       "CVE-2026-109964",
+       "CVE-2026-116140",
+       "CVE-2026-116141",
+       "CVE-2026-116142",
+       "CVE-2026-116143",
+       "CVE-2026-116144",
+       "CVE-2026-116145",
+       "CVE-2026-116146",
+       "CVE-2026-116147",
+       "CVE-2026-116148",
+       "CVE-2026-116149",
+       "CVE-2026-116150",
+       "CVE-2026-116151",
+       "CVE-2026-116153",
+       "CVE-2026-116154",
+       "CVE-2026-116155",
+       "CVE-2026-116156",
+       "CVE-2026-116157",
+       "CVE-2026-116158",
+       "CVE-2026-116159",
+       "CVE-2026-116160",
+       "CVE-2026-130666"
+      ],
+      "sem_impacto": [],
+      "em_triagem": 47,
+      "estado": "em_triagem"
+     },
+     {
+      "pacote": "ghostscript",
+      "cves_avaliados": 4,
+      "abertos": [
+       "CVE-2026-39919",
+       "CVE-2026-125396"
+      ],
+      "sem_impacto": [],
+      "em_triagem": 2,
+      "versao": "9.50~dfsg-5ubuntu4.15+esm3",
+      "ubuntu_pro": true,
+      "estado": "parcial",
+      "aviso": "USN-8949-1"
      }
     ],
     "u2204": [
@@ -11349,7 +12363,7 @@
      "u": "https://ubuntu.com/security/notices/USN-8949-1"
     }
    ],
-   "revisao": "0e285498bba4",
+   "revisao": "5b59696dc1ce",
    "coletado_em": "2026-11-25",
    "atualizado_em": "2026-11-25"
   },
@@ -11577,6 +12591,69 @@
       "aviso": "DSA-6630-1"
      }
     ],
+    "u2004": [
+     {
+      "pacote": "bind9",
+      "cves_avaliados": 20,
+      "abertos": [
+       "CVE-2026-19630",
+       "CVE-2026-94300",
+       "CVE-2026-96888",
+       "CVE-2026-97313"
+      ],
+      "sem_impacto": [],
+      "em_triagem": 3,
+      "versao": "1:9.18.30-0ubuntu0.20.04.2+esm3",
+      "ubuntu_pro": true,
+      "estado": "parcial",
+      "aviso": ""
+     },
+     {
+      "pacote": "unbound",
+      "cves_avaliados": 15,
+      "abertos": [
+       "CVE-2026-35501",
+       "CVE-2026-50106",
+       "CVE-2026-96405",
+       "CVE-2026-97206",
+       "CVE-2026-109125"
+      ],
+      "sem_impacto": [],
+      "em_triagem": 5,
+      "versao": "1.9.4-2ubuntu1.11+esm3",
+      "ubuntu_pro": true,
+      "estado": "parcial",
+      "aviso": "USN-8946-1"
+     },
+     {
+      "pacote": "pdns",
+      "cves_avaliados": 1,
+      "abertos": [
+       "CVE-2026-73206"
+      ],
+      "sem_impacto": [],
+      "em_triagem": 1,
+      "estado": "em_triagem"
+     },
+     {
+      "pacote": "pdns-recursor",
+      "cves_avaliados": 9,
+      "abertos": [
+       "CVE-2023-50868",
+       "CVE-2023-50387",
+       "CVE-2026-73206",
+       "CVE-2026-73205",
+       "CVE-2026-85555",
+       "CVE-2026-85556",
+       "CVE-2026-85557",
+       "CVE-2026-85558",
+       "CVE-2026-85559"
+      ],
+      "sem_impacto": [],
+      "em_triagem": 9,
+      "estado": "em_triagem"
+     }
+    ],
     "u2204": [
      {
       "pacote": "bind9",
@@ -11758,7 +12835,7 @@
      "u": "https://security-tracker.debian.org/tracker/DSA-6576-1"
     }
    ],
-   "revisao": "33b7eb46130a",
+   "revisao": "18c186d60a5e",
    "coletado_em": "2026-11-25",
    "atualizado_em": "2026-11-26"
   },
@@ -11999,6 +13076,91 @@
       "aviso": ""
      }
     ],
+    "u2004": [
+     {
+      "pacote": "dovecot",
+      "cves_avaliados": 24,
+      "abertos": [
+       "CVE-2026-27852",
+       "CVE-2026-33263",
+       "CVE-2026-33604",
+       "CVE-2026-33605",
+       "CVE-2026-33606",
+       "CVE-2026-33607",
+       "CVE-2026-40013",
+       "CVE-2026-40014",
+       "CVE-2026-40015",
+       "CVE-2026-40017",
+       "CVE-2026-40018",
+       "CVE-2026-40203",
+       "CVE-2026-40204",
+       "CVE-2026-40205",
+       "CVE-2026-42007",
+       "CVE-2026-42008",
+       "CVE-2026-42391",
+       "CVE-2026-42393",
+       "CVE-2026-42394",
+       "CVE-2026-42395",
+       "CVE-2026-52681",
+       "CVE-2026-52687",
+       "CVE-2026-73208",
+       "CVE-2026-73209"
+      ],
+      "sem_impacto": [],
+      "em_triagem": 24,
+      "estado": "em_triagem"
+     },
+     {
+      "pacote": "sogo",
+      "cves_avaliados": 2,
+      "abertos": [],
+      "sem_impacto": [],
+      "em_triagem": 0,
+      "estado": "nao_afetado"
+     },
+     {
+      "pacote": "postfixadmin",
+      "cves_avaliados": 1,
+      "abertos": [
+       "CVE-2026-127178"
+      ],
+      "sem_impacto": [],
+      "em_triagem": 1,
+      "estado": "em_triagem"
+     },
+     {
+      "pacote": "cyrus-sasl2",
+      "cves_avaliados": 1,
+      "abertos": [
+       "CVE-2026-107161"
+      ],
+      "sem_impacto": [],
+      "em_triagem": 0,
+      "estado": "sem_correcao"
+     },
+     {
+      "pacote": "clamav",
+      "cves_avaliados": 13,
+      "abertos": [
+       "CVE-2026-20031",
+       "CVE-2026-20213",
+       "CVE-2026-20214",
+       "CVE-2026-20215",
+       "CVE-2026-20216",
+       "CVE-2026-20217",
+       "CVE-2026-20243",
+       "CVE-2026-20244",
+       "CVE-2026-20339",
+       "CVE-2026-20345",
+       "CVE-2026-20346",
+       "CVE-2026-20347",
+       "CVE-2026-20348"
+      ],
+      "sem_impacto": [],
+      "em_triagem": 13,
+      "estado": "em_triagem"
+     }
+    ],
     "u2204": [
      {
       "pacote": "dovecot",
@@ -12230,7 +13392,7 @@
      "u": "https://security-tracker.debian.org/tracker/DLA-4873-1"
     }
    ],
-   "revisao": "06dc29424903",
+   "revisao": "f225dc67fc83",
    "coletado_em": "2026-11-25",
    "atualizado_em": "2026-11-25"
   },
@@ -12379,6 +13541,47 @@
       "estado": "sem_correcao"
      }
     ],
+    "u2004": [
+     {
+      "pacote": "radsecproxy",
+      "cves_avaliados": 1,
+      "abertos": [
+       "CVE-2026-104201"
+      ],
+      "sem_impacto": [],
+      "em_triagem": 1,
+      "estado": "em_triagem"
+     },
+     {
+      "pacote": "strongswan",
+      "cves_avaliados": 10,
+      "abertos": [
+       "CVE-2026-78123",
+       "CVE-2026-78124",
+       "CVE-2026-78126",
+       "CVE-2026-78127",
+       "CVE-2026-78129",
+       "CVE-2026-78130",
+       "CVE-2026-78131",
+       "CVE-2026-78132",
+       "CVE-2026-78134",
+       "CVE-2026-78135"
+      ],
+      "sem_impacto": [],
+      "em_triagem": 10,
+      "estado": "em_triagem"
+     },
+     {
+      "pacote": "openvpn",
+      "cves_avaliados": 1,
+      "abertos": [
+       "CVE-2026-84790"
+      ],
+      "sem_impacto": [],
+      "em_triagem": 1,
+      "estado": "em_triagem"
+     }
+    ],
     "u2204": [
      {
       "pacote": "radsecproxy",
@@ -12492,7 +13695,7 @@
      "u": "https://ubuntu.com/security/notices/USN-8953-1"
     }
    ],
-   "revisao": "b3331e41815a",
+   "revisao": "8d19f7076d4a",
    "coletado_em": "2026-11-25",
    "atualizado_em": "2026-11-25"
   },
@@ -12598,6 +13801,29 @@
       "aviso": "DSA-6610-1"
      }
     ],
+    "u2004": [
+     {
+      "pacote": "xen",
+      "cves_avaliados": 12,
+      "abertos": [
+       "CVE-2026-102703",
+       "CVE-2026-102704",
+       "CVE-2026-62437",
+       "CVE-2026-79602",
+       "CVE-2026-79603",
+       "CVE-2026-79604",
+       "CVE-2026-79609",
+       "CVE-2026-79610",
+       "CVE-2026-79611",
+       "CVE-2026-102699",
+       "CVE-2026-102700",
+       "CVE-2026-102702"
+      ],
+      "sem_impacto": [],
+      "em_triagem": 12,
+      "estado": "em_triagem"
+     }
+    ],
     "u2204": [
      {
       "pacote": "xen",
@@ -12674,7 +13900,7 @@
      "u": "https://security-tracker.debian.org/tracker/DSA-6610-1"
     }
    ],
-   "revisao": "40d1764d206a",
+   "revisao": "8e4b92ec1445",
    "coletado_em": "2026-11-25",
    "atualizado_em": "2026-11-25"
   },
@@ -12833,6 +14059,42 @@
       "aviso": "DSA-6546-1"
      }
     ],
+    "u2004": [
+     {
+      "pacote": "rails",
+      "cves_avaliados": 25,
+      "abertos": [
+       "CVE-2026-33168",
+       "CVE-2026-33169",
+       "CVE-2026-33170",
+       "CVE-2026-33173",
+       "CVE-2026-33174",
+       "CVE-2026-33176",
+       "CVE-2026-33195",
+       "CVE-2026-33202",
+       "CVE-2026-33658",
+       "CVE-2026-66066",
+       "CVE-2026-122006",
+       "CVE-2026-126067",
+       "CVE-2026-126068",
+       "CVE-2026-126069",
+       "CVE-2026-126072",
+       "CVE-2026-126073",
+       "CVE-2026-126074",
+       "CVE-2026-126076",
+       "CVE-2026-126077",
+       "CVE-2026-126078",
+       "CVE-2026-126080",
+       "CVE-2026-126081",
+       "CVE-2026-126085",
+       "CVE-2026-126186",
+       "CVE-2026-126188"
+      ],
+      "sem_impacto": [],
+      "em_triagem": 25,
+      "estado": "em_triagem"
+     }
+    ],
     "u2204": [
      {
       "pacote": "ruby3.0",
@@ -12981,7 +14243,7 @@
      "u": "https://security-tracker.debian.org/tracker/DSA-6644-1"
     }
    ],
-   "revisao": "66384f41392c",
+   "revisao": "a67d20e1fb40",
    "coletado_em": "2026-11-25",
    "atualizado_em": "2026-11-25"
   },
@@ -13114,6 +14376,37 @@
       "aviso": "DSA-6617-1"
      }
     ],
+    "u2004": [
+     {
+      "pacote": "symfony",
+      "cves_avaliados": 20,
+      "abertos": [
+       "CVE-2026-118513",
+       "CVE-2026-118514",
+       "CVE-2026-118515",
+       "CVE-2026-118516",
+       "CVE-2026-118517",
+       "CVE-2026-121373",
+       "CVE-2026-121623",
+       "CVE-2026-121949",
+       "CVE-2026-121971",
+       "CVE-2026-122053",
+       "CVE-2026-123119",
+       "CVE-2026-123125",
+       "CVE-2026-123339",
+       "CVE-2026-123746",
+       "CVE-2026-123792",
+       "CVE-2026-123824",
+       "CVE-2026-45070",
+       "CVE-2026-108082",
+       "CVE-2026-109413",
+       "CVE-2026-109449"
+      ],
+      "sem_impacto": [],
+      "em_triagem": 20,
+      "estado": "em_triagem"
+     }
+    ],
     "u2204": [
      {
       "pacote": "symfony",
@@ -13214,7 +14507,7 @@
      "u": "https://security-tracker.debian.org/tracker/DSA-6617-1"
     }
    ],
-   "revisao": "f9e725cad1b6",
+   "revisao": "f1264ddd24d7",
    "coletado_em": "2026-11-25",
    "atualizado_em": "2026-11-25"
   },
@@ -13513,6 +14806,41 @@
       "aviso": "DSA-6357-1"
      }
     ],
+    "u2004": [
+     {
+      "pacote": "python-tornado",
+      "cves_avaliados": 6,
+      "abertos": [],
+      "sem_impacto": [],
+      "em_triagem": 0,
+      "versao": "6.0.3+really5.1.1-3ubuntu0.1~esm9",
+      "ubuntu_pro": true,
+      "estado": "pro",
+      "aviso": "USN-8952-3"
+     },
+     {
+      "pacote": "pillow",
+      "cves_avaliados": 50,
+      "abertos": [
+       "CVE-2026-54060",
+       "CVE-2026-54059",
+       "CVE-2026-59200",
+       "CVE-2026-54058",
+       "CVE-2026-59197",
+       "CVE-2026-55380",
+       "CVE-2026-59204",
+       "CVE-2026-59205",
+       "CVE-2026-55379",
+       "CVE-2026-59199"
+      ],
+      "sem_impacto": [],
+      "em_triagem": 10,
+      "versao": "7.0.0-4ubuntu0.9+esm2",
+      "ubuntu_pro": true,
+      "estado": "parcial",
+      "aviso": "USN-9064-1"
+     }
+    ],
     "u2204": [
      {
       "pacote": "python-tornado",
@@ -13598,7 +14926,7 @@
      "u": "https://ubuntu.com/security/notices/USN-8952-1"
     }
    ],
-   "revisao": "ecf1069d43b9",
+   "revisao": "99adcb021f55",
    "coletado_em": "2026-11-25",
    "atualizado_em": "2026-11-25"
   },
@@ -13812,6 +15140,96 @@
       "versao": "1.7.0-5",
       "ubuntu_pro": false,
       "estado": "corrigido",
+      "aviso": ""
+     }
+    ],
+    "u2004": [
+     {
+      "pacote": "sudo",
+      "cves_avaliados": 1,
+      "abertos": [],
+      "sem_impacto": [],
+      "em_triagem": 0,
+      "versao": "1.8.31-1ubuntu1.5+esm2",
+      "ubuntu_pro": true,
+      "estado": "pro",
+      "aviso": "USN-8895-2"
+     },
+     {
+      "pacote": "needrestart",
+      "cves_avaliados": 1,
+      "abertos": [],
+      "sem_impacto": [],
+      "em_triagem": 0,
+      "versao": "3.4-6ubuntu0.1+esm4",
+      "ubuntu_pro": true,
+      "estado": "pro",
+      "aviso": "USN-9151-1"
+     },
+     {
+      "pacote": "shadow",
+      "cves_avaliados": 1,
+      "abertos": [
+       "CVE-2026-135901"
+      ],
+      "sem_impacto": [],
+      "em_triagem": 1,
+      "estado": "em_triagem"
+     },
+     {
+      "pacote": "rsync",
+      "cves_avaliados": 34,
+      "abertos": [
+       "CVE-2026-53783",
+       "CVE-2026-53784",
+       "CVE-2026-53785",
+       "CVE-2026-53786",
+       "CVE-2026-53788",
+       "CVE-2026-53789",
+       "CVE-2026-53790",
+       "CVE-2026-53791",
+       "CVE-2026-53792",
+       "CVE-2026-53793",
+       "CVE-2026-53794",
+       "CVE-2026-53795",
+       "CVE-2026-53796",
+       "CVE-2026-53797",
+       "CVE-2026-53798",
+       "CVE-2026-53799",
+       "CVE-2026-53800",
+       "CVE-2026-53801",
+       "CVE-2026-53802",
+       "CVE-2026-53803",
+       "CVE-2026-70452",
+       "CVE-2026-70453",
+       "CVE-2026-70454",
+       "CVE-2026-70455",
+       "CVE-2026-70456",
+       "CVE-2026-70457",
+       "CVE-2026-70458",
+       "CVE-2026-70459",
+       "CVE-2026-70460",
+       "CVE-2026-70461",
+       "CVE-2026-70462",
+       "CVE-2026-70463",
+       "CVE-2026-70464",
+       "CVE-2026-119741"
+      ],
+      "sem_impacto": [],
+      "em_triagem": 34,
+      "estado": "em_triagem"
+     },
+     {
+      "pacote": "pam",
+      "cves_avaliados": 2,
+      "abertos": [
+       "CVE-2025-6020"
+      ],
+      "sem_impacto": [],
+      "em_triagem": 1,
+      "versao": "1.3.1-5ubuntu4.7",
+      "ubuntu_pro": false,
+      "estado": "parcial",
       "aviso": ""
      }
     ],
@@ -14093,7 +15511,7 @@
      "u": "https://security-tracker.debian.org/tracker/DLA-4941-1"
     }
    ],
-   "revisao": "7a246f5711e9",
+   "revisao": "7e0881c7710e",
    "coletado_em": "2026-11-25",
    "atualizado_em": "2026-11-27"
   },
