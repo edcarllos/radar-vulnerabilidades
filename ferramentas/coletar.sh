@@ -49,7 +49,7 @@ if [ "${1:-}" != "--sem-rede" ]; then
   baixar "$CACHE/dsa-list.txt" https://salsa.debian.org/security-tracker-team/security-tracker/-/raw/master/data/DSA/list
   baixar "$CACHE/dla-list.txt" https://salsa.debian.org/security-tracker-team/security-tracker/-/raw/master/data/DLA/list
   echo "== Ubuntu OVAL (histórico completo; uma vez por dia)"
-  for cod in jammy noble resolute; do
+  for cod in focal jammy noble resolute; do
     f="$CACHE/oval/com.ubuntu.$cod.cve.oval.xml.bz2"
     if [ ! -s "$f" ] || [ -n "$(find "$f" -mmin +1380 2>/dev/null)" ]; then
       baixar "$f" "https://security-metadata.canonical.com/oval/com.ubuntu.$cod.cve.oval.xml.bz2" || echo "falhou OVAL $cod"
@@ -134,6 +134,12 @@ if [ "${1:-}" != "--sem-rede" ]; then
       sleep 1
     fi
   done < <(cat "$CACHE/ctir/links.txt" 2>/dev/null)
+  echo "== TrueNAS (avisos de segurança, RSS; uma vez por dia)"
+  f="$CACHE/truenas.xml"
+  if [ ! -s "$f" ] || [ -n "$(find "$f" -mmin +1380 2>/dev/null)" ]; then
+    curl -fsSL --compressed -m 30 -o "$f.tmp" https://security.truenas.com/index.xml 2>/dev/null && mv "$f.tmp" "$f" \
+      || { rm -f "$f.tmp"; echo "AVISO: avisos do TrueNAS indisponíveis agora; seguindo com o cache."; echo "TrueNAS (avisos)" >> "$CACHE/falhas.txt"; }
+  fi
   echo "== Ubuntu (USNs recentes)"
   # Se o site da Ubuntu falhar (504, lentidão), para na primeira falha e segue com o cache: não trava a coleta.
   for off in $(seq 0 20 300); do

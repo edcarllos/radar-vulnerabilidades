@@ -52,6 +52,11 @@ if [ -n "$RADAR_IMAGEM" ]; then
 fi
 QUIETO=0; { [ "$CSV" = 1 ] || [ "$JSON" = 1 ] || [ "$JSONL" = 1 ] || [ "$REGISTRO" = 1 ]; } && QUIETO=1
 radar_checar_release
+if [ -n "${RADAR_EOL:-}" ] && [ "$QUIETO" = 0 ]; then
+  echo "${C_VERM}${C_NEG}Sistema sem suporte.${C_FIM} $RADAR_EOL"
+  echo "Só as aplicações web e os itens que não dependem da distro serão conferidos."
+  echo
+fi
 radar_carregar_dpkg
 [ "$QUIETO" = 1 ] || {
   echo "${C_NEG}Radar de Vulnerabilidades: verificação${C_FIM}"
@@ -59,7 +64,7 @@ radar_carregar_dpkg
   else echo "Host: $(hostname) · $(radar_rotulo "$REL") · kernel $(uname -r)"; fi
   case "$(radar_appliance)" in
     proxmox) echo "${C_AMAR}Proxmox VE: os pacotes Debian são conferidos; o kernel e os pacotes próprios do Proxmox não. Veja os avisos de segurança do Proxmox.${C_FIM}" ;;
-    truenas) echo "${C_AMAR}TrueNAS: resultado só informativo. Não corrija com apt; use o atualizador do TrueNAS.${C_FIM}" ;;
+    truenas) echo "${C_AMAR}TrueNAS $(head -c 40 /etc/version 2>/dev/null): resultado só informativo. Não corrija com apt; use o atualizador do TrueNAS e confira os avisos em https://security.truenas.com/${C_FIM}" ;;
   esac
   echo "Dados coletados em $RADAR_COLETA · script gerado em $RADAR_GERADO"
   radar_idade_dados
@@ -67,6 +72,10 @@ radar_carregar_dpkg
 }
 
 # ---------- modo completo: todo o histórico de CVEs da distro ----------
+if [ "$COMPLETO" = 1 ] && [ -n "${RADAR_EOL:-}" ]; then
+  echo "Modo completo indisponível: o Radar não tem dados por pacote de sistemas sem suporte. $RADAR_EOL"
+  exit 1
+fi
 if [ "$COMPLETO" = 1 ]; then
   if ! command -v python3 >/dev/null 2>&1; then
     echo "A verificação completa precisa do python3 (apt-get install python3-minimal)."; exit 2

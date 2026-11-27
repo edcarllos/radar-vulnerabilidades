@@ -140,6 +140,9 @@
         "deb13": [
           "php8.4"
         ],
+        "u2004": [
+          "php7.4"
+        ],
         "u2204": [
           "php8.1"
         ],
@@ -211,6 +214,9 @@
           "linux"
         ],
         "deb13": [
+          "linux"
+        ],
+        "u2004": [
           "linux"
         ],
         "u2204": [
@@ -318,6 +324,9 @@
         "deb13": [
           "wordpress"
         ],
+        "u2004": [
+          "wordpress"
+        ],
         "u2204": [
           "wordpress"
         ],
@@ -369,6 +378,9 @@
           "brotli"
         ],
         "deb13": [
+          "brotli"
+        ],
+        "u2004": [
           "brotli"
         ],
         "u2204": [
@@ -427,6 +439,9 @@
         "deb13": [
           "puppet-agent"
         ],
+        "u2004": [
+          "puppet"
+        ],
         "u2204": [
           "puppet"
         ],
@@ -473,6 +488,9 @@
           "axis"
         ],
         "deb13": [
+          "axis"
+        ],
+        "u2004": [
           "axis"
         ],
         "u2204": [
@@ -1170,6 +1188,9 @@
         "deb13": [
           "openssh"
         ],
+        "u2004": [
+          "openssh"
+        ],
         "u2204": [
           "openssh"
         ],
@@ -1223,6 +1244,9 @@
         ],
         "deb13": [
           "php8.4"
+        ],
+        "u2004": [
+          "php7.4"
         ],
         "u2204": [
           "php8.1"
@@ -1289,6 +1313,9 @@
         "deb13": [
           "linux"
         ],
+        "u2004": [
+          "linux"
+        ],
         "u2204": [
           "linux"
         ],
@@ -1336,6 +1363,9 @@
           "linux"
         ],
         "deb13": [
+          "linux"
+        ],
+        "u2004": [
           "linux"
         ],
         "u2204": [
@@ -1392,6 +1422,9 @@
         "deb13": [
           "apt"
         ],
+        "u2004": [
+          "apt"
+        ],
         "u2204": [
           "apt"
         ],
@@ -1443,6 +1476,9 @@
           "nginx"
         ],
         "deb13": [
+          "nginx"
+        ],
+        "u2004": [
           "nginx"
         ],
         "u2204": [
@@ -1501,6 +1537,9 @@
         "deb13": [
           "apache2"
         ],
+        "u2004": [
+          "apache2"
+        ],
         "u2204": [
           "apache2"
         ],
@@ -1552,6 +1591,9 @@
         "deb13": [
           "haproxy"
         ],
+        "u2004": [
+          "haproxy"
+        ],
         "u2204": [
           "haproxy"
         ],
@@ -1595,6 +1637,9 @@
           "exim4"
         ],
         "deb13": [
+          "exim4"
+        ],
+        "u2004": [
           "exim4"
         ],
         "u2204": [
@@ -1657,6 +1702,9 @@
           "exim4"
         ],
         "deb13": [
+          "exim4"
+        ],
+        "u2004": [
           "exim4"
         ],
         "u2204": [
@@ -1768,6 +1816,11 @@
         "deb13": [
           "runc"
         ],
+        "u2004": [
+          "runc",
+          "runc-app",
+          "runc-stable"
+        ],
         "u2204": [
           "runc",
           "runc-app",
@@ -1819,6 +1872,9 @@
           "libzstd"
         ],
         "deb13": [
+          "libzstd"
+        ],
+        "u2004": [
           "libzstd"
         ],
         "u2204": [
@@ -1875,6 +1931,9 @@
         "deb13": [
           "expat"
         ],
+        "u2004": [
+          "expat"
+        ],
         "u2204": [
           "expat"
         ],
@@ -1925,6 +1984,9 @@
           "pcre2"
         ],
         "deb13": [
+          "pcre2"
+        ],
+        "u2004": [
           "pcre2"
         ],
         "u2204": [
@@ -1980,6 +2042,9 @@
         "deb13": [
           "libssh"
         ],
+        "u2004": [
+          "libssh"
+        ],
         "u2204": [
           "libssh"
         ],
@@ -2028,6 +2093,9 @@
         "deb13": [
           "glibc"
         ],
+        "u2004": [
+          "glibc"
+        ],
         "u2204": [
           "glibc"
         ],
@@ -2072,6 +2140,9 @@
           "openssl"
         ],
         "deb13": [
+          "openssl"
+        ],
+        "u2004": [
           "openssl"
         ],
         "u2204": [
@@ -2120,6 +2191,9 @@
           "curl"
         ],
         "deb13": [
+          "curl"
+        ],
+        "u2004": [
           "curl"
         ],
         "u2204": [
@@ -2224,6 +2298,9 @@
         "deb13": [
           "krb5"
         ],
+        "u2004": [
+          "krb5"
+        ],
         "u2204": [
           "krb5"
         ],
@@ -2276,6 +2353,9 @@
         "deb13": [
           "tomcat10"
         ],
+        "u2004": [
+          "tomcat9"
+        ],
         "u2204": [
           "tomcat9",
           "tomcat10"
@@ -2325,6 +2405,9 @@
         "deb13": [
           "python-django"
         ],
+        "u2004": [
+          "python-django"
+        ],
         "u2204": [
           "python-django"
         ],
@@ -2372,6 +2455,9 @@
         ],
         "deb13": [
           "postgresql-17"
+        ],
+        "u2004": [
+          "postgresql-12"
         ],
         "u2204": [
           "postgresql-14"
@@ -2423,6 +2509,9 @@
         "deb13": [
           "squid"
         ],
+        "u2004": [
+          "squid"
+        ],
         "u2204": [
           "squid"
         ],
@@ -2465,6 +2554,9 @@
           "mediawiki"
         ],
         "deb13": [
+          "mediawiki"
+        ],
+        "u2004": [
           "mediawiki"
         ],
         "u2204": [
@@ -2517,6 +2609,11 @@
         "deb13": [
           "openjdk-21",
           "openjdk-25"
+        ],
+        "u2004": [
+          "openjdk-lts",
+          "openjdk-17",
+          "openjdk-8"
         ],
         "u2204": [
           "openjdk-lts",
@@ -2583,6 +2680,10 @@
         "deb13": [
           "mariadb"
         ],
+        "u2004": [
+          "mysql-8.0",
+          "mariadb-10.6"
+        ],
         "u2204": [
           "mysql-8.0",
           "mariadb-10.6"
@@ -2645,6 +2746,9 @@
           "firefox-esr",
           "thunderbird"
         ],
+        "u2004": [
+          "thunderbird"
+        ],
         "u2204": [
           "thunderbird"
         ]
@@ -2698,6 +2802,9 @@
         "deb13": [
           "libreoffice"
         ],
+        "u2004": [
+          "libreoffice"
+        ],
         "u2204": [
           "libreoffice"
         ],
@@ -2746,6 +2853,10 @@
           "ghostscript"
         ],
         "deb13": [
+          "imagemagick",
+          "ghostscript"
+        ],
+        "u2004": [
           "imagemagick",
           "ghostscript"
         ],
@@ -2816,6 +2927,12 @@
           "pdns-recursor"
         ],
         "deb13": [
+          "bind9",
+          "unbound",
+          "pdns",
+          "pdns-recursor"
+        ],
+        "u2004": [
           "bind9",
           "unbound",
           "pdns",
@@ -2896,6 +3013,14 @@
           "cyrus-sasl2",
           "clamav"
         ],
+        "u2004": [
+          "dovecot",
+          "sogo",
+          "sympa",
+          "postfixadmin",
+          "cyrus-sasl2",
+          "clamav"
+        ],
         "u2204": [
           "dovecot",
           "sogo",
@@ -2969,6 +3094,11 @@
           "strongswan",
           "openvpn"
         ],
+        "u2004": [
+          "radsecproxy",
+          "strongswan",
+          "openvpn"
+        ],
         "u2204": [
           "radsecproxy",
           "strongswan",
@@ -3025,6 +3155,9 @@
         "deb13": [
           "xen"
         ],
+        "u2004": [
+          "xen"
+        ],
         "u2204": [
           "xen"
         ],
@@ -3073,6 +3206,10 @@
         ],
         "deb13": [
           "ruby3.3",
+          "rails"
+        ],
+        "u2004": [
+          "ruby3.0",
           "rails"
         ],
         "u2204": [
@@ -3125,6 +3262,9 @@
         "deb13": [
           "symfony"
         ],
+        "u2004": [
+          "symfony"
+        ],
         "u2204": [
           "symfony"
         ],
@@ -3171,6 +3311,10 @@
           "valkey"
         ],
         "deb13": [
+          "redis",
+          "valkey"
+        ],
+        "u2004": [
           "redis",
           "valkey"
         ],
@@ -3223,6 +3367,9 @@
         "deb13": [
           "nodejs"
         ],
+        "u2004": [
+          "nodejs"
+        ],
         "u2204": [
           "nodejs"
         ],
@@ -3268,6 +3415,10 @@
           "python3.11"
         ],
         "deb13": [
+          "python-tornado",
+          "pillow"
+        ],
+        "u2004": [
           "python-tornado",
           "pillow"
         ],
@@ -3337,6 +3488,13 @@
           "rsync",
           "pam"
         ],
+        "u2004": [
+          "sudo",
+          "needrestart",
+          "shadow",
+          "rsync",
+          "pam"
+        ],
         "u2204": [
           "sudo",
           "needrestart",
@@ -3398,6 +3556,9 @@
           "nagios4"
         ],
         "deb13": [
+          "nagios4"
+        ],
+        "u2004": [
           "nagios4"
         ],
         "u2204": [
@@ -3757,6 +3918,9 @@
         "deb13": [
           "samba"
         ],
+        "u2004": [
+          "samba"
+        ],
         "u2204": [
           "samba"
         ],
@@ -3798,6 +3962,9 @@
         "deb13": [
           "openldap"
         ],
+        "u2004": [
+          "openldap"
+        ],
         "u2204": [
           "openldap"
         ],
@@ -3834,6 +4001,9 @@
           "freeradius"
         ],
         "deb13": [
+          "freeradius"
+        ],
+        "u2004": [
           "freeradius"
         ],
         "u2204": [
@@ -3873,6 +4043,9 @@
           "zabbix"
         ],
         "deb13": [
+          "zabbix"
+        ],
+        "u2004": [
           "zabbix"
         ],
         "u2204": [

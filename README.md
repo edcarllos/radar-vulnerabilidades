@@ -7,9 +7,9 @@ Painel público e gratuito com as falhas de segurança **exploradas ou urgentes*
 O painel tem estas abas:
 - **Hoje:** o que mudou desde a coleta anterior (falhas que entraram no catálogo de exploradas, alertas do CTIR Gov e do CAIS, itens novos) e a situação de cada fonte.
 - **Exploradas:** o catálogo KEV inteiro da CISA, de qualquer ano, com a situação da correção no Debian e na Ubuntu. Por padrão, só categorias de servidor e rede.
-- **Novas:** itens curados, com gravidade, versões afetadas, correção por distro (Debian 12/13, Ubuntu 22.04/24.04/26.04), mitigação, referências e uma decisão com prazo sugerido. Antes de 01/11/2026 só entram falhas exploradas; a partir dessa data, todas as dos produtos acompanhados.
-- **Por sistema:** as falhas exploradas e o histórico completo de CVEs de uma versão de distro.
-- **Scripts:** verificação, correção com ponto de restauração, rollback e playbook Ansible.
+- **Novas:** itens curados, com gravidade, versões afetadas, correção por distro (Debian 12/13, Ubuntu 20.04/22.04/24.04/26.04), mitigação, referências e uma decisão com prazo sugerido. Antes de 01/11/2026 só entram falhas exploradas; a partir dessa data, todas as dos produtos acompanhados.
+- **Por sistema:** as falhas exploradas e o histórico completo de CVEs de uma versão de distro, e o que fazer com Debian 11 (sem suporte), Ubuntu 20.04 (só Ubuntu Pro), Proxmox VE e TrueNAS.
+- **Scripts:** verificação, correção com ponto de restauração, rollback e playbook Ansible. No Proxmox VE, a correção faz a atualização completa guiada (com snapshot ZFS ou backup antes); no TrueNAS e no Debian 11 só há verificação.
 - **Relatório:** boletim mensal com números gerais e o uso no PPSI.
 - **Aprender:** como usar, prazos e normas (PPSI, CTIR Gov, ANPD), glossário e laboratório.
 

@@ -23,8 +23,10 @@ radar_release() {
     ver=$(awk -F= '$1=="VERSION_ID" {gsub(/"/, "", $2); print $2; exit}' "$osr")
   fi
   case "$id:$ver" in
+    debian:11) echo deb11 ;;
     debian:12) echo deb12 ;;
     debian:13) echo deb13 ;;
+    ubuntu:20.04) echo u2004 ;;
     ubuntu:22.04) echo u2204 ;;
     ubuntu:24.04) echo u2404 ;;
     ubuntu:26.04) echo u2604 ;;
@@ -41,11 +43,16 @@ radar_appliance() {
   if [ -e /usr/bin/midclt ] || grep -qi truenas /etc/version 2>/dev/null; then echo truenas; return 0; fi
 }
 
+# Rollback não se aplica a equipamentos com atualização própria nem a sistemas sem suporte.
 radar_bloquear_appliance() {
+  if [ -n "${RADAR_EOL:-}" ]; then
+    echo "${C_VERM}Sem correção para este sistema.${C_FIM} $RADAR_EOL"
+    exit 2
+  fi
   case "$(radar_appliance)" in
     proxmox)
-      echo "${C_VERM}Este host é um Proxmox VE.${C_FIM} A correção e o rollback do Radar ainda não tratam o kernel e os pacotes do Proxmox."
-      echo "Atualize pelo caminho do Proxmox (apt update && apt full-upgrade, com snapshot ou backup antes) e confira com radar-verificar.sh."
+      echo "${C_VERM}Este host é um Proxmox VE.${C_FIM} Voltar versões de pacotes no Proxmox não é feito pelo Radar."
+      echo "Para desfazer uma atualização, use o snapshot feito antes (zfs rollback, ou o backup do host) e confira com radar-verificar.sh."
       exit 2 ;;
     truenas)
       echo "${C_VERM}Este host é um TrueNAS.${C_FIM} Ele não deve ser alterado com apt: atualize pelo atualizador do próprio TrueNAS."
@@ -56,7 +63,9 @@ radar_bloquear_appliance() {
 radar_rotulo() {
   case "$1" in
     deb12) echo "Debian 12 (bookworm)" ;;
+    deb11) echo "Debian 11 (bullseye)" ;;
     deb13) echo "Debian 13 (trixie)" ;;
+    u2004) echo "Ubuntu 20.04 LTS (focal)" ;;
     u2204) echo "Ubuntu 22.04 LTS (jammy)" ;;
     u2404) echo "Ubuntu 24.04 LTS (noble)" ;;
     u2604) echo "Ubuntu 26.04 LTS (resolute)" ;;
@@ -65,14 +74,26 @@ radar_rotulo() {
 }
 
 radar_codinome() {
-  case "$1" in deb12) echo bookworm ;; deb13) echo trixie ;; u2204) echo jammy ;; u2404) echo noble ;; u2604) echo resolute ;; esac
+  case "$1" in deb11) echo bullseye ;; deb12) echo bookworm ;; deb13) echo trixie ;; u2004) echo focal ;; u2204) echo jammy ;; u2404) echo noble ;; u2604) echo resolute ;; esac
+}
+
+# Versões sem suporte de segurança gratuito e sem dados por pacote no Radar.
+radar_fim_suporte() {
+  case "$1" in
+    deb11) echo "O Debian 11 (bullseye) está sem suporte desde 31/08/2026: não recebe mais correções gratuitas, e o Radar não tem dados por pacote dele. Migre para o Debian 12 ou 13 (ou contrate o suporte estendido pago, ELTS)." ;;
+  esac
 }
 
 radar_checar_release() {
   REL=$(radar_release)
+  RADAR_EOL=""
   if [ -z "$REL" ]; then
-    echo "${C_VERM}Distribuição não suportada.${C_FIM} Este script cobre Debian 12/13 e Ubuntu 22.04/24.04/26.04."
+    echo "${C_VERM}Distribuição não suportada.${C_FIM} Este script cobre Debian 12/13 e Ubuntu 20.04/22.04/24.04/26.04."
     exit 2
+  fi
+  RADAR_EOL=$(radar_fim_suporte "$REL")
+  if [ -n "$RADAR_EOL" ]; then
+    return 0
   fi
   case " $RADAR_RELEASES " in
     *" $REL "*) ;;
@@ -230,6 +251,10 @@ radar_checar_kernel() {
   run=$(uname -r)
   if radar_em_conteiner; then
     printf 'VERIFICAR%s%s%s%s\n' "$RS" "$run" "$RS" "contêiner: o kernel é o do host"
+    return
+  fi
+  if [ "$(radar_appliance)" = proxmox ]; then
+    printf 'VERIFICAR%s%s%s%s\n' "$RS" "$run" "$RS" "kernel do Proxmox: confira os avisos de segurança do Proxmox; a correção é a atualização completa (radar-corrigir.sh)"
     return
   fi
   pv=$(radar_versao_instalada "linux-image-$run")

@@ -21,7 +21,16 @@ if [ "$SIMULAR" = 0 ] && [ "$(id -u)" != 0 ]; then
 fi
 
 radar_checar_release
-radar_bloquear_appliance
+# Sistemas sem suporte e TrueNAS não são corrigidos pelo Radar; o Proxmox VE tem um caminho próprio (abaixo).
+PROXMOX=0
+if [ -n "${RADAR_EOL:-}" ]; then
+  echo "${C_VERM}Sem correção gratuita para este sistema.${C_FIM} $RADAR_EOL"
+  exit 2
+fi
+case "$(radar_appliance)" in
+  truenas) echo "${C_VERM}Este host é um TrueNAS.${C_FIM} Ele não deve ser alterado com apt: atualize pelo atualizador do próprio TrueNAS."; exit 2 ;;
+  proxmox) PROXMOX=1 ;;
+esac
 radar_carregar_dpkg
 
 CARIMBO=$(date +%Y%m%d-%H%M%S)
@@ -59,6 +68,56 @@ echo "${C_NEG}Radar de Vulnerabilidades: correção passo a passo${C_FIM}"
 echo "Host: $(hostname) · $(radar_rotulo "$REL") · kernel $(uname -r)"
 echo "Dados coletados em $RADAR_COLETA · registro em $LOG"
 radar_idade_dados
+
+# ---------- Proxmox VE: atualização completa guiada ----------
+# No Proxmox a correção segura é atualizar o sistema inteiro (apt full-upgrade), como a Proxmox recomenda:
+# atualizar pacotes soltos pode deixar o hipervisor inconsistente. O rollback é pelo snapshot, não pelo Radar.
+if [ "$PROXMOX" = 1 ]; then
+  passo "Proxmox VE: atualização completa guiada"
+  command -v pveversion >/dev/null 2>&1 && echo "  $(pveversion 2>/dev/null | head -n1)"
+  echo "Os itens vulneráveis deste host aparecem em: bash radar-verificar.sh"
+  passo "Ponto de restauração"
+  raiz_fs=$(findmnt -no FSTYPE / 2>/dev/null || true); raiz_src=$(findmnt -no SOURCE / 2>/dev/null || true)
+  if [ "$raiz_fs" = zfs ] && [[ "$raiz_src" =~ ^[A-Za-z0-9_./-]+$ ]]; then
+    if perguntar "Criar o snapshot ZFS $raiz_src@radar-$CARIMBO antes de atualizar?" s; then
+      executar zfs snapshot "$raiz_src@radar-$CARIMBO"
+      echo "Para desfazer depois, siga a documentação do Proxmox para voltar o snapshot $raiz_src@radar-$CARIMBO."
+    fi
+  else
+    echo "A raiz do sistema não está em ZFS. Faça backup do host antes (por exemplo, no Proxmox Backup Server)."
+    perguntar "Já tem backup do host e quer continuar?" n || { echo "Encerrado sem alterações."; exit 0; }
+  fi
+  printf '%s\n' "$RADAR_DPKG" | awk -F'\t' '{print $1"\t"$2}' > "$BACKUP/versoes-antes.tsv"
+  echo "$REL" > "$BACKUP/release"
+  if perguntar "Salvar cópia de /etc e da configuração do cluster (/etc/pve) em $BACKUP?" s; then
+    executar tar --one-file-system -czf "$BACKUP/etc.tar.gz" -C / etc 2>/dev/null || echo "Aviso: cópia de /etc incompleta."
+    executar tar -czf "$BACKUP/etc-pve.tar.gz" -C / etc/pve 2>/dev/null || echo "Aviso: cópia de /etc/pve incompleta."
+  fi
+  passo "Atualizar a lista de pacotes"
+  perguntar "Executar apt-get update?" s && executar apt-get update
+  passo "Simulação da atualização completa"
+  sim=$(apt-get -s full-upgrade 2>/dev/null | grep -E '^(Inst|Remv) ' || true)
+  n_inst=$(printf '%s' "$sim" | grep -c '^Inst ' || true); n_rem=$(printf '%s' "$sim" | grep -c '^Remv ' || true)
+  echo "Pacotes a atualizar ou instalar: $n_inst · a remover: $n_rem"
+  [ -n "$sim" ] && printf '%s\n' "$sim" | awk '{print "  " $1 " " $2}' | head -n 40
+  [ "$n_inst" -gt 40 ] && echo "  (e mais $((n_inst - 40)))"
+  if printf '%s\n' "$sim" | grep -qE '^Remv (proxmox-ve|pve-manager|qemu-server|pve-cluster) '; then
+    echo "${C_VERM}A simulação remove pacotes essenciais do Proxmox. Pare e confira os repositórios (veja a documentação do Proxmox) antes de atualizar.${C_FIM}"
+    exit 1
+  fi
+  if [ "$n_inst" = 0 ] && [ "$n_rem" = 0 ]; then echo "${C_VERD}Nada a atualizar.${C_FIM}"; exit 0; fi
+  [ "$n_rem" -gt 0 ] && echo "${C_AMAR}Há remoções: leia a lista acima antes de confirmar.${C_FIM}"
+  perguntar "Aplicar a atualização completa agora?" n || { echo "Encerrado sem alterações."; exit 0; }
+  executar env DEBIAN_FRONTEND=noninteractive apt-get -y -o Dpkg::Options::=--force-confold full-upgrade
+  [ "$SIMULAR" = 1 ] || dpkg-query -W -f='${Package}\t${Version}\n' > "$BACKUP/versoes-depois.tsv" 2>/dev/null || true
+  passo "Depois da atualização"
+  novo=$(dpkg-query -W -f='${Package}\n' 'proxmox-kernel-*-pve*' 'pve-kernel-*-pve' 2>/dev/null | sed -E 's/^(proxmox|pve)-kernel-//' | sort -V | tail -n1)
+  if [ -n "$novo" ] && [ "$novo" != "$(uname -r)" ]; then
+    echo "${C_AMAR}Kernel novo instalado ($novo); o host roda $(uname -r). Reinicie numa janela combinada; em cluster, migre as VMs antes.${C_FIM}"
+  fi
+  echo "Confira o resultado com: bash radar-verificar.sh · registro em $LOG"
+  exit 0
+fi
 
 # ---------- Passo 1: diagnóstico ----------
 passo "Passo 1 de 7: diagnóstico"

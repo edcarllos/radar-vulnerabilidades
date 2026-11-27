@@ -18,11 +18,14 @@ permite que um script imprima OK. Falta de dado vira "nao_verificado".
 import argparse, datetime, glob, hashlib, json, os, re, sys
 
 RELEASES = {
-    "deb12": {"familia": "debian", "codinome": "bookworm", "rotulo": "Debian 12 (bookworm)", "nota": "Suporte LTS: correções chegam como DLA"},
-    "deb13": {"familia": "debian", "codinome": "trixie", "rotulo": "Debian 13 (trixie)", "nota": ""},
-    "u2204": {"familia": "ubuntu", "codinome": "jammy", "rotulo": "Ubuntu 22.04 LTS (jammy)", "nota": ""},
-    "u2404": {"familia": "ubuntu", "codinome": "noble", "rotulo": "Ubuntu 24.04 LTS (noble)", "nota": ""},
-    "u2604": {"familia": "ubuntu", "codinome": "resolute", "rotulo": "Ubuntu 26.04 LTS (resolute)", "nota": ""},
+    "deb12": {"familia": "debian", "codinome": "bookworm", "rotulo": "Debian 12 (bookworm)",
+              "nota": "Em LTS desde 11/06/2026 (até 30/06/2028): as correções chegam como avisos DLA"},
+    "deb13": {"familia": "debian", "codinome": "trixie", "rotulo": "Debian 13 (trixie)", "nota": "Suporte regular do Debian"},
+    "u2004": {"familia": "ubuntu", "codinome": "focal", "rotulo": "Ubuntu 20.04 LTS (focal)",
+              "nota": "Suporte padrão encerrado em 31/05/2025: correções novas só com Ubuntu Pro (ESM); planeje a migração", "fim_padrao": "2025-05-31"},
+    "u2204": {"familia": "ubuntu", "codinome": "jammy", "rotulo": "Ubuntu 22.04 LTS (jammy)", "nota": "Suporte padrão da Canonical"},
+    "u2404": {"familia": "ubuntu", "codinome": "noble", "rotulo": "Ubuntu 24.04 LTS (noble)", "nota": "Suporte padrão da Canonical"},
+    "u2604": {"familia": "ubuntu", "codinome": "resolute", "rotulo": "Ubuntu 26.04 LTS (resolute)", "nota": "Suporte padrão da Canonical"},
 }
 POR_AVISO = {}  # (aviso, codinome, pacote) -> versão publicada pelo aviso
 ESTADOS = {"corrigido", "parcial", "pro", "sem_correcao", "em_triagem", "nao_afetado", "nao_empacotado", "nao_verificado"}
@@ -34,6 +37,7 @@ RE_CVE = re.compile(r"^CVE-\d{4}-\d{4,7}$")
 RE_AVISO = re.compile(r"^((DSA|DLA|USN)-\d{3,5}-\d{1,2}|SA-CORE-\d{4}-\d{3})$")
 RE_APPVER = re.compile(r"^\d+(\.\d+){1,3}$")
 RE_DATA = re.compile(r"^\d{4}-\d{2}-\d{2}$")
+RE_CVE_TXT = re.compile(r"CVE-\d{4}-\d{4,7}")
 
 
 def aviso(msg):
@@ -562,6 +566,7 @@ FONTES_CACHE = [
     ("CISA KEV", ["kev.json"]), ("Debian Security Tracker", ["deb.json"]), ("Avisos DSA/DLA", ["dsa-list.txt", "dla-list.txt"]),
     ("Ubuntu OVAL", ["oval/com.ubuntu.noble.cve.oval.xml.bz2"]), ("Ubuntu CVE Tracker", ["uct.tsv"]), ("Avisos USN", ["usn/p0.json"]),
     ("FIRST EPSS", ["epss.csv.gz"]), ("CAIS/RNP", ["cais/pagina1.html"]), ("CTIR Gov", ["ctir/links.txt"]),
+    ("TrueNAS (avisos)", ["truenas.xml"]),
     ("NVD (produtos)", ["nvd-produtos"]),
 ]
 
@@ -666,6 +671,28 @@ def gerar_exploradas(kev, cfg, saida_dir, itens, ctir_todos, alertas_cais, cache
     with open(os.path.join(saida_dir, "exploradas.json"), "w", encoding="utf-8") as fh:
         json.dump(out, fh, ensure_ascii=False, separators=(",", ":"))
     return len(lista)
+
+
+# ---------- F23: avisos de segurança do TrueNAS (RSS) ----------
+def ler_avisos_truenas(cache, limite=20):
+    """Só título, data e link de cada aviso (leitura por expressão regular, sem interpretar entidades XML)."""
+    try:
+        x = open(os.path.join(cache, "truenas.xml"), encoding="utf-8", errors="replace").read()
+    except OSError:
+        return []
+    out = []
+    for bloco in re.findall(r"<item>(.*?)</item>", x, re.S)[:200]:
+        t = re.search(r"<title>(.*?)</title>", bloco, re.S)
+        u = re.search(r"<link>(https://(?:security|www)\.truenas\.com/[^<\s]{1,200})</link>", bloco)
+        d = re.search(r"<pubDate>\s*(\d{4}-\d{2}-\d{2})", bloco)
+        if not (t and u):
+            continue
+        data = d.group(1) if d else None
+        titulo = re.sub(r"<!\[CDATA\[|\]\]>", "", t.group(1)).replace("&amp;", "&").replace("&#39;", "'").replace("&quot;", '"')
+        out.append({"titulo": limpar_texto(titulo, 160), "data": data, "url": u.group(1),
+                    "cves": sorted(set(RE_CVE_TXT.findall(t.group(1))))[:8]})
+    out.sort(key=lambda a: a["data"] or "", reverse=True)
+    return out[:limite]
 
 
 # ---------- F22: alertas do CTIR Gov (páginas do GSI) ----------
@@ -803,6 +830,9 @@ def main():
     os.makedirs(saida_dir, exist_ok=True)
     anterior = ler_json(os.path.join(saida_dir, "vulns.json"), {}) or {}
     ant_idx = {i["id"]: i for i in anterior.get("itens", [])}
+    # Quando o Radar passa a cobrir uma versão nova de distro, as linhas novas mudam a revisão de todos os itens de
+    # pacote. Isso não é atualização de conteúdo: nessa coleta, nenhum item é marcado como atualizado por esse motivo.
+    mesmas_versoes = set((anterior.get("releases") or {}).keys()) in (set(), set(RELEASES))
     coletas = ler_json(os.path.join(saida_dir, "coletas.json"), []) or []
 
     erros = []
@@ -1050,7 +1080,7 @@ def main():
             novos.append(it["id"])
         else:
             corpo["coletado_em"] = prev.get("coletado_em") or args.data
-            if prev.get("revisao") != revisao:
+            if prev.get("revisao") != revisao and mesmas_versoes:
                 corpo["atualizado_em"] = args.data
                 alterados.append(it["id"])
             else:
@@ -1114,6 +1144,7 @@ def main():
         "candidatos": candidatos[:60],
         # Alertas do CTIR Gov do ano: só número, assunto, data, CVEs e link (o site do GSI não permite obras derivadas).
         "alertas_ctir": [{k: a[k] for k in ("fonte", "data", "titulo", "cves", "url")} for a in ctir_todos[:400]],
+        "avisos_truenas": ler_avisos_truenas(args.cache),
         "itens": itens,
     }
     with open(os.path.join(saida_dir, "vulns.json"), "w", encoding="utf-8") as f:

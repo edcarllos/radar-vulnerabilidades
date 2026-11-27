@@ -26,7 +26,7 @@ import argparse, datetime, hashlib, http.server, json, os, re, secrets, sqlite3,
 
 RE_HOST = re.compile(r"^[A-Za-z0-9][A-Za-z0-9.-]{0,62}$")
 RE_ITEM = re.compile(r"^[a-z0-9][a-z0-9-]{2,60}$")
-RE_REL = re.compile(r"^(deb12|deb13|u2204|u2404|u2604)$")
+RE_REL = re.compile(r"^(deb12|deb13|u2004|u2204|u2404|u2604)$")
 STATUS = {"VULNERAVEL", "SEM_CORRECAO", "REINICIAR", "VERIFICAR", "ATENCAO", "OK", "NAO_AFETADO", "AUSENTE"}
 DECISOES = {"agir_agora", "agir_em_breve", "acompanhar_de_perto", "acompanhar", "nao_se_aplica"}
 LIMITE_CORPO = 4 * 1024 * 1024

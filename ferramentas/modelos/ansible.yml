@@ -47,7 +47,7 @@
     - name: Recusar Proxmox VE e TrueNAS
       ansible.builtin.assert:
         that: radar_appliance.results | selectattr('stat.exists') | list | length == 0
-        fail_msg: "{{ inventory_hostname }} é Proxmox VE ou TrueNAS: atualize pelo caminho do próprio sistema."
+        fail_msg: "{{ inventory_hostname }} é Proxmox VE ou TrueNAS: no Proxmox use radar-corrigir.sh (atualização completa guiada); no TrueNAS, o atualizador do próprio TrueNAS."
         quiet: true
 
     - name: Radar
