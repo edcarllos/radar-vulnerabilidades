@@ -83,7 +83,7 @@
         "estrito": true
       },
       "situacao": "explorado",
-      "exploracao": "Drupal declara exploração ativa; o CVE anterior (SA-CORE-2026-017) está no KEV desde 24/11.",
+      "exploracao": "Drupal declara exploração ativa; CVE-2026-136716 (SA-CORE-2026-019) no CISA KEV desde 27/11; o CVE anterior (SA-CORE-2026-017) está no KEV desde 24/11.",
       "kev": "2026-11-24",
       "publicado_em": "2026-11-25",
       "cves": [
@@ -1084,6 +1084,70 @@
       ]
     },
     {
+      "id": "geoserver-129243",
+      "titulo": "GeoServer: cadeia de falhas no WFS leva a RCE sem autenticação",
+      "tecnologia": "pesquisa",
+      "tipo": "manual",
+      "situacao": "explorado",
+      "exploracao": "CISA KEV desde 27/11 (CVE-2026-120705 e CVE-2026-129243).",
+      "kev": "2026-11-27",
+      "publicado_em": "2026-11-27",
+      "cves": [
+        "CVE-2026-120705",
+        "CVE-2026-129243",
+        "CVE-2026-129244",
+        "CVE-2026-129245",
+        "CVE-2026-129242"
+      ],
+      "pontuacao_manual": {
+        "valor": 9.2,
+        "rotulo": "Até 9.2 (CVSS 4.0, CVE-2026-129245)",
+        "fonte": "Avisos do GeoServer no GitHub (NVD sem nota na coleta)"
+      },
+      "resumo": "Cinco falhas encadeadas dão execução remota de código sem autenticação. Um parâmetro service com prefixo (x/WFS) ignora as regras de segurança por serviço (CVE-2026-129243); a stored query GetFeatureById aceita XML injetado e lê arquivos locais ou faz SSRF (CVE-2026-120705); a chave padrão do cookie remember-me permite forjar sessão de administrador (CVE-2026-129245); e o serviço JDBC de usuários desserializa objetos Java (CVE-2026-129242).",
+      "afetadas": "GeoServer até 2.27.6, 2.28.0 a 2.28.5 e 3.0.0 a 3.0.1. Corrigido em 2.27.7, 2.28.6 e 3.0.2.",
+      "softwares": [
+        "Infraestrutura de dados espaciais (IDE) e geoportais",
+        "Laboratórios de geoprocessamento, geografia e ciências ambientais",
+        "Servidores WMS/WFS de projetos de pesquisa"
+      ],
+      "mitigacao": [
+        "Atualizar para 2.27.7, 2.28.6 ou 3.0.2",
+        "Até atualizar: no proxy, bloquear requisições cujo parâmetro service (na URL ou no XML) contenha '/'",
+        "Restringir ou desativar o WFS para usuários anônimos",
+        "Remover rememberme da cadeia de filtros web (Security > Authentication) ou trocar a chave em security/config.xml por um valor longo e aleatório",
+        "Restringir /rest/resource e /rest/security a redes confiáveis",
+        "Procurar stored queries que você não criou em wfs/query e workspaces/*/wfs/query no diretório de dados; trocar senhas de administrador se houver indício"
+      ],
+      "como_verificar": "Interface web do GeoServer > About GeoServer (versão).",
+      "referencias": [
+        {
+          "t": "GeoServer: atualização de CVEs (23/11/2026)",
+          "u": "https://geoserver.org/vulnerability/2026/11/23/cve-update.html"
+        },
+        {
+          "t": "GHSA-rv5g-g2r9-58rj (CVE-2026-129243)",
+          "u": "https://github.com/geoserver/geoserver/security/advisories/GHSA-rv5g-g2r9-58rj"
+        },
+        {
+          "t": "GHSA-39mw-5chv-jh47 (CVE-2026-120705)",
+          "u": "https://github.com/geoserver/geoserver/security/advisories/GHSA-39mw-5chv-jh47"
+        },
+        {
+          "t": "GHSA-hgm3-wq4h-8vvq (CVE-2026-129245)",
+          "u": "https://github.com/geoserver/geoserver/security/advisories/GHSA-hgm3-wq4h-8vvq"
+        },
+        {
+          "t": "GHSA-9wf2-fcgq-vxhq (CVE-2026-129242)",
+          "u": "https://github.com/geoserver/geoserver/security/advisories/GHSA-9wf2-fcgq-vxhq"
+        },
+        {
+          "t": "NVD CVE-2026-120705",
+          "u": "https://nvd.nist.gov/vuln/detail/CVE-2026-120705"
+        }
+      ]
+    },
+    {
       "id": "litellm-40217",
       "titulo": "LiteLLM: execução de código via guardrails",
       "tecnologia": "pesquisa",
@@ -1864,6 +1928,10 @@
       "tipo": "pacote",
       "situacao": "urgente",
       "publicado_em": "2026-11-24",
+      "cves_de": [
+        "DSA-6657-1",
+        "DLA-4946-1"
+      ],
       "cves": [
         "CVE-2026-124851"
       ],
@@ -1905,6 +1973,14 @@
         {
           "t": "Debian tracker",
           "u": "https://security-tracker.debian.org/tracker/CVE-2026-124851"
+        },
+        {
+          "t": "Debian DSA-6657-1",
+          "u": "https://security-tracker.debian.org/tracker/DSA-6657-1"
+        },
+        {
+          "t": "Debian DLA-4946-1",
+          "u": "https://security-tracker.debian.org/tracker/DLA-4946-1"
         }
       ],
       "bibliotecas": [
